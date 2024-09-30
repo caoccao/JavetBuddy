@@ -20,4 +20,3 @@ plugins {
 }
 
 rootProject.name = "javet-buddy"
-include("lib")
