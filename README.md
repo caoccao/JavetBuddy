@@ -1,10 +1,34 @@
 # JavetBuddy
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.caoccao.javet/JavetBuddy?style=for-the-badge)](https://central.sonatype.com/artifact/com.caoccao.javet/JavetBuddy) [![Discord](https://img.shields.io/discord/870518906115211305?label=join%20our%20Discord&style=for-the-badge)](https://discord.gg/R4vvKU96gw)
+[![Maven Central](https://img.shields.io/maven-central/v/com.caoccao.javet.buddy/javet-buddy?style=for-the-badge)](https://central.sonatype.com/artifact/com.caoccao.javet.buddy/javet-buddy) [![Discord](https://img.shields.io/discord/870518906115211305?label=join%20our%20Discord&style=for-the-badge)](https://discord.gg/R4vvKU96gw)
 
 [![Build](https://github.com/caoccao/JavetBuddy/actions/workflows/build.yml/badge.svg)](https://github.com/caoccao/JavetBuddy/actions/workflows/build.yml)
 
 JavetBuddy is [Javet](https://github.com/caoccao/Javet) + [ByteBuddy](https://bytebuddy.net/). JavetBuddy enhances JVM via bytecode by JavaScript.
+
+## Dependencies
+
+### Maven
+
+```xml
+<dependency>
+    <groupId>com.caoccao.javet.buddy</groupId>
+    <artifactId>javet-buddy</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
+
+### Gradle Kotlin DSL
+
+```kotlin
+implementation("com.caoccao.javet.buddy:javet-buddy:0.1.0")
+```
+
+### Gradle Groovy DSL
+
+```groovy
+implementation 'com.caoccao.javet.buddy:javet-buddy:0.1.0'
+```
 
 ## Documentation
 
