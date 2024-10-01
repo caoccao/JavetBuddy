@@ -55,7 +55,7 @@ object Config {
         const val BYTE_BUDDY = "1.14.10"
         const val JAVA_VERSION = "1.8"
         const val JAVET = "3.1.8"
-        const val JAVET_BUDDY = "0.1.0"
+        const val JAVET_BUDDY = "0.2.0"
         const val JUNIT = "5.10.1"
     }
 }
@@ -80,11 +80,11 @@ dependencies {
     val os = OperatingSystem.current()
     val cpuArch = System.getProperty("os.arch")
     if (os.isMacOsX) {
-        implementation("com.caoccao.javet:javet:${Config.Versions.JAVET}")
+        compileOnly("com.caoccao.javet:javet:${Config.Versions.JAVET}")
     } else if (os.isLinux && (cpuArch == "aarch64" || cpuArch == "arm64")) {
-        implementation("com.caoccao.javet:javet-linux-arm64:${Config.Versions.JAVET}")
+        compileOnly("com.caoccao.javet:javet-linux-arm64:${Config.Versions.JAVET}")
     } else {
-        implementation("com.caoccao.javet:javet-macos:${Config.Versions.JAVET}")
+        compileOnly("com.caoccao.javet:javet-macos:${Config.Versions.JAVET}")
     }
     implementation(Config.Projects.BYTE_BUDDY)
 }

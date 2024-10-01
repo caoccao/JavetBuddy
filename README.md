@@ -14,7 +14,7 @@ JavetBuddy is [Javet](https://github.com/caoccao/Javet) + [ByteBuddy](https://by
 <dependency>
     <groupId>com.caoccao.javet.buddy</groupId>
     <artifactId>javet-buddy</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 </dependency>
 <dependency>
     <groupId>net.bytebuddy</groupId>
@@ -26,14 +26,14 @@ JavetBuddy is [Javet](https://github.com/caoccao/Javet) + [ByteBuddy](https://by
 ### Gradle Kotlin DSL
 
 ```kotlin
-implementation("com.caoccao.javet.buddy:javet-buddy:0.1.0")
+implementation("com.caoccao.javet.buddy:javet-buddy:0.2.0")
 implementation("net.bytebuddy:byte-buddy:1.14.10")
 ```
 
 ### Gradle Groovy DSL
 
 ```groovy
-implementation 'com.caoccao.javet.buddy:javet-buddy:0.1.0'
+implementation 'com.caoccao.javet.buddy:javet-buddy:0.2.0'
 implementation 'net.bytebuddy:byte-buddy:1.14.10'
 ```
 
