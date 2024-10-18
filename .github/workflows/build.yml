@@ -17,7 +17,7 @@ on:
       - "docs/**"
 
 env:
-  JAVET_BUDDY_VERSION: 0.2.0
+  JAVET_BUDDY_VERSION: 0.3.0
 
 jobs:
   build_jar:
@@ -38,11 +38,11 @@ jobs:
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v4
       with:
-        gradle-version: 8.5
+        gradle-version: 8.10.2
 
     - name: Build the Artifact
       run: |
-        gradle build generatePomFileForGeneratePomPublication
+        gradle build test generatePomFileForGeneratePomPublication
 
     - name: Upload the Artifact
       uses: actions/upload-artifact@v4

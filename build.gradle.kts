@@ -49,13 +49,25 @@ object Config {
     object Projects {
         // https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy
         const val BYTE_BUDDY = "net.bytebuddy:byte-buddy:${Versions.BYTE_BUDDY}"
+
+        const val JAVET = "com.caoccao.javet:javet-core:${Versions.JAVET}"
+        const val JAVET_NODE_LINUX_ARM64 = "com.caoccao.javet:javet-node-linux-arm64:${Versions.JAVET}"
+        const val JAVET_NODE_LINUX_X86_64 = "com.caoccao.javet:javet-node-linux-x86_64:${Versions.JAVET}"
+        const val JAVET_NODE_MACOS_ARM64 = "com.caoccao.javet:javet-node-macos-arm64:${Versions.JAVET}"
+        const val JAVET_NODE_MACOS_X86_64 = "com.caoccao.javet:javet-node-macos-x86_64:${Versions.JAVET}"
+        const val JAVET_NODE_WINDOWS_X86_64 = "com.caoccao.javet:javet-node-windows-x86_64:${Versions.JAVET}"
+        const val JAVET_V8_LINUX_ARM64 = "com.caoccao.javet:javet-v8-linux-arm64:${Versions.JAVET}"
+        const val JAVET_V8_LINUX_X86_64 = "com.caoccao.javet:javet-v8-linux-x86_64:${Versions.JAVET}"
+        const val JAVET_V8_MACOS_ARM64 = "com.caoccao.javet:javet-v8-macos-arm64:${Versions.JAVET}"
+        const val JAVET_V8_MACOS_X86_64 = "com.caoccao.javet:javet-v8-macos-x86_64:${Versions.JAVET}"
+        const val JAVET_V8_WINDOWS_X86_64 = "com.caoccao.javet:javet-v8-windows-x86_64:${Versions.JAVET}"
     }
 
     object Versions {
         const val BYTE_BUDDY = "1.14.10"
         const val JAVA_VERSION = "1.8"
-        const val JAVET = "3.1.8"
-        const val JAVET_BUDDY = "0.2.0"
+        const val JAVET = "4.0.0"
+        const val JAVET_BUDDY = "0.3.0"
         const val JUNIT = "5.10.1"
     }
 }
@@ -79,12 +91,38 @@ repositories {
 dependencies {
     val os = OperatingSystem.current()
     val cpuArch = System.getProperty("os.arch")
-    if (os.isMacOsX) {
-        compileOnly("com.caoccao.javet:javet:${Config.Versions.JAVET}")
-    } else if (os.isLinux && (cpuArch == "aarch64" || cpuArch == "arm64")) {
-        compileOnly("com.caoccao.javet:javet-linux-arm64:${Config.Versions.JAVET}")
-    } else {
-        compileOnly("com.caoccao.javet:javet-macos:${Config.Versions.JAVET}")
+    val isArm64 = cpuArch == "aarch64" || cpuArch == "arm64";
+    compileOnly(Config.Projects.JAVET)
+    testImplementation(Config.Projects.JAVET)
+    if (os.isLinux) {
+        if (isArm64) {
+            compileOnly(Config.Projects.JAVET_NODE_LINUX_ARM64)
+            testImplementation(Config.Projects.JAVET_NODE_LINUX_ARM64)
+            compileOnly(Config.Projects.JAVET_V8_LINUX_ARM64)
+            testImplementation(Config.Projects.JAVET_V8_LINUX_ARM64)
+        } else {
+            compileOnly(Config.Projects.JAVET_NODE_LINUX_X86_64)
+            testImplementation(Config.Projects.JAVET_NODE_LINUX_X86_64)
+            compileOnly(Config.Projects.JAVET_V8_LINUX_X86_64)
+            testImplementation(Config.Projects.JAVET_V8_LINUX_X86_64)
+        }
+    } else if (os.isMacOsX) {
+        if (isArm64) {
+            compileOnly(Config.Projects.JAVET_NODE_MACOS_ARM64)
+            testImplementation(Config.Projects.JAVET_NODE_MACOS_ARM64)
+            compileOnly(Config.Projects.JAVET_V8_MACOS_ARM64)
+            testImplementation(Config.Projects.JAVET_V8_MACOS_ARM64)
+        } else {
+            compileOnly(Config.Projects.JAVET_NODE_MACOS_X86_64)
+            testImplementation(Config.Projects.JAVET_NODE_MACOS_X86_64)
+            compileOnly(Config.Projects.JAVET_V8_MACOS_X86_64)
+            testImplementation(Config.Projects.JAVET_V8_MACOS_X86_64)
+        }
+    } else if (os.isWindows && !isArm64) {
+        compileOnly(Config.Projects.JAVET_NODE_WINDOWS_X86_64)
+        testImplementation(Config.Projects.JAVET_NODE_WINDOWS_X86_64)
+        compileOnly(Config.Projects.JAVET_V8_WINDOWS_X86_64)
+        testImplementation(Config.Projects.JAVET_V8_WINDOWS_X86_64)
     }
     implementation(Config.Projects.BYTE_BUDDY)
 }
