@@ -1,5 +1,9 @@
 # Release Notes
 
+## 0.3.0
+
+* Supported all public constructors
+
 ## 0.2.0
 
 * Updated Javet to `compileOnly`

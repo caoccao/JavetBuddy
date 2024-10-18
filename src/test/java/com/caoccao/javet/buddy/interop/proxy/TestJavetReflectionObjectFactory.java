@@ -22,11 +22,32 @@ import com.caoccao.javet.interfaces.IJavetAnonymous;
 import com.caoccao.javet.interop.V8Host;
 import com.caoccao.javet.interop.V8Runtime;
 import com.caoccao.javet.interop.converters.JavetProxyConverter;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestJavetReflectionObjectFactory {
+    protected V8Runtime v8Runtime;
+
+    @AfterEach
+    public void afterEach() throws JavetException {
+        v8Runtime.lowMemoryNotification();
+        assertEquals(0, v8Runtime.getReferenceCount());
+        v8Runtime.close();
+    }
+
+    @BeforeEach
+    public void beforeEach() throws JavetException {
+        v8Runtime = V8Host.getV8Instance().createV8Runtime();
+        JavetProxyConverter javetProxyConverter = new JavetProxyConverter();
+        javetProxyConverter.getConfig().setReflectionObjectFactory(JavetReflectionObjectFactory.getInstance());
+        v8Runtime.setConverter(javetProxyConverter);
+    }
+
     @Test
     public void testDynamicClassAutoCloseable() throws JavetException {
         IJavetAnonymous anonymous = new IJavetAnonymous() {
@@ -38,19 +59,12 @@ public class TestJavetReflectionObjectFactory {
                 ((AutoCloseable) mockedDynamicClass).close();
             }
         };
-        try (V8Runtime v8Runtime = V8Host.getV8Instance().createV8Runtime()) {
-            JavetProxyConverter javetProxyConverter = new JavetProxyConverter();
-            javetProxyConverter.getConfig().setReflectionObjectFactory(JavetReflectionObjectFactory.getInstance());
-            v8Runtime.setConverter(javetProxyConverter);
-            v8Runtime.getGlobalObject().set("a", anonymous);
-            String codeString = "a.test({\n" +
-                    "  add: (a, b) => a + b,\n" +
-                    "});";
-            v8Runtime.getExecutor(codeString).executeVoid();
-            v8Runtime.getGlobalObject().delete("a");
-            v8Runtime.lowMemoryNotification();
-            assertEquals(0, v8Runtime.getReferenceCount());
-        }
+        v8Runtime.getGlobalObject().set("a", anonymous);
+        String codeString = "a.test({\n" +
+                "  add: (a, b) => a + b,\n" +
+                "});";
+        v8Runtime.getExecutor(codeString).executeVoid();
+        v8Runtime.getGlobalObject().delete("a");
     }
 
     @Test
@@ -78,25 +92,36 @@ public class TestJavetReflectionObjectFactory {
                 ((AutoCloseable) mockedDynamicClass).close();
             }
         };
-        try (V8Runtime v8Runtime = V8Host.getV8Instance().createV8Runtime()) {
-            JavetProxyConverter javetProxyConverter = new JavetProxyConverter();
-            javetProxyConverter.getConfig().setReflectionObjectFactory(JavetReflectionObjectFactory.getInstance());
-            v8Runtime.setConverter(javetProxyConverter);
-            v8Runtime.getGlobalObject().set("a", anonymous);
-            String codeString = "a.test({\n" +
-                    "  add: (a, b) => a + b,\n" +
-                    "  description: 'b',\n" +
-                    "  getName: () => 'b',\n" +
-                    "  getNumber: (n) => n,\n" +
-                    "  getTitle: 'b',\n" +
-                    "  passed: true,\n" +
-                    "  value: 1,\n" +
-                    "});";
-            v8Runtime.getExecutor(codeString).executeVoid();
-            v8Runtime.getGlobalObject().delete("a");
-            v8Runtime.lowMemoryNotification();
-            assertEquals(0, v8Runtime.getReferenceCount());
-        }
+        v8Runtime.getGlobalObject().set("a", anonymous);
+        String codeString = "a.test({\n" +
+                "  add: (a, b) => a + b,\n" +
+                "  description: 'b',\n" +
+                "  getName: () => 'b',\n" +
+                "  getNumber: (n) => n,\n" +
+                "  getTitle: 'b',\n" +
+                "  passed: true,\n" +
+                "  value: 1,\n" +
+                "});";
+        v8Runtime.getExecutor(codeString).executeVoid();
+        v8Runtime.getGlobalObject().delete("a");
+    }
+
+    @Test
+    public void testFile() throws JavetException {
+        IJavetAnonymous anonymous = new IJavetAnonymous() {
+            @V8Function
+            public void test(File file) throws Exception {
+                assertTrue(file.exists());
+                ((AutoCloseable) file).close();
+            }
+        };
+        v8Runtime.getGlobalObject().set("a", anonymous);
+        String codeString = "a.test({\n" +
+                "  $: ['/tmp/not-exist-file'],\n" +
+                "  exists: () => true,\n" +
+                "});";
+        v8Runtime.getExecutor(codeString).executeVoid();
+        v8Runtime.getGlobalObject().delete("a");
     }
 
     public static class DynamicClassAutoCloseable implements AutoCloseable {
