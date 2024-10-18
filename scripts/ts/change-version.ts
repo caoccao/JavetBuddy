@@ -90,7 +90,7 @@ class ChangeVersion {
       "README.md",
       [
         /<artifactId>javet-buddy<\/artifactId>\s*<version>(?<version>\d+\.\d+\.\d+)<\/version>/gi,
-        /javet-buddy:(?<version>\d+\.\d+\.\d+)"/gim,
+        /javet-buddy:(?<version>\d+\.\d+\.\d+)['"]/gim,
       ],
       false
     );
@@ -103,5 +103,5 @@ class ChangeVersion {
   }
 }
 
-const changeVersion = new ChangeVersion("0.2.0", "0.3.0");
+const changeVersion = new ChangeVersion("0.3.0", "0.3.0");
 changeVersion.change();
