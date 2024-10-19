@@ -1,5 +1,9 @@
 # Release Notes
 
+## 0.4.0
+
+* Upgraded ByteBuddy to v1.15.5
+
 ## 0.3.0
 
 * Supported all public constructors
