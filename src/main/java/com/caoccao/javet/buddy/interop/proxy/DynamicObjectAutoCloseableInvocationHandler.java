@@ -104,9 +104,11 @@ public class DynamicObjectAutoCloseableInvocationHandler {
      * @since 0.1.0
      */
     public void close() throws Exception {
-        JavetResourceUtils.safeClose(v8ValueObject);
-        dynamicObject = null;
-        v8ValueObject = null;
+        if (v8ValueObject != null) {
+            JavetResourceUtils.safeClose(v8ValueObject);
+            dynamicObject = null;
+            v8ValueObject = null;
+        }
     }
 
     @Override
@@ -153,6 +155,7 @@ public class DynamicObjectAutoCloseableInvocationHandler {
     public void initialize()
             throws NoSuchMethodException, InvocationTargetException,
             InstantiationException, IllegalAccessException, JavetException {
+        dynamicObject = null;
         if (v8ValueObject.has(ARGS)) {
             try (V8Value v8Value = v8ValueObject.get(ARGS)) {
                 if (v8Value instanceof V8ValueArray) {
@@ -162,11 +165,12 @@ public class DynamicObjectAutoCloseableInvocationHandler {
                     v8ValueArray.forEach(value -> args.add(v8Runtime.toObject(value)));
                     Class<?>[] argClasses = args.stream().map(Object::getClass).toArray(Class[]::new);
                     dynamicObject = getObjectClass().getConstructor(argClasses).newInstance(args.toArray());
-                    return;
                 }
             }
         }
-        dynamicObject = getObjectClass().getConstructor().newInstance();
+        if (dynamicObject == null) {
+            dynamicObject = getObjectClass().getConstructor().newInstance();
+        }
     }
 
     /**
