@@ -51,13 +51,9 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
         if (v8Value instanceof V8ValueObject) {
             V8ValueObject v8ValueObject = null;
             try {
-                DynamicObjectAutoCloseableInvocationHandler invocationHandler;
+                DynamicObjectInvocationHandler invocationHandler;
                 v8ValueObject = v8Value.toClone();
-                if (AutoCloseable.class.isAssignableFrom(type)) {
-                    invocationHandler = new DynamicObjectAutoCloseableInvocationHandler(type, v8ValueObject);
-                } else {
-                    invocationHandler = new DynamicObjectForceCloseableInvocationHandler(type, v8ValueObject);
-                }
+                invocationHandler = new DynamicObjectInvocationHandler(type, v8ValueObject);
                 invocationHandler.initialize();
                 return invocationHandler.getDynamicObject();
             } catch (Throwable t) {

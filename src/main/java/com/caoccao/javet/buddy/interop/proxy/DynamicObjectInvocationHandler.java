@@ -39,6 +39,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 /**
@@ -46,7 +47,7 @@ import java.util.concurrent.Callable;
  *
  * @since 0.1.0
  */
-public class DynamicObjectAutoCloseableInvocationHandler {
+public class DynamicObjectInvocationHandler {
     /**
      * The constant ARGS for constructor.
      *
@@ -92,8 +93,8 @@ public class DynamicObjectAutoCloseableInvocationHandler {
      * @param v8ValueObject the V8 value object
      * @since 0.1.0
      */
-    public DynamicObjectAutoCloseableInvocationHandler(Class<?> type, V8ValueObject v8ValueObject) {
-        this.type = type;
+    public DynamicObjectInvocationHandler(Class<?> type, V8ValueObject v8ValueObject) {
+        this.type = Objects.requireNonNull(type);
         this.v8ValueObject = v8ValueObject;
     }
 
@@ -133,8 +134,11 @@ public class DynamicObjectAutoCloseableInvocationHandler {
      * @since 0.3.0
      */
     protected Class<?> getObjectClass() {
-        try (DynamicType.Unloaded<?> unloadedType = new ByteBuddy()
-                .subclass(type, CONSTRUCTOR_STRATEGY)
+        DynamicType.Builder<?> builder = new ByteBuddy().subclass(type, CONSTRUCTOR_STRATEGY);
+        if (!AutoCloseable.class.isAssignableFrom(type)) {
+            builder = builder.implement(AutoCloseable.class);
+        }
+        try (DynamicType.Unloaded<?> unloadedType = builder
                 .method(ElementMatchers.isPublic())
                 .intercept(MethodDelegation.to(this))
                 .make()) {
