@@ -124,7 +124,8 @@ dependencies {
         compileOnly(Config.Projects.JAVET_V8_WINDOWS_X86_64)
         testImplementation(Config.Projects.JAVET_V8_WINDOWS_X86_64)
     }
-    implementation(Config.Projects.BYTE_BUDDY)
+    compileOnly(Config.Projects.BYTE_BUDDY)
+    testImplementation(Config.Projects.BYTE_BUDDY)
 }
 
 testing {
