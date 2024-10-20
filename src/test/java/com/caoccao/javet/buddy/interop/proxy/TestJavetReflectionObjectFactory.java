@@ -73,13 +73,17 @@ public class TestJavetReflectionObjectFactory {
             @V8Function
             public void test(File file) throws Exception {
                 assertTrue(file.exists());
+                assertTrue(file.isFile());
+                assertTrue(file.isDirectory());
                 ((AutoCloseable) file).close();
             }
         };
         v8Runtime.getGlobalObject().set("a", anonymous);
         String codeString = "a.test({\n" +
                 "  $: ['/tmp/not-exist-file'],\n" +
-                "  exists: () => true,\n" +
+                "  exists: () => !$super.exists(),\n" +
+                "  isFile: () => true,\n" +
+                "  isDirectory: () => true,\n" +
                 "});";
         v8Runtime.getExecutor(codeString).executeVoid();
         v8Runtime.getGlobalObject().delete("a");

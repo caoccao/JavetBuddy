@@ -26,12 +26,10 @@ import com.caoccao.javet.values.reference.V8ValueFunction;
 import com.caoccao.javet.values.reference.V8ValueObject;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.DynamicType;
+import net.bytebuddy.dynamic.TargetType;
 import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy;
 import net.bytebuddy.implementation.MethodDelegation;
-import net.bytebuddy.implementation.bind.annotation.AllArguments;
-import net.bytebuddy.implementation.bind.annotation.Origin;
-import net.bytebuddy.implementation.bind.annotation.RuntimeType;
-import net.bytebuddy.implementation.bind.annotation.SuperCall;
+import net.bytebuddy.implementation.bind.annotation.*;
 import net.bytebuddy.matcher.ElementMatchers;
 
 import java.lang.reflect.InvocationTargetException;
@@ -60,13 +58,19 @@ public class DynamicObjectInvocationHandler implements AutoCloseable {
      * @since 0.1.0
      */
     protected static final ConstructorStrategy CONSTRUCTOR_STRATEGY =
-            ConstructorStrategy.Default.IMITATE_SUPER_CLASS_PUBLIC;
+            ConstructorStrategy.Default.IMITATE_SUPER_CLASS;
     /**
      * The constant METHOD_CLOSE.
      *
      * @since 0.1.0
      */
     protected static final String METHOD_CLOSE = "close";
+    /**
+     * The constant SUPER.
+     *
+     * @since 0.4.0
+     */
+    protected static final String SUPER = "$super";
     /**
      * The Dynamic object.
      *
@@ -176,9 +180,10 @@ public class DynamicObjectInvocationHandler implements AutoCloseable {
     /**
      * Intercept object.
      *
-     * @param method    the method
-     * @param arguments the arguments
-     * @param callable  the callable
+     * @param method      the method
+     * @param arguments   the arguments
+     * @param superObject the super object
+     * @param superCall   the super call
      * @return the object
      * @throws Exception the exception
      * @since 0.1.0
@@ -187,54 +192,61 @@ public class DynamicObjectInvocationHandler implements AutoCloseable {
     public Object intercept(
             @Origin Method method,
             @AllArguments Object[] arguments,
-            @SuperCall Callable<Object> callable) throws Exception {
+            @Super(strategy = Super.Instantiation.UNSAFE, proxyType = TargetType.class) Object superObject,
+            @SuperCall Callable<Object> superCall) throws Exception {
         if (v8ValueObject != null) {
-            String methodName = method.getName();
-            final int argumentLength = arguments.length;
-            if (METHOD_CLOSE.equals(methodName) && argumentLength == 0) {
-                close();
-            } else if (v8ValueObject.has(methodName)) {
-                // Function or Property
-                try (V8Value v8ValueProperty = v8ValueObject.get(methodName)) {
-                    if (v8ValueProperty instanceof V8ValueFunction) {
-                        // Function
-                        V8ValueFunction v8ValueFunction = (V8ValueFunction) v8ValueProperty;
-                        return v8ValueFunction.callObject(null, arguments);
-                    } else if (argumentLength == 0) {
-                        // Property
-                        return v8ValueObject.getV8Runtime().toObject(v8ValueProperty);
+            V8Runtime v8Runtime = v8ValueObject.getV8Runtime();
+            try (V8Value v8ValueSuper = v8Runtime.toV8Value(superObject)) {
+                v8Runtime.getGlobalObject().set(SUPER, v8ValueSuper);
+                String methodName = method.getName();
+                final int argumentLength = arguments.length;
+                if (METHOD_CLOSE.equals(methodName) && argumentLength == 0) {
+                    close();
+                } else if (v8ValueObject.has(methodName)) {
+                    // Function or Property
+                    try (V8Value v8ValueProperty = v8ValueObject.get(methodName)) {
+                        if (v8ValueProperty instanceof V8ValueFunction) {
+                            // Function
+                            V8ValueFunction v8ValueFunction = (V8ValueFunction) v8ValueProperty;
+                            return v8ValueFunction.callObject(v8ValueObject, arguments);
+                        } else if (argumentLength == 0) {
+                            // Property
+                            return v8ValueObject.getV8Runtime().toObject(v8ValueProperty);
+                        }
+                    }
+                } else if (argumentLength == 0) {
+                    // Getter
+                    String propertyName = null;
+                    if (methodName.startsWith(V8ValueObject.METHOD_PREFIX_IS)) {
+                        propertyName = methodName.substring(V8ValueObject.METHOD_PREFIX_IS.length());
+                    } else if (methodName.startsWith(V8ValueObject.METHOD_PREFIX_GET)) {
+                        propertyName = methodName.substring(V8ValueObject.METHOD_PREFIX_GET.length());
+                    }
+                    if (StringUtils.isNotEmpty(propertyName)) {
+                        propertyName = propertyName.substring(0, 1).toLowerCase(Locale.ROOT)
+                                + propertyName.substring(1);
+                        if (v8ValueObject.has(propertyName)) {
+                            return v8ValueObject.getObject(propertyName);
+                        }
+                    }
+                } else if (argumentLength == 1) {
+                    // Setter
+                    String propertyName = null;
+                    if (methodName.startsWith(V8ValueObject.METHOD_PREFIX_SET)) {
+                        propertyName = methodName.substring(V8ValueObject.METHOD_PREFIX_SET.length());
+                    }
+                    if (StringUtils.isNotEmpty(propertyName)) {
+                        propertyName = propertyName.substring(0, 1).toLowerCase(Locale.ROOT)
+                                + propertyName.substring(1);
+                        if (v8ValueObject.has(propertyName)) {
+                            return v8ValueObject.set(propertyName, arguments[0]);
+                        }
                     }
                 }
-            } else if (argumentLength == 0) {
-                // Getter
-                String propertyName = null;
-                if (methodName.startsWith(V8ValueObject.METHOD_PREFIX_IS)) {
-                    propertyName = methodName.substring(V8ValueObject.METHOD_PREFIX_IS.length());
-                } else if (methodName.startsWith(V8ValueObject.METHOD_PREFIX_GET)) {
-                    propertyName = methodName.substring(V8ValueObject.METHOD_PREFIX_GET.length());
-                }
-                if (StringUtils.isNotEmpty(propertyName)) {
-                    propertyName = propertyName.substring(0, 1).toLowerCase(Locale.ROOT)
-                            + propertyName.substring(1);
-                    if (v8ValueObject.has(propertyName)) {
-                        return v8ValueObject.getObject(propertyName);
-                    }
-                }
-            } else if (argumentLength == 1) {
-                // Setter
-                String propertyName = null;
-                if (methodName.startsWith(V8ValueObject.METHOD_PREFIX_SET)) {
-                    propertyName = methodName.substring(V8ValueObject.METHOD_PREFIX_SET.length());
-                }
-                if (StringUtils.isNotEmpty(propertyName)) {
-                    propertyName = propertyName.substring(0, 1).toLowerCase(Locale.ROOT)
-                            + propertyName.substring(1);
-                    if (v8ValueObject.has(propertyName)) {
-                        return v8ValueObject.set(propertyName, arguments[0]);
-                    }
-                }
+            } finally {
+                v8Runtime.getGlobalObject().delete(SUPER);
             }
         }
-        return callable.call();
+        return superCall.call();
     }
 }

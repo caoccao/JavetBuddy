@@ -3,6 +3,7 @@
 ## 0.4.0
 
 * Upgraded ByteBuddy to v1.15.5
+* Supported calling super
 
 ## 0.3.0
 
