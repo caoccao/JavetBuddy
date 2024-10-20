@@ -193,7 +193,6 @@ public class DynamicObjectAutoCloseableInvocationHandler {
             final int argumentLength = arguments.length;
             if (METHOD_CLOSE.equals(methodName) && argumentLength == 0) {
                 close();
-                return callable.call();
             } else if (v8ValueObject.has(methodName)) {
                 // Function or Property
                 try (V8Value v8ValueProperty = v8ValueObject.get(methodName)) {
