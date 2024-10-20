@@ -49,7 +49,7 @@ public class TestJavetReflectionObjectFactory {
     }
 
     @Test
-    public void testDynamicClassAutoCloseable() throws JavetException {
+    public void testAutoCloseable() throws JavetException {
         IJavetAnonymous anonymous = new IJavetAnonymous() {
             @V8Function
             public void test(DynamicClassAutoCloseable mockedDynamicClass) throws Exception {
@@ -68,7 +68,25 @@ public class TestJavetReflectionObjectFactory {
     }
 
     @Test
-    public void testDynamicClassForceCloseable() throws JavetException {
+    public void testFile() throws JavetException {
+        IJavetAnonymous anonymous = new IJavetAnonymous() {
+            @V8Function
+            public void test(File file) throws Exception {
+                assertTrue(file.exists());
+                ((AutoCloseable) file).close();
+            }
+        };
+        v8Runtime.getGlobalObject().set("a", anonymous);
+        String codeString = "a.test({\n" +
+                "  $: ['/tmp/not-exist-file'],\n" +
+                "  exists: () => true,\n" +
+                "});";
+        v8Runtime.getExecutor(codeString).executeVoid();
+        v8Runtime.getGlobalObject().delete("a");
+    }
+
+    @Test
+    public void testForceAutoCloseable() throws JavetException {
         IJavetAnonymous anonymous = new IJavetAnonymous() {
             @V8Function
             public void test(DynamicClassForceCloseable mockedDynamicClass) throws Exception {
@@ -101,24 +119,6 @@ public class TestJavetReflectionObjectFactory {
                 "  getTitle: 'b',\n" +
                 "  passed: true,\n" +
                 "  value: 1,\n" +
-                "});";
-        v8Runtime.getExecutor(codeString).executeVoid();
-        v8Runtime.getGlobalObject().delete("a");
-    }
-
-    @Test
-    public void testFile() throws JavetException {
-        IJavetAnonymous anonymous = new IJavetAnonymous() {
-            @V8Function
-            public void test(File file) throws Exception {
-                assertTrue(file.exists());
-                ((AutoCloseable) file).close();
-            }
-        };
-        v8Runtime.getGlobalObject().set("a", anonymous);
-        String codeString = "a.test({\n" +
-                "  $: ['/tmp/not-exist-file'],\n" +
-                "  exists: () => true,\n" +
                 "});";
         v8Runtime.getExecutor(codeString).executeVoid();
         v8Runtime.getGlobalObject().delete("a");

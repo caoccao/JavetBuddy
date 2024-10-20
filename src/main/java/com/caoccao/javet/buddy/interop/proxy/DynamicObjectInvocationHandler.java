@@ -47,7 +47,7 @@ import java.util.concurrent.Callable;
  *
  * @since 0.1.0
  */
-public class DynamicObjectInvocationHandler {
+public class DynamicObjectInvocationHandler implements AutoCloseable {
     /**
      * The constant ARGS for constructor.
      *
@@ -98,12 +98,8 @@ public class DynamicObjectInvocationHandler {
         this.v8ValueObject = v8ValueObject;
     }
 
-    /**
-     * Close.
-     *
-     * @throws Exception the exception
-     * @since 0.1.0
-     */
+    @RuntimeType
+    @Override
     public void close() throws Exception {
         if (v8ValueObject != null) {
             JavetResourceUtils.safeClose(v8ValueObject);
