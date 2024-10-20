@@ -16,92 +16,59 @@
 
 package com.caoccao.javet.buddy.interop.proxy;
 
-import com.caoccao.javet.exceptions.JavetException;
 import com.caoccao.javet.interop.V8Runtime;
 import com.caoccao.javet.utils.StringUtils;
 import com.caoccao.javet.values.V8Value;
-import com.caoccao.javet.values.reference.V8ValueArray;
 import com.caoccao.javet.values.reference.V8ValueFunction;
 import com.caoccao.javet.values.reference.V8ValueObject;
 import net.bytebuddy.dynamic.TargetType;
 import net.bytebuddy.implementation.bind.annotation.*;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Callable;
 
 /**
- * The type Dynamic object auto closeable invocation handler.
+ * The type Dynamic object extend handler.
  *
- * @since 0.1.0
+ * @param <T> the type parameter
+ * @since 0.4.0
  */
-public class DynamicObjectInvocationHandler<T> extends BaseDynamicObjectHandler<T> {
+public class DynamicObjectExtendHandler<T> extends BaseDynamicObjectHandler<T> {
     /**
-     * The constant ARGS for constructor.
-     *
-     * @since 0.3.0
-     */
-    protected static final String ARGS = "$";
-    /**
-     * The Dynamic object.
+     * The Handle.
      *
      * @since 0.4.0
      */
-    protected Object dynamicObject;
+    protected long handle;
 
     /**
-     * Instantiates a new Dynamic object auto closeable invocation handler.
+     * Instantiates a new Dynamic object extend handler.
      *
+     * @param handle        the handle
      * @param type          the type
      * @param v8ValueObject the V8 value object
-     * @since 0.1.0
+     * @since 0.4.0
      */
-    public DynamicObjectInvocationHandler(Class<T> type, V8ValueObject v8ValueObject) {
+    public DynamicObjectExtendHandler(long handle, Class<T> type, V8ValueObject v8ValueObject) {
         super(type, v8ValueObject);
-        dynamicObject = null;
+        this.handle = handle;
     }
 
     @RuntimeType
     @Override
     public void close() throws Exception {
         super.close();
-        dynamicObject = null;
     }
 
     /**
-     * Gets dynamic object.
+     * Gets handle.
      *
-     * @return the dynamic object
-     * @throws NoSuchMethodException     the no such method exception
-     * @throws InvocationTargetException the invocation target exception
-     * @throws InstantiationException    the instantiation exception
-     * @throws IllegalAccessException    the illegal access exception
-     * @throws JavetException            the javet exception
-     * @since 0.1.0
+     * @return the handle
+     * @since 0.4.0
      */
-    public Object getDynamicObject()
-            throws NoSuchMethodException, InvocationTargetException,
-            InstantiationException, IllegalAccessException, JavetException {
-        dynamicObject = null;
-        if (v8ValueObject.has(ARGS)) {
-            try (V8Value v8Value = v8ValueObject.get(ARGS)) {
-                if (v8Value instanceof V8ValueArray) {
-                    List<Object> args = new ArrayList<>();
-                    V8ValueArray v8ValueArray = (V8ValueArray) v8Value;
-                    V8Runtime v8Runtime = v8ValueObject.getV8Runtime();
-                    v8ValueArray.forEach(value -> args.add(v8Runtime.toObject(value)));
-                    Class<?>[] argClasses = args.stream().map(Object::getClass).toArray(Class[]::new);
-                    dynamicObject = getObjectClass().getConstructor(argClasses).newInstance(args.toArray());
-                }
-            }
-        }
-        if (dynamicObject == null) {
-            dynamicObject = getObjectClass().getConstructor().newInstance();
-        }
-        return dynamicObject;
+    public long getHandle() {
+        return handle;
     }
 
     /**
@@ -110,6 +77,7 @@ public class DynamicObjectInvocationHandler<T> extends BaseDynamicObjectHandler<
      * @param method      the method
      * @param arguments   the arguments
      * @param superObject the super object
+     * @param thisObject  the this object
      * @param superCall   the super call
      * @return the object
      * @throws Exception the exception
@@ -120,28 +88,29 @@ public class DynamicObjectInvocationHandler<T> extends BaseDynamicObjectHandler<
             @Origin Method method,
             @AllArguments Object[] arguments,
             @Super(strategy = Super.Instantiation.UNSAFE, proxyType = TargetType.class) Object superObject,
+            @This Object thisObject,
             @SuperCall Callable<T> superCall) throws Exception {
         if (v8ValueObject != null) {
             V8Runtime v8Runtime = v8ValueObject.getV8Runtime();
-            try (V8ValueObject v8ValueSuper = v8Runtime.toV8Value(superObject)) {
+            try (V8ValueObject v8ValueSuper = v8Runtime.toV8Value(superObject);
+                 V8ValueObject v8ValueThis = v8Runtime.toV8Value(thisObject)) {
                 v8Runtime.getGlobalObject().set(SUPER, v8ValueSuper);
                 String methodName = method.getName();
                 final int argumentLength = arguments.length;
-                if (METHOD_CLOSE.equals(methodName) && argumentLength == 0) {
-                    close();
-                } else if (v8ValueObject.has(methodName)) {
+                if (v8ValueObject.has(methodName)) {
                     // Function or Property
                     try (V8Value v8ValueProperty = v8ValueObject.get(methodName)) {
                         if (v8ValueProperty instanceof V8ValueFunction) {
                             // Function
                             V8ValueFunction v8ValueFunction = (V8ValueFunction) v8ValueProperty;
-                            return v8ValueFunction.callObject(v8ValueObject, arguments);
+                            return v8ValueFunction.callObject(v8ValueThis, arguments);
                         } else if (argumentLength == 0) {
                             // Property
                             return v8Runtime.toObject(v8ValueProperty);
                         }
                     }
-                } else if (argumentLength == 0) {
+                }
+                else if (argumentLength == 0) {
                     // Getter
                     String propertyName = null;
                     if (methodName.startsWith(V8ValueObject.METHOD_PREFIX_IS)) {
@@ -166,7 +135,7 @@ public class DynamicObjectInvocationHandler<T> extends BaseDynamicObjectHandler<
                         propertyName = propertyName.substring(0, 1).toLowerCase(Locale.ROOT)
                                 + propertyName.substring(1);
                         if (v8ValueObject.has(propertyName)) {
-                            return v8ValueObject.set(propertyName, arguments[0]);
+                            return v8ValueThis.set(propertyName, arguments[0]);
                         }
                     }
                 }

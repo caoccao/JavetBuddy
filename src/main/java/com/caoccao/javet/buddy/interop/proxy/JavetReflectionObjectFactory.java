@@ -23,6 +23,9 @@ import com.caoccao.javet.utils.JavetResourceUtils;
 import com.caoccao.javet.values.V8Value;
 import com.caoccao.javet.values.reference.V8ValueObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * The type Javet dynamic object factory.
  *
@@ -30,10 +33,14 @@ import com.caoccao.javet.values.reference.V8ValueObject;
  */
 public final class JavetReflectionObjectFactory implements IJavetReflectionObjectFactory {
     private static final JavetReflectionObjectFactory instance = new JavetReflectionObjectFactory();
+    private final Map<Long, DynamicObjectExtendHandler<?>> extendHandlerMap;
     private final IJavetLogger logger;
+    private long currentExtendHandle;
 
     private JavetReflectionObjectFactory() {
         logger = new JavetDefaultLogger(getClass().getName());
+        currentExtendHandle = 0;
+        extendHandlerMap = new HashMap<>();
     }
 
     /**
@@ -46,18 +53,72 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
         return instance;
     }
 
+    /**
+     * Clear the internal handlers and return the cleared handler count.
+     *
+     * @return the cleared handler count
+     * @throws Exception the exception
+     * @since 0.4.0
+     */
+    public int clear() throws Exception {
+        final int count = extendHandlerMap.size();
+        if (count > 0) {
+            for (DynamicObjectExtendHandler<?> handler : extendHandlerMap.values()) {
+                handler.close();
+            }
+            extendHandlerMap.clear();
+        }
+        return count;
+    }
+
+    /**
+     * Extend class.
+     *
+     * @param <T>     the type parameter
+     * @param type    the type
+     * @param v8Value the V8 value
+     * @return the class
+     * @since 0.4.0
+     */
+    public <T> Class<T> extend(Class<T> type, V8Value v8Value) {
+        if (v8Value instanceof V8ValueObject) {
+            V8ValueObject v8ValueObject = null;
+            try {
+                v8ValueObject = v8Value.toClone();
+                ++currentExtendHandle;
+                DynamicObjectExtendHandler<T> extendHandler =
+                        new DynamicObjectExtendHandler<>(currentExtendHandle, type, v8ValueObject);
+                extendHandlerMap.put(currentExtendHandle, extendHandler);
+                return extendHandler.getObjectClass();
+            } catch (Throwable t) {
+                logger.logError(t, "Failed to extend {0} by a dynamic object.", type.getName());
+                JavetResourceUtils.safeClose(v8ValueObject);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets extend handler map.
+     *
+     * @return the extend handler map
+     * @since 0.4.0
+     */
+    public Map<Long, DynamicObjectExtendHandler<?>> getExtendHandlerMap() {
+        return extendHandlerMap;
+    }
+
     @Override
     public Object toObject(Class<?> type, V8Value v8Value) {
         if (v8Value instanceof V8ValueObject) {
             V8ValueObject v8ValueObject = null;
             try {
-                DynamicObjectInvocationHandler invocationHandler;
                 v8ValueObject = v8Value.toClone();
-                invocationHandler = new DynamicObjectInvocationHandler(type, v8ValueObject);
-                invocationHandler.initialize();
+                DynamicObjectInvocationHandler<?> invocationHandler =
+                        new DynamicObjectInvocationHandler<>(type, v8ValueObject);
                 return invocationHandler.getDynamicObject();
             } catch (Throwable t) {
-                logger.logError(t, "Failed to create dynamic object for {0}.", type.getName());
+                logger.logError(t, "Failed to create {0} by a dynamic object.", type.getName());
                 JavetResourceUtils.safeClose(v8ValueObject);
             }
         }

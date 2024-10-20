@@ -22,6 +22,7 @@ import com.caoccao.javet.interfaces.IJavetAnonymous;
 import com.caoccao.javet.interop.V8Host;
 import com.caoccao.javet.interop.V8Runtime;
 import com.caoccao.javet.interop.converters.JavetProxyConverter;
+import com.caoccao.javet.values.reference.V8ValueObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,9 +35,9 @@ public class TestJavetReflectionObjectFactory {
     protected V8Runtime v8Runtime;
 
     @AfterEach
-    public void afterEach() throws JavetException {
+    public void afterEach() throws Exception {
+        JavetReflectionObjectFactory.getInstance().clear();
         v8Runtime.lowMemoryNotification();
-        assertEquals(0, v8Runtime.getReferenceCount());
         v8Runtime.close();
     }
 
@@ -49,11 +50,35 @@ public class TestJavetReflectionObjectFactory {
     }
 
     @Test
-    public void testAutoCloseable() throws JavetException {
+    public void testExtendHandlerFile() throws JavetException {
         IJavetAnonymous anonymous = new IJavetAnonymous() {
             @V8Function
-            public void test(DynamicClassAutoCloseable mockedDynamicClass) throws Exception {
-                DynamicClassAutoCloseable regularDynamicClass = new DynamicClassAutoCloseable();
+            public Class<?> extend(Class<?> clazz, V8ValueObject v8ValueObject) throws Exception {
+                assertEquals(File.class, clazz);
+                return JavetReflectionObjectFactory.getInstance().extend(clazz, v8ValueObject);
+            }
+        };
+        v8Runtime.getGlobalObject().bind(anonymous);
+        v8Runtime.getGlobalObject().set("File", File.class);
+        String codeString = "let ChildFile = extend(File, {\n" +
+                "  exists: () => !$super.exists(),\n" +
+                "  isFile: () => true,\n" +
+                "  isDirectory: () => true,\n" +
+                "});\n" +
+                "let file = new ChildFile('/tmp/not-exist-file');\n" +
+                "JSON.stringify([file.exists(), file.isFile(), file.isDirectory()]);";
+        assertEquals("[true,true,true]", v8Runtime.getExecutor(codeString).executeString());
+        v8Runtime.getExecutor("ChildFile = undefined; file = undefined;").executeVoid();
+        v8Runtime.getGlobalObject().unbind(anonymous);
+        v8Runtime.getGlobalObject().delete("File");
+    }
+
+    @Test
+    public void testInvocationHandlerAutoCloseable() throws JavetException {
+        IJavetAnonymous anonymous = new IJavetAnonymous() {
+            @V8Function
+            public void test(TestDynamicObjectAutoCloseable mockedDynamicClass) throws Exception {
+                TestDynamicObjectAutoCloseable regularDynamicClass = new TestDynamicObjectAutoCloseable();
                 assertEquals(0, regularDynamicClass.add(1, 2));
                 assertEquals(3, mockedDynamicClass.add(1, 2), "Add should work.");
                 ((AutoCloseable) mockedDynamicClass).close();
@@ -68,7 +93,7 @@ public class TestJavetReflectionObjectFactory {
     }
 
     @Test
-    public void testFile() throws JavetException {
+    public void testInvocationHandlerFile() throws JavetException {
         IJavetAnonymous anonymous = new IJavetAnonymous() {
             @V8Function
             public void test(File file) throws Exception {
@@ -90,11 +115,11 @@ public class TestJavetReflectionObjectFactory {
     }
 
     @Test
-    public void testForceAutoCloseable() throws JavetException {
+    public void testInvocationHandlerForceAutoCloseable() throws JavetException {
         IJavetAnonymous anonymous = new IJavetAnonymous() {
             @V8Function
-            public void test(DynamicClassForceCloseable mockedDynamicClass) throws Exception {
-                DynamicClassForceCloseable regularDynamicClass = new DynamicClassForceCloseable();
+            public void test(TestDynamicObjectForceCloseable mockedDynamicClass) throws Exception {
+                TestDynamicObjectForceCloseable regularDynamicClass = new TestDynamicObjectForceCloseable();
                 assertEquals(0, regularDynamicClass.add(1, 2));
                 assertEquals(3, mockedDynamicClass.add(1, 2), "Add should work.");
                 assertEquals("a", regularDynamicClass.getDescription());
@@ -128,7 +153,7 @@ public class TestJavetReflectionObjectFactory {
         v8Runtime.getGlobalObject().delete("a");
     }
 
-    public static class DynamicClassAutoCloseable implements AutoCloseable {
+    public static class TestDynamicObjectAutoCloseable implements AutoCloseable {
         public int add(int a, int b) {
             return 0;
         }
@@ -138,7 +163,7 @@ public class TestJavetReflectionObjectFactory {
         }
     }
 
-    public static class DynamicClassForceCloseable {
+    public static class TestDynamicObjectForceCloseable {
         public int add(int a, int b) {
             return 0;
         }

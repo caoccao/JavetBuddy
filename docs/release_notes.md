@@ -4,6 +4,8 @@
 
 * Upgraded ByteBuddy to v1.15.5
 * Supported calling super
+* Supported extending an existing Java class
+* Added ``DynamicObjectExtendHandler``
 
 ## 0.3.0
 
