@@ -6,6 +6,12 @@
 
 JavetBuddy is [Javet](https://github.com/caoccao/Javet) + [ByteBuddy](https://bytebuddy.net/). JavetBuddy enhances JVM via bytecode by JavaScript.
 
+## Features
+
+* Inject ad-hoc non-final Java Class by JavaScript
+* Extend non-final Java Class by JavaScript
+* Call `$super` in Derived Class
+
 ## Dependencies
 
 ### Maven
@@ -14,7 +20,7 @@ JavetBuddy is [Javet](https://github.com/caoccao/Javet) + [ByteBuddy](https://by
 <dependency>
     <groupId>com.caoccao.javet.buddy</groupId>
     <artifactId>javet-buddy</artifactId>
-    <version>0.3.0</version>
+    <version>0.4.0</version>
 </dependency>
 <dependency>
     <groupId>net.bytebuddy</groupId>
@@ -26,14 +32,14 @@ JavetBuddy is [Javet](https://github.com/caoccao/Javet) + [ByteBuddy](https://by
 ### Gradle Kotlin DSL
 
 ```kotlin
-implementation("com.caoccao.javet.buddy:javet-buddy:0.3.0")
+implementation("com.caoccao.javet.buddy:javet-buddy:0.4.0")
 implementation("net.bytebuddy:byte-buddy:1.15.5")
 ```
 
 ### Gradle Groovy DSL
 
 ```groovy
-implementation 'com.caoccao.javet.buddy:javet-buddy:0.3.0'
+implementation 'com.caoccao.javet.buddy:javet-buddy:0.4.0'
 implementation 'net.bytebuddy:byte-buddy:1.15.5'
 ```
 
