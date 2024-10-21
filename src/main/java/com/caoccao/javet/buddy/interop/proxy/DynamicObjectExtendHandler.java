@@ -72,7 +72,7 @@ public class DynamicObjectExtendHandler<T> extends BaseDynamicObjectHandler<T> {
     }
 
     /**
-     * Intercept object.
+     * Intercept method call.
      *
      * @param method      the method
      * @param arguments   the arguments
@@ -84,7 +84,7 @@ public class DynamicObjectExtendHandler<T> extends BaseDynamicObjectHandler<T> {
      * @since 0.1.0
      */
     @RuntimeType
-    public Object intercept(
+    public Object interceptMethod(
             @Origin Method method,
             @AllArguments Object[] arguments,
             @Super(strategy = Super.Instantiation.UNSAFE, proxyType = TargetType.class) Object superObject,
@@ -109,8 +109,7 @@ public class DynamicObjectExtendHandler<T> extends BaseDynamicObjectHandler<T> {
                             return v8Runtime.toObject(v8ValueProperty);
                         }
                     }
-                }
-                else if (argumentLength == 0) {
+                } else if (argumentLength == 0) {
                     // Getter
                     String propertyName = null;
                     if (methodName.startsWith(V8ValueObject.METHOD_PREFIX_IS)) {

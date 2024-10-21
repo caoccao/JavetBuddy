@@ -28,6 +28,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,20 +46,33 @@ public class TestJavetReflectionObjectFactory {
     public void beforeEach() throws JavetException {
         v8Runtime = V8Host.getV8Instance().createV8Runtime();
         JavetProxyConverter javetProxyConverter = new JavetProxyConverter();
-        javetProxyConverter.getConfig().setReflectionObjectFactory(JavetReflectionObjectFactory.getInstance());
+        javetProxyConverter.getConfig()
+                .setReflectionObjectFactory(JavetReflectionObjectFactory.getInstance())
+                .setProxyArrayEnabled(true)
+                .setProxyListEnabled(true);
         v8Runtime.setConverter(javetProxyConverter);
     }
 
     @Test
+    public void testExtendHandlerArrayList() throws JavetException {
+        MockExtend mockExtend = new MockExtend(ArrayList.class);
+        v8Runtime.getGlobalObject().bind(mockExtend);
+        v8Runtime.getGlobalObject().set("ArrayList", ArrayList.class);
+        String codeString = "let ChildArrayList = extend(ArrayList, {\n" +
+                "  isEmpty: () => !$super.isEmpty(),\n" +
+                "});\n" +
+                "let list = new ChildArrayList([1, 2, 3]);\n" +
+                "JSON.stringify([list.isEmpty(), list.size()]);";
+        assertEquals("[true,3]", v8Runtime.getExecutor(codeString).executeString());
+        v8Runtime.getExecutor("ChildArrayList = undefined; list = undefined;").executeVoid();
+        v8Runtime.getGlobalObject().unbind(mockExtend);
+        v8Runtime.getGlobalObject().delete("ArrayList");
+    }
+
+    @Test
     public void testExtendHandlerFile() throws JavetException {
-        IJavetAnonymous anonymous = new IJavetAnonymous() {
-            @V8Function
-            public Class<?> extend(Class<?> clazz, V8ValueObject v8ValueObject) throws Exception {
-                assertEquals(File.class, clazz);
-                return JavetReflectionObjectFactory.getInstance().extend(clazz, v8ValueObject);
-            }
-        };
-        v8Runtime.getGlobalObject().bind(anonymous);
+        MockExtend mockExtend = new MockExtend(File.class);
+        v8Runtime.getGlobalObject().bind(mockExtend);
         v8Runtime.getGlobalObject().set("File", File.class);
         String codeString = "let ChildFile = extend(File, {\n" +
                 "  exists: () => !$super.exists(),\n" +
@@ -66,10 +80,12 @@ public class TestJavetReflectionObjectFactory {
                 "  isDirectory: () => true,\n" +
                 "});\n" +
                 "let file = new ChildFile('/tmp/not-exist-file');\n" +
-                "JSON.stringify([file.exists(), file.isFile(), file.isDirectory()]);";
-        assertEquals("[true,true,true]", v8Runtime.getExecutor(codeString).executeString());
+                "JSON.stringify([file.exists(), file.isFile(), file.isDirectory(), file.getAbsolutePath()]);";
+        assertEquals(
+                "[true,true,true,\"" + (new File("/tmp/not-exist-file").getAbsolutePath().replace("\\", "\\\\")) + "\"]",
+                v8Runtime.getExecutor(codeString).executeString());
         v8Runtime.getExecutor("ChildFile = undefined; file = undefined;").executeVoid();
-        v8Runtime.getGlobalObject().unbind(anonymous);
+        v8Runtime.getGlobalObject().unbind(mockExtend);
         v8Runtime.getGlobalObject().delete("File");
     }
 
@@ -151,6 +167,20 @@ public class TestJavetReflectionObjectFactory {
                 "});";
         v8Runtime.getExecutor(codeString).executeVoid();
         v8Runtime.getGlobalObject().delete("a");
+    }
+
+    public static class MockExtend {
+        private final Class<?> clazz;
+
+        public MockExtend(Class<?> clazz) {
+            this.clazz = clazz;
+        }
+
+        @V8Function
+        public Class<?> extend(Class<?> clazz, V8ValueObject v8ValueObject) throws Exception {
+            assertEquals(this.clazz, clazz);
+            return JavetReflectionObjectFactory.getInstance().extend(clazz, v8ValueObject);
+        }
     }
 
     public static class TestDynamicObjectAutoCloseable implements AutoCloseable {

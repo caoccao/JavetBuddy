@@ -23,8 +23,9 @@ import com.caoccao.javet.utils.JavetResourceUtils;
 import com.caoccao.javet.values.V8Value;
 import com.caoccao.javet.values.reference.V8ValueObject;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * The type Javet dynamic object factory.
@@ -33,14 +34,14 @@ import java.util.Map;
  */
 public final class JavetReflectionObjectFactory implements IJavetReflectionObjectFactory {
     private static final JavetReflectionObjectFactory instance = new JavetReflectionObjectFactory();
+    private final AtomicLong currentExtendHandle;
     private final Map<Long, DynamicObjectExtendHandler<?>> extendHandlerMap;
     private final IJavetLogger logger;
-    private long currentExtendHandle;
 
     private JavetReflectionObjectFactory() {
         logger = new JavetDefaultLogger(getClass().getName());
-        currentExtendHandle = 0;
-        extendHandlerMap = new HashMap<>();
+        currentExtendHandle = new AtomicLong();
+        extendHandlerMap = new ConcurrentHashMap<>();
     }
 
     /**
@@ -85,10 +86,11 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
             V8ValueObject v8ValueObject = null;
             try {
                 v8ValueObject = v8Value.toClone();
-                ++currentExtendHandle;
-                DynamicObjectExtendHandler<T> extendHandler =
-                        new DynamicObjectExtendHandler<>(currentExtendHandle, type, v8ValueObject);
-                extendHandlerMap.put(currentExtendHandle, extendHandler);
+                DynamicObjectExtendHandler<T> extendHandler = new DynamicObjectExtendHandler<>(
+                        currentExtendHandle.incrementAndGet(),
+                        type,
+                        v8ValueObject);
+                extendHandlerMap.put(extendHandler.getHandle(), extendHandler);
                 return extendHandler.getObjectClass();
             } catch (Throwable t) {
                 logger.logError(t, "Failed to extend {0} by a dynamic object.", type.getName());

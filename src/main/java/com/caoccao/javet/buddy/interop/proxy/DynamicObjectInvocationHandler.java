@@ -36,6 +36,7 @@ import java.util.concurrent.Callable;
 /**
  * The type Dynamic object auto closeable invocation handler.
  *
+ * @param <T> the type parameter
  * @since 0.1.0
  */
 public class DynamicObjectInvocationHandler<T> extends BaseDynamicObjectHandler<T> {
@@ -105,7 +106,7 @@ public class DynamicObjectInvocationHandler<T> extends BaseDynamicObjectHandler<
     }
 
     /**
-     * Intercept object.
+     * Intercept method call.
      *
      * @param method      the method
      * @param arguments   the arguments
@@ -116,7 +117,7 @@ public class DynamicObjectInvocationHandler<T> extends BaseDynamicObjectHandler<
      * @since 0.1.0
      */
     @RuntimeType
-    public Object intercept(
+    public Object interceptMethod(
             @Origin Method method,
             @AllArguments Object[] arguments,
             @Super(strategy = Super.Instantiation.UNSAFE, proxyType = TargetType.class) Object superObject,
