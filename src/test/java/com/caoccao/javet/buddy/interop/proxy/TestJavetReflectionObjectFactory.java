@@ -97,7 +97,6 @@ public class TestJavetReflectionObjectFactory {
                 TestDynamicObjectAutoCloseable regularDynamicClass = new TestDynamicObjectAutoCloseable();
                 assertEquals(0, regularDynamicClass.add(1, 2));
                 assertEquals(3, mockedDynamicClass.add(1, 2), "Add should work.");
-                ((AutoCloseable) mockedDynamicClass).close();
             }
         };
         v8Runtime.getGlobalObject().set("a", anonymous);
@@ -116,7 +115,6 @@ public class TestJavetReflectionObjectFactory {
                 assertTrue(file.exists());
                 assertTrue(file.isFile());
                 assertTrue(file.isDirectory());
-                ((AutoCloseable) file).close();
             }
         };
         v8Runtime.getGlobalObject().set("a", anonymous);
@@ -152,7 +150,6 @@ public class TestJavetReflectionObjectFactory {
                 assertEquals(2, mockedDynamicClass.getValue(), "Setter for value should work.");
                 assertFalse(regularDynamicClass.isPassed());
                 assertTrue(mockedDynamicClass.isPassed());
-                ((AutoCloseable) mockedDynamicClass).close();
             }
         };
         v8Runtime.getGlobalObject().set("a", anonymous);

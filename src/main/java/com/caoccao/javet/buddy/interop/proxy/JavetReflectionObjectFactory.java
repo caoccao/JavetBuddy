@@ -36,11 +36,13 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
     private static final JavetReflectionObjectFactory instance = new JavetReflectionObjectFactory();
     private final AtomicLong currentExtendHandle;
     private final Map<Long, DynamicObjectExtendHandler<?>> extendHandlerMap;
+    private final Map<Long, DynamicObjectExtendHandler<?>> invocationHandlerMap;
     private final IJavetLogger logger;
 
     private JavetReflectionObjectFactory() {
         logger = new JavetDefaultLogger(getClass().getName());
         currentExtendHandle = new AtomicLong();
+        invocationHandlerMap = new ConcurrentHashMap<>();
         extendHandlerMap = new ConcurrentHashMap<>();
     }
 
@@ -62,14 +64,21 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
      * @since 0.4.0
      */
     public int clear() throws Exception {
-        final int count = extendHandlerMap.size();
-        if (count > 0) {
+        final int invocationHandlerCount = invocationHandlerMap.size();
+        if (invocationHandlerCount > 0) {
+            for (DynamicObjectExtendHandler<?> handler : invocationHandlerMap.values()) {
+                handler.close();
+            }
+            invocationHandlerMap.clear();
+        }
+        final int extendHandlerCount = extendHandlerMap.size();
+        if (extendHandlerCount > 0) {
             for (DynamicObjectExtendHandler<?> handler : extendHandlerMap.values()) {
                 handler.close();
             }
             extendHandlerMap.clear();
         }
-        return count;
+        return invocationHandlerCount + extendHandlerCount;
     }
 
     /**
@@ -108,6 +117,16 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
      */
     public Map<Long, DynamicObjectExtendHandler<?>> getExtendHandlerMap() {
         return extendHandlerMap;
+    }
+
+    /**
+     * Gets invocation handler map.
+     *
+     * @return the invocation handler map
+     * @since 0.4.0
+     */
+    public Map<Long, DynamicObjectExtendHandler<?>> getInvocationHandlerMap() {
+        return invocationHandlerMap;
     }
 
     @Override

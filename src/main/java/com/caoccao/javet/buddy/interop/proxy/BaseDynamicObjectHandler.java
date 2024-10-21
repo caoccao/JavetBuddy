@@ -88,6 +88,7 @@ public abstract class BaseDynamicObjectHandler<T> implements AutoCloseable {
     @Override
     protected void finalize() throws Throwable {
         close();
+        super.finalize();
     }
 
     /**
