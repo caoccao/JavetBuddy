@@ -90,13 +90,35 @@ public class TestJavetReflectionObjectFactory {
     }
 
     @Test
+    public void testExtendHandlerPojo() throws JavetException {
+        MockExtend mockExtend = new MockExtend(TestPojo.class);
+        v8Runtime.getGlobalObject().bind(mockExtend);
+        v8Runtime.getGlobalObject().set("TestPojo", TestPojo.class);
+        String codeString = "let ChildTestPojo = extend(TestPojo, {\n" +
+                "  getValue: () => $super.value + '!',\n" +
+                "  toJson: () => $super.toJson() + '!',\n" +
+                "});\n" +
+                "let pojo = new ChildTestPojo('name', 'value');\n" +
+                "pojo.name = 'newName';\n" +
+                "pojo.value = 'newValue';\n" +
+                "JSON.stringify([pojo.name, pojo.value, pojo.getValue(), pojo.toJson()]);";
+        assertEquals(
+                "[\"newName\",\"newValue!\",\"newValue!\",\"{\\\"name\\\":\\\"newName\\\",\\\"value\\\":\\\"newValue\\\"}!\"]",
+                v8Runtime.getExecutor(codeString).executeString());
+        v8Runtime.getExecutor("ChildTestPojo = undefined; pojo = undefined;").executeVoid();
+        v8Runtime.getGlobalObject().unbind(mockExtend);
+        v8Runtime.getGlobalObject().delete("TestPojo");
+    }
+
+    @Test
     public void testInvocationHandlerAutoCloseable() throws JavetException {
         IJavetAnonymous anonymous = new IJavetAnonymous() {
             @V8Function
             public void test(TestDynamicObjectAutoCloseable mockedDynamicClass) throws Exception {
-                TestDynamicObjectAutoCloseable regularDynamicClass = new TestDynamicObjectAutoCloseable();
-                assertEquals(0, regularDynamicClass.add(1, 2));
-                assertEquals(3, mockedDynamicClass.add(1, 2), "Add should work.");
+                try (TestDynamicObjectAutoCloseable regularDynamicClass = new TestDynamicObjectAutoCloseable()) {
+                    assertEquals(0, regularDynamicClass.add(1, 2));
+                    assertEquals(3, mockedDynamicClass.add(1, 2), "Add should work.");
+                }
             }
         };
         v8Runtime.getGlobalObject().set("a", anonymous);
@@ -220,6 +242,29 @@ public class TestJavetReflectionObjectFactory {
         }
 
         public void setValue(int value) {
+        }
+    }
+
+    public static class TestPojo {
+        public String name;
+
+        private String value;
+
+        public TestPojo(String name, String value) {
+            this.name = name;
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
+
+        public String toJson() {
+            return "{\"name\":\"" + name + "\",\"value\":\"" + value + "\"}";
         }
     }
 }
