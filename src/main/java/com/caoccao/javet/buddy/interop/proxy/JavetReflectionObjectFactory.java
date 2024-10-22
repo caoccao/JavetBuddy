@@ -36,7 +36,7 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
     private static final JavetReflectionObjectFactory instance = new JavetReflectionObjectFactory();
     private final AtomicLong currentExtendHandle;
     private final Map<Long, DynamicObjectExtendHandler<?>> extendHandlerMap;
-    private final Map<Long, DynamicObjectExtendHandler<?>> invocationHandlerMap;
+    private final Map<Long, DynamicObjectInvocationHandler<?>> invocationHandlerMap;
     private final IJavetLogger logger;
 
     private JavetReflectionObjectFactory() {
@@ -66,7 +66,7 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
     public int clear() throws Exception {
         final int invocationHandlerCount = invocationHandlerMap.size();
         if (invocationHandlerCount > 0) {
-            for (DynamicObjectExtendHandler<?> handler : invocationHandlerMap.values()) {
+            for (DynamicObjectInvocationHandler<?> handler : invocationHandlerMap.values()) {
                 handler.close();
             }
             invocationHandlerMap.clear();
@@ -125,7 +125,7 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
      * @return the invocation handler map
      * @since 0.4.0
      */
-    public Map<Long, DynamicObjectExtendHandler<?>> getInvocationHandlerMap() {
+    public Map<Long, DynamicObjectInvocationHandler<?>> getInvocationHandlerMap() {
         return invocationHandlerMap;
     }
 
@@ -136,7 +136,11 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
             try {
                 v8ValueObject = v8Value.toClone();
                 DynamicObjectInvocationHandler<?> invocationHandler =
-                        new DynamicObjectInvocationHandler<>(type, v8ValueObject);
+                        new DynamicObjectInvocationHandler<>(
+                                currentExtendHandle.incrementAndGet(),
+                                type,
+                                v8ValueObject);
+                invocationHandlerMap.put(invocationHandler.getHandle(), invocationHandler);
                 return invocationHandler.getDynamicObject();
             } catch (Throwable t) {
                 logger.logError(t, "Failed to create {0} by a dynamic object.", type.getName());

@@ -36,13 +36,6 @@ import java.util.concurrent.Callable;
  */
 public class DynamicObjectExtendHandler<T> extends BaseDynamicObjectHandler<T> {
     /**
-     * The Handle.
-     *
-     * @since 0.4.0
-     */
-    protected long handle;
-
-    /**
      * Instantiates a new Dynamic object extend handler.
      *
      * @param handle        the handle
@@ -51,24 +44,13 @@ public class DynamicObjectExtendHandler<T> extends BaseDynamicObjectHandler<T> {
      * @since 0.4.0
      */
     public DynamicObjectExtendHandler(long handle, Class<T> type, V8ValueObject v8ValueObject) {
-        super(type, v8ValueObject);
-        this.handle = handle;
+        super(handle, type, v8ValueObject);
     }
 
     @RuntimeType
     @Override
     public void close() throws Exception {
         super.close();
-    }
-
-    /**
-     * Gets handle.
-     *
-     * @return the handle
-     * @since 0.4.0
-     */
-    public long getHandle() {
-        return handle;
     }
 
     /**

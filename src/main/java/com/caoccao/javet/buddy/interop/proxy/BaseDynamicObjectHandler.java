@@ -53,6 +53,12 @@ public abstract class BaseDynamicObjectHandler<T> implements AutoCloseable {
      */
     protected static final String SUPER = "$super";
     /**
+     * The Handle.
+     *
+     * @since 0.4.0
+     */
+    protected long handle;
+    /**
      * The Type.
      *
      * @since 0.4.0
@@ -68,11 +74,13 @@ public abstract class BaseDynamicObjectHandler<T> implements AutoCloseable {
     /**
      * Instantiates a new Base dynamic object handler.
      *
+     * @param handle        the handle
      * @param type          the type
      * @param v8ValueObject the V8 value object
      * @since 0.4.0
      */
-    public BaseDynamicObjectHandler(Class<T> type, V8ValueObject v8ValueObject) {
+    public BaseDynamicObjectHandler(long handle, Class<T> type, V8ValueObject v8ValueObject) {
+        this.handle = handle;
         this.type = Objects.requireNonNull(type);
         this.v8ValueObject = Objects.requireNonNull(v8ValueObject);
     }
@@ -89,6 +97,16 @@ public abstract class BaseDynamicObjectHandler<T> implements AutoCloseable {
     protected void finalize() throws Throwable {
         close();
         super.finalize();
+    }
+
+    /**
+     * Gets handle.
+     *
+     * @return the handle
+     * @since 0.4.0
+     */
+    public long getHandle() {
+        return handle;
     }
 
     /**

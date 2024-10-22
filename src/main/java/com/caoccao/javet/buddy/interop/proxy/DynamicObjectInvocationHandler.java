@@ -56,12 +56,13 @@ public class DynamicObjectInvocationHandler<T> extends BaseDynamicObjectHandler<
     /**
      * Instantiates a new Dynamic object auto closeable invocation handler.
      *
+     * @param handle        the handle
      * @param type          the type
      * @param v8ValueObject the V8 value object
      * @since 0.1.0
      */
-    public DynamicObjectInvocationHandler(Class<T> type, V8ValueObject v8ValueObject) {
-        super(type, v8ValueObject);
+    public DynamicObjectInvocationHandler(long handle, Class<T> type, V8ValueObject v8ValueObject) {
+        super(handle, type, v8ValueObject);
         dynamicObject = null;
     }
 
