@@ -71,19 +71,11 @@ public class TestByteCodeGenerator {
                             StackManipulation.Size operandStackSize = new StackManipulation.Compound(
                                     MethodVariableAccess.of(parameters.get(0).getType()).loadFrom(1),
                                     MethodVariableAccess.of(parameters.get(1).getType()).loadFrom(2),
-                                    new StackManipulation() {
-                                        @Override
-                                        public Size apply(MethodVisitor methodVisitor, Context implementationContext) {
-                                            methodVisitor.visitInsn(Opcodes.IADD);
-                                            methodVisitor.visitInsn(Opcodes.I2L);
-                                            return new Size(-1, 0);
-                                        }
-
-                                        @Override
-                                        public boolean isValid() {
-                                            return true;
-                                        }
-                                    },
+                                    new StackManipulation.Simple((MethodVisitor simpleMethodVisitor, Context simpleImplementationContext) -> {
+                                        simpleMethodVisitor.visitInsn(Opcodes.IADD);
+                                        simpleMethodVisitor.visitInsn(Opcodes.I2L);
+                                        return new StackManipulation.Size(-1, 0);
+                                    }),
                                     MethodReturn.LONG
                             ).apply(methodVisitor, implementationContext);
                             return new ByteCodeAppender.Size(operandStackSize.getMaximalSize(),
