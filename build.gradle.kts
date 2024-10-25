@@ -61,6 +61,8 @@ object Config {
         const val JAVET_V8_MACOS_ARM64 = "com.caoccao.javet:javet-v8-macos-arm64:${Versions.JAVET}"
         const val JAVET_V8_MACOS_X86_64 = "com.caoccao.javet:javet-v8-macos-x86_64:${Versions.JAVET}"
         const val JAVET_V8_WINDOWS_X86_64 = "com.caoccao.javet:javet-v8-windows-x86_64:${Versions.JAVET}"
+
+        const val JAVET_SWC4J = "com.caoccao.javet:swc4j:${Versions.JAVET_SWC4J}"
     }
 
     object Versions {
@@ -68,6 +70,7 @@ object Config {
         const val JAVA_VERSION = "1.8"
         const val JAVET = "4.0.0"
         const val JAVET_BUDDY = "0.5.0"
+        const val JAVET_SWC4J = "1.1.0"
         const val JUNIT = "5.11.3"
     }
 }
@@ -124,6 +127,8 @@ dependencies {
         compileOnly(Config.Projects.JAVET_V8_WINDOWS_X86_64)
         testImplementation(Config.Projects.JAVET_V8_WINDOWS_X86_64)
     }
+    compileOnly(Config.Projects.JAVET_SWC4J)
+    testImplementation(Config.Projects.JAVET_SWC4J)
     compileOnly(Config.Projects.BYTE_BUDDY)
     testImplementation(Config.Projects.BYTE_BUDDY)
 }

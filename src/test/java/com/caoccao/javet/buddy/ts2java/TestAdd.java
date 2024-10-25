@@ -19,44 +19,32 @@ package com.caoccao.javet.buddy.ts2java;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class TestSum extends BaseTestTs2Java {
+public class TestAdd extends BaseTestTs2Java {
     /*
-  public sum(I)I
+  public add(II)I
    L0
-    ICONST_0
-    ISTORE 2
-   L1
-    ICONST_0
-    ISTORE 3
-   L2
-   FRAME APPEND [I I]
-    ILOAD 3
+    LINENUMBER 34 L0
     ILOAD 1
-    IF_ICMPGE L3
-   L4
     ILOAD 2
-    ILOAD 3
     IADD
-    ISTORE 2
-   L5
-    IINC 3 1
-    GOTO L2
-   L3
-   FRAME CHOP 1
-    ILOAD 2
     IRETURN
      */
-    public int sum(int n) {
-        int sum = 0;
-        for (int i = 0; i < n; i++) {
-            sum += i;
-        }
-        return sum;
+    public int add(int a, int b) {
+        return a + b;
     }
 
     @Test
-    public void testSum() {
-        assertEquals(45, sum(10));
+    public void testAdd() throws Exception {
+        assertEquals(3, add(1, 2));
+        String tsCode = getTsCode("test.add.ts");
+        assertNotNull(tsCode);
+        Ts2Java ts2Java = new Ts2Java("com.test", tsCode);
+        ts2Java.transpile();
+        Class<?> javaClass = ts2Java.getJavaClass();
+        assertNotNull(javaClass);
+        assertEquals("Test", javaClass.getSimpleName());
+        assertEquals("com.test.Test", javaClass.getName());
     }
 }
