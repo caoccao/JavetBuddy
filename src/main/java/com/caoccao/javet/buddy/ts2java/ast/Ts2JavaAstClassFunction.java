@@ -17,13 +17,18 @@
 package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.buddy.ts2java.Ts2JavaException;
+import com.caoccao.javet.buddy.ts2java.compiler.JavaStackFrame;
+import com.caoccao.javet.buddy.ts2java.compiler.JavaStackObject;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstFunction;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstAccessibility;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.implementation.MethodDelegation;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Stack;
 
 public final class Ts2JavaAstClassFunction extends BaseTs2JavaAst<Swc4jAstFunction> {
     private final Swc4jAstAccessibility accessibility;
@@ -47,12 +52,21 @@ public final class Ts2JavaAstClassFunction extends BaseTs2JavaAst<Swc4jAstFuncti
             DynamicType.Builder<?> builder,
             Swc4jAstFunction ast)
             throws Ts2JavaException {
-        Visibility visibility = Ts2JavaAstAccessibility.getVisibility(accessibility);
-        Class<?> returnType = ast.getReturnType()
+        final Visibility visibility = Ts2JavaAstAccessibility.getVisibility(accessibility);
+        final Class<?> returnType = ast.getReturnType()
                 .map(Ts2JavaAstTsTypeAnn::getClass)
                 .orElse((Class) Object.class);
-        Class<?>[] parameters = ast.getParams().stream()
-                .map(Ts2JavaAstParam::getClass)
+        final Stack<JavaStackFrame> stackFrames = new Stack<>();
+        final List<JavaStackObject> stackObjects = new ArrayList<>();
+        final int size = ast.getParams().size();
+        for (int i = 0; i < size; i++) {
+            JavaStackObject stackObject = Ts2JavaAstParam.getStackObject(i + 1, ast.getParams().get(i));
+            stackObjects.add(stackObject);
+        }
+        final JavaStackFrame stackFrame = new JavaStackFrame(stackObjects);
+        stackFrames.push(stackFrame);
+        final Class<?>[] parameters = stackFrame.getObjects().stream()
+                .map(JavaStackObject::getType)
                 .toArray(Class[]::new);
         builder = builder.defineMethod(name, returnType, visibility)
                 .withParameters(parameters)

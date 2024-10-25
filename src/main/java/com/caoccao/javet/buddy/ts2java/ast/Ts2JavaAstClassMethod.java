@@ -39,8 +39,8 @@ public final class Ts2JavaAstClassMethod extends BaseTs2JavaAst<Swc4jAstClassMet
             throw new Ts2JavaException("Function ident type " + ast.getKey().getClass().getSimpleName() + " is not supported");
         }
         String name = ast.getKey().as(Swc4jAstIdentName.class).getSym();
-        builder = new Ts2JavaAstClassFunction(name, ast.getAccessibility().orElse(Swc4jAstAccessibility.Public))
-                .transpile(builder, ast.getFunction());
+        Swc4jAstAccessibility accessibility = ast.getAccessibility().orElse(Swc4jAstAccessibility.Public);
+        builder = new Ts2JavaAstClassFunction(name, accessibility).transpile(builder, ast.getFunction());
         return builder;
     }
 }

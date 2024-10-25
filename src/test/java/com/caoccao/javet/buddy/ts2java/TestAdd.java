@@ -18,6 +18,7 @@ package com.caoccao.javet.buddy.ts2java;
 
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Method;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,5 +50,11 @@ public class TestAdd extends BaseTestTs2Java {
         Class<?> clazz = classes.get(0);
         assertEquals("Test", clazz.getSimpleName());
         assertEquals("com.test.Test", clazz.getName());
+        Method method = clazz.getMethod("add", int.class, int.class);
+        assertNotNull(method);
+        assertEquals(int.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(int.class, method.getParameters()[1].getType());
     }
 }

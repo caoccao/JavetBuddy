@@ -27,4 +27,8 @@ public final class Ts2JavaAstBindingIdent {
                 .map(Ts2JavaAstTsTypeAnn::getClass)
                 .orElse((Class) Object.class);
     }
+
+    public static String getIdent(Swc4jAstBindingIdent ast) {
+        return ast.getId().getSym();
+    }
 }

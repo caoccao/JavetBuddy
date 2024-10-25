@@ -16,6 +16,8 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
+import com.caoccao.javet.buddy.ts2java.Ts2JavaException;
+import com.caoccao.javet.buddy.ts2java.compiler.JavaStackObject;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstParam;
 import com.caoccao.javet.swc4j.ast.pat.Swc4jAstBindingIdent;
 
@@ -23,12 +25,14 @@ public final class Ts2JavaAstParam {
     private Ts2JavaAstParam() {
     }
 
-    public static Class<?> getClass(Swc4jAstParam ast) {
+    public static JavaStackObject getStackObject(int index, Swc4jAstParam ast) throws Ts2JavaException {
         switch (ast.getPat().getType()) {
             case BindingIdent:
-                return Ts2JavaAstBindingIdent.getClass(ast.getPat().as(Swc4jAstBindingIdent.class));
+                String ident = Ts2JavaAstBindingIdent.getIdent(ast.getPat().as(Swc4jAstBindingIdent.class));
+                Class<?> type = Ts2JavaAstBindingIdent.getClass(ast.getPat().as(Swc4jAstBindingIdent.class));
+                return new JavaStackObject(index, ident, type);
             default:
-                return Object.class;
+                throw new Ts2JavaException(ast.getPat().getType().name() + " is not supported");
         }
     }
 }
