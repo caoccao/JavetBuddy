@@ -28,7 +28,6 @@ import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -62,22 +61,22 @@ public class Ts2Java {
         return tsCode;
     }
 
-    public void transpile() throws Swc4jCoreException, IOException {
+    public void transpile() throws Swc4jCoreException, Ts2JavaException {
         classes.clear();
         Swc4jParseOutput output = swc4j.parse(getTsCode(), swc4jParseOptions);
         Swc4jAstScript script = (Swc4jAstScript) output.getProgram();
         if (script == null) {
-            throw new IOException("The TypeScript code must be a script, not a module.");
+            throw new Ts2JavaException("The TypeScript code must be a script, not a module.");
         }
         if (script.getBody().isEmpty()) {
-            throw new IOException("The TypeScript code must contain at least one statement.");
+            throw new Ts2JavaException("The TypeScript code must contain at least one statement.");
         }
         List<Swc4jAstClassDecl> classDecls = script.getBody().stream()
                 .filter(ast -> ast instanceof Swc4jAstClassDecl)
                 .map(ast -> (Swc4jAstClassDecl) ast)
                 .collect(Collectors.toList());
         if (classDecls.isEmpty()) {
-            throw new IOException("There must be at least one class declaration in the TypeScript code.");
+            throw new Ts2JavaException("There must be at least one class declaration in the TypeScript code.");
         }
         for (
                 Swc4jAstClassDecl classDecl : classDecls) {

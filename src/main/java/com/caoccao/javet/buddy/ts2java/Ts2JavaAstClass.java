@@ -16,31 +16,27 @@
 
 package com.caoccao.javet.buddy.ts2java;
 
-import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstClassDecl;
-import com.caoccao.javet.utils.StringUtils;
+import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstClass;
+import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstClassMethod;
+import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstClassMember;
 import net.bytebuddy.dynamic.DynamicType;
 
-public final class Ts2JavaAstClassDecl extends BaseTs2JavaAst<Swc4jAstClassDecl> {
-    private final String packageName;
-
-    public Ts2JavaAstClassDecl(String packageName) {
-        this.packageName = packageName;
-    }
-
-    public String getPackageName() {
-        return packageName;
-    }
-
+public final class Ts2JavaAstClass extends BaseTs2JavaAst<Swc4jAstClass> {
     @Override
     public DynamicType.Builder<?> transpile(
             DynamicType.Builder<?> builder,
-            Swc4jAstClassDecl ast)
+            Swc4jAstClass ast)
             throws Ts2JavaException {
-        String className = StringUtils.isEmpty(packageName)
-                ? ast.getIdent().getSym()
-                : packageName + "." + ast.getIdent().getSym();
-        builder = builder.name(className);
-        builder = new Ts2JavaAstClass().transpile(builder, ast.getClazz());
+        for (ISwc4jAstClassMember classMember : ast.getBody()) {
+            switch (classMember.getType()) {
+                case ClassMethod:
+                    builder = new Ts2JavaAstClassMethod().transpile(builder, classMember.as(Swc4jAstClassMethod.class));
+                    break;
+                default:
+                    // TODO
+                    break;
+            }
+        }
         return builder;
     }
 }
