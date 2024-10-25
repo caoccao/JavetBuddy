@@ -29,7 +29,10 @@ import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Ts2Java {
     protected final static Swc4j swc4j = new Swc4j();
@@ -39,16 +42,16 @@ public class Ts2Java {
             .setCaptureAst(true);
     protected final String packageName;
     protected final String tsCode;
-    protected Class<?> javaClass;
+    protected List<Class<?>> classes;
 
     public Ts2Java(String packageName, String tsCode) {
-        javaClass = null;
+        classes = new ArrayList<>();
         this.packageName = packageName;
         this.tsCode = Objects.requireNonNull(tsCode);
     }
 
-    public Class<?> getJavaClass() {
-        return javaClass;
+    public List<Class<?>> getClasses() {
+        return classes;
     }
 
     public String getPackageName() {
@@ -60,6 +63,7 @@ public class Ts2Java {
     }
 
     public void transpile() throws Swc4jCoreException, IOException {
+        classes.clear();
         Swc4jParseOutput output = swc4j.parse(getTsCode(), swc4jParseOptions);
         Swc4jAstScript script = (Swc4jAstScript) output.getProgram();
         if (script == null) {
@@ -68,15 +72,21 @@ public class Ts2Java {
         if (script.getBody().isEmpty()) {
             throw new IOException("The TypeScript code must contain at least one statement.");
         }
-        if (!(script.getBody().get(0) instanceof Swc4jAstClassDecl)) {
-            throw new IOException("The first statement of the TypeScript code must be a class declaration.");
+        List<Swc4jAstClassDecl> classDecls = script.getBody().stream()
+                .filter(ast -> ast instanceof Swc4jAstClassDecl)
+                .map(ast -> (Swc4jAstClassDecl) ast)
+                .collect(Collectors.toList());
+        if (classDecls.isEmpty()) {
+            throw new IOException("There must be at least one class declaration in the TypeScript code.");
         }
-        DynamicType.Builder<?> builder = new ByteBuddy()
-                .subclass(Object.class, ConstructorStrategy.Default.DEFAULT_CONSTRUCTOR);
-        Swc4jAstClassDecl classDecl = (Swc4jAstClassDecl) script.getBody().get(0);
-        builder = new Ts2JavaAstClassDecl(getPackageName()).transpile(builder, classDecl);
-        try (DynamicType.Unloaded<?> unloadedType = builder.make()) {
-            javaClass = unloadedType.load(getClass().getClassLoader()).getLoaded();
+        for (
+                Swc4jAstClassDecl classDecl : classDecls) {
+            DynamicType.Builder<?> builder = new ByteBuddy()
+                    .subclass(Object.class, ConstructorStrategy.Default.DEFAULT_CONSTRUCTOR);
+            builder = new Ts2JavaAstClassDecl(getPackageName()).transpile(builder, classDecl);
+            try (DynamicType.Unloaded<?> unloadedType = builder.make()) {
+                classes.add(unloadedType.load(getClass().getClassLoader()).getLoaded());
+            }
         }
     }
 }

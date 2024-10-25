@@ -18,6 +18,8 @@ package com.caoccao.javet.buddy.ts2java;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -42,9 +44,10 @@ public class TestAdd extends BaseTestTs2Java {
         assertNotNull(tsCode);
         Ts2Java ts2Java = new Ts2Java("com.test", tsCode);
         ts2Java.transpile();
-        Class<?> javaClass = ts2Java.getJavaClass();
-        assertNotNull(javaClass);
-        assertEquals("Test", javaClass.getSimpleName());
-        assertEquals("com.test.Test", javaClass.getName());
+        List<Class<?>> classes = ts2Java.getClasses();
+        assertEquals(1, classes.size());
+        Class<?> clazz = classes.get(0);
+        assertEquals("Test", clazz.getSimpleName());
+        assertEquals("com.test.Test", clazz.getName());
     }
 }
