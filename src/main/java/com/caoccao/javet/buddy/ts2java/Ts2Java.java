@@ -16,6 +16,7 @@
 
 package com.caoccao.javet.buddy.ts2java;
 
+import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaAstClassDecl;
 import com.caoccao.javet.swc4j.Swc4j;
 import com.caoccao.javet.swc4j.ast.program.Swc4jAstScript;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstClassDecl;
@@ -78,8 +79,7 @@ public class Ts2Java {
         if (classDecls.isEmpty()) {
             throw new Ts2JavaException("There must be at least one class declaration in the TypeScript code.");
         }
-        for (
-                Swc4jAstClassDecl classDecl : classDecls) {
+        for (Swc4jAstClassDecl classDecl : classDecls) {
             DynamicType.Builder<?> builder = new ByteBuddy()
                     .subclass(Object.class, ConstructorStrategy.Default.DEFAULT_CONSTRUCTOR);
             builder = new Ts2JavaAstClassDecl(getPackageName()).transpile(builder, classDecl);
