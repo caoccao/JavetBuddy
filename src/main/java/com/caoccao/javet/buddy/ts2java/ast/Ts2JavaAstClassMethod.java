@@ -27,8 +27,7 @@ public final class Ts2JavaAstClassMethod extends BaseTs2JavaAst<Swc4jAstClassMet
     @Override
     public DynamicType.Builder<?> transpile(
             DynamicType.Builder<?> builder,
-            Swc4jAstClassMethod ast)
-            throws Ts2JavaException {
+            Swc4jAstClassMethod ast) {
         if (ast.isStatic()) {
             throw new Ts2JavaException("Not implemented");
         }
@@ -38,7 +37,7 @@ public final class Ts2JavaAstClassMethod extends BaseTs2JavaAst<Swc4jAstClassMet
         if (!(ast.getKey() instanceof Swc4jAstIdentName)) {
             throw new Ts2JavaException("Function ident type " + ast.getKey().getClass().getSimpleName() + " is not supported");
         }
-        String name = ast.getKey().as(Swc4jAstIdentName.class).getSym();
+        String name = Ts2JavaAstIdentName.getSym(ast.getKey().as(Swc4jAstIdentName.class));
         Swc4jAstAccessibility accessibility = ast.getAccessibility().orElse(Swc4jAstAccessibility.Public);
         builder = new Ts2JavaAstClassFunction(name, accessibility).transpile(builder, ast.getFunction());
         return builder;

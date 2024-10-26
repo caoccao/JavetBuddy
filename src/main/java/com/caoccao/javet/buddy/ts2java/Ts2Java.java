@@ -62,7 +62,7 @@ public class Ts2Java {
         return tsCode;
     }
 
-    public void transpile() throws Swc4jCoreException, Ts2JavaException {
+    public void transpile() throws Swc4jCoreException {
         classes.clear();
         Swc4jParseOutput output = swc4j.parse(getTsCode(), swc4jParseOptions);
         Swc4jAstScript script = (Swc4jAstScript) output.getProgram();

@@ -16,7 +16,6 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
-import com.caoccao.javet.buddy.ts2java.Ts2JavaException;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstClass;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstClassMethod;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstClassMember;
@@ -26,8 +25,7 @@ public final class Ts2JavaAstClass extends BaseTs2JavaAst<Swc4jAstClass> {
     @Override
     public DynamicType.Builder<?> transpile(
             DynamicType.Builder<?> builder,
-            Swc4jAstClass ast)
-            throws Ts2JavaException {
+            Swc4jAstClass ast) {
         for (ISwc4jAstClassMember classMember : ast.getBody()) {
             switch (classMember.getType()) {
                 case ClassMethod:

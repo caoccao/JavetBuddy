@@ -25,7 +25,7 @@ public final class Ts2JavaAstParam {
     private Ts2JavaAstParam() {
     }
 
-    public static JavaStackObject getStackObject(int index, Swc4jAstParam ast) throws Ts2JavaException {
+    public static JavaStackObject getStackObject(int index, Swc4jAstParam ast) {
         switch (ast.getPat().getType()) {
             case BindingIdent:
                 String ident = Ts2JavaAstBindingIdent.getIdent(ast.getPat().as(Swc4jAstBindingIdent.class));

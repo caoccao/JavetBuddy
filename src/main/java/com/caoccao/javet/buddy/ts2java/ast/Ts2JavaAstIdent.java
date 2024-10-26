@@ -17,18 +17,12 @@
 package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
-import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstTsEntityName;
 
-public final class Ts2JavaAstTsEntityName {
-    private Ts2JavaAstTsEntityName() {
+public final class Ts2JavaAstIdent {
+    private Ts2JavaAstIdent() {
     }
 
-    public static String getName(ISwc4jAstTsEntityName ast) {
-        switch (ast.getType()) {
-            case Ident:
-                return Ts2JavaAstIdent.getSym(ast.as(Swc4jAstIdent.class));
-            default:
-                return null;
-        }
+    public static String getSym(Swc4jAstIdent ast) {
+        return ast.getSym();
     }
 }

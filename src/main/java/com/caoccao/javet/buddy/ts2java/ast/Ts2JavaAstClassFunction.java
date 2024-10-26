@@ -16,7 +16,6 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
-import com.caoccao.javet.buddy.ts2java.Ts2JavaException;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaStackFrame;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaStackObject;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstFunction;
@@ -25,10 +24,11 @@ import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.implementation.MethodDelegation;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public final class Ts2JavaAstClassFunction extends BaseTs2JavaAst<Swc4jAstFunction> {
     private final Swc4jAstAccessibility accessibility;
@@ -50,19 +50,15 @@ public final class Ts2JavaAstClassFunction extends BaseTs2JavaAst<Swc4jAstFuncti
     @Override
     public DynamicType.Builder<?> transpile(
             DynamicType.Builder<?> builder,
-            Swc4jAstFunction ast)
-            throws Ts2JavaException {
+            Swc4jAstFunction ast) {
         final Visibility visibility = Ts2JavaAstAccessibility.getVisibility(accessibility);
         final Class<?> returnType = ast.getReturnType()
                 .map(Ts2JavaAstTsTypeAnn::getClass)
                 .orElse((Class) Object.class);
         final Stack<JavaStackFrame> stackFrames = new Stack<>();
-        final List<JavaStackObject> stackObjects = new ArrayList<>();
-        final int size = ast.getParams().size();
-        for (int i = 0; i < size; i++) {
-            JavaStackObject stackObject = Ts2JavaAstParam.getStackObject(i + 1, ast.getParams().get(i));
-            stackObjects.add(stackObject);
-        }
+        final List<JavaStackObject> stackObjects = IntStream.range(0, ast.getParams().size())
+                .mapToObj(i -> Ts2JavaAstParam.getStackObject(i + 1, ast.getParams().get(i)))
+                .collect(Collectors.toList());
         final JavaStackFrame stackFrame = new JavaStackFrame(stackObjects);
         stackFrames.push(stackFrame);
         final Class<?>[] parameters = stackFrame.getObjects().stream()

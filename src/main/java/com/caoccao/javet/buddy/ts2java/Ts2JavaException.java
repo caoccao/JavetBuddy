@@ -16,7 +16,7 @@
 
 package com.caoccao.javet.buddy.ts2java;
 
-public class Ts2JavaException extends Exception {
+public class Ts2JavaException extends RuntimeException {
     public Ts2JavaException(String message) {
         super(message);
     }

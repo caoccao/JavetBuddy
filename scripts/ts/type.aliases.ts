@@ -1,1 +1,1 @@
-type int = number;
+export type int = number;

@@ -29,6 +29,6 @@ public final class Ts2JavaAstBindingIdent {
     }
 
     public static String getIdent(Swc4jAstBindingIdent ast) {
-        return ast.getId().getSym();
+        return Ts2JavaAstIdent.getSym(ast.getId());
     }
 }

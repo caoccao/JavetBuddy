@@ -1,3 +1,5 @@
+import { type int } from "./type.aliases";
+
 function sum(n: int): int {
   let sum: int = 0;
   for (let i: int = 0; i < n; i++) {

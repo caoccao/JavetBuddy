@@ -1,3 +1,5 @@
+import { type int } from "./type.aliases";
+
 class Test {
   public add(a: int, b: int): int {
     return a + b;

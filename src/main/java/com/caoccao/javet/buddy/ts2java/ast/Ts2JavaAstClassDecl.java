@@ -16,7 +16,6 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
-import com.caoccao.javet.buddy.ts2java.Ts2JavaException;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstClassDecl;
 import com.caoccao.javet.utils.StringUtils;
 import net.bytebuddy.dynamic.DynamicType;
@@ -35,11 +34,10 @@ public final class Ts2JavaAstClassDecl extends BaseTs2JavaAst<Swc4jAstClassDecl>
     @Override
     public DynamicType.Builder<?> transpile(
             DynamicType.Builder<?> builder,
-            Swc4jAstClassDecl ast)
-            throws Ts2JavaException {
+            Swc4jAstClassDecl ast) {
         String className = StringUtils.isEmpty(packageName)
-                ? ast.getIdent().getSym()
-                : packageName + "." + ast.getIdent().getSym();
+                ? Ts2JavaAstIdent.getSym(ast.getIdent())
+                : packageName + "." + Ts2JavaAstIdent.getSym(ast.getIdent());
         builder = builder.name(className);
         builder = new Ts2JavaAstClass().transpile(builder, ast.getClazz());
         return builder;
