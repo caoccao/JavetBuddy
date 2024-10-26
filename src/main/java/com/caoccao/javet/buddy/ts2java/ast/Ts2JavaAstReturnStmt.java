@@ -20,26 +20,28 @@ import com.caoccao.javet.buddy.ts2java.Ts2JavaException;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstReturnStmt;
+import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
+import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.implementation.bytecode.member.MethodReturn;
 
-import java.util.List;
-
 public final class Ts2JavaAstReturnStmt implements ITs2JavaAstStackManipulation<Swc4jAstReturnStmt> {
     @Override
-    public void manipulate(JavaFunctionContext functionContext, List<StackManipulation> stackManipulations, Swc4jAstReturnStmt ast) {
+    public void manipulate(JavaFunctionContext functionContext, Swc4jAstReturnStmt ast) {
         ast.getArg().ifPresent(arg -> {
             switch (arg.getType()) {
                 case BinExpr:
-                    new Ts2JavaAstBinExpr().manipulate(functionContext, stackManipulations, arg.as(Swc4jAstBinExpr.class));
+                    new Ts2JavaAstBinExpr().manipulate(functionContext, arg.as(Swc4jAstBinExpr.class));
                     break;
                 default:
-                    throw new Ts2JavaException(arg.getType().name() + " is not supported");
+                    throw new Ts2JavaException(
+                            SimpleFreeMarkerFormat.format("ReturnStmt arg type ${argType} is not supported",
+                                    SimpleMap.of("argType", arg.getType().name())));
             }
         });
         TypeDescription typeDescription = TypeDescription.ForLoadedType.of(functionContext.getReturnType());
         StackManipulation stackManipulation = MethodReturn.of(typeDescription);
-        stackManipulations.add(stackManipulation);
+        functionContext.getStackManipulations().add(stackManipulation);
     }
 }

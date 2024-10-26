@@ -17,11 +17,8 @@
 package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
-import com.caoccao.javet.swc4j.ast.Swc4jAst;
-import net.bytebuddy.implementation.bytecode.StackManipulation;
+import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAst;
 
-import java.util.List;
-
-public interface ITs2JavaAstStackManipulation<AST extends Swc4jAst> {
-    void manipulate(JavaFunctionContext functionContext, List<StackManipulation> stackManipulations, AST ast);
+public interface ITs2JavaAstStackManipulation<AST extends ISwc4jAst> {
+    void manipulate(JavaFunctionContext functionContext, AST ast);
 }

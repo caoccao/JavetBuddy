@@ -76,5 +76,7 @@ public class TestAdd extends BaseTestTs2Java {
         assertEquals(2, method.getParameterCount());
         assertEquals(int.class, method.getParameters()[0].getType());
         assertEquals(int.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertEquals(3, method.invoke(object, 1, 2));
     }
 }

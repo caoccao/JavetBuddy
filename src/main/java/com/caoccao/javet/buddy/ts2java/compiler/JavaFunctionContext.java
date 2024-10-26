@@ -16,20 +16,48 @@
 
 package com.caoccao.javet.buddy.ts2java.compiler;
 
-public final class JavaFunctionContext {
-    private final Class<?>[] parameters;
-    private final Class<?> returnType;
+import net.bytebuddy.implementation.bytecode.StackManipulation;
 
-    public JavaFunctionContext(Class<?>[] parameters, Class<?> returnType) {
-        this.parameters = parameters;
-        this.returnType = returnType;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.IntStream;
+
+public final class JavaFunctionContext {
+    private final Class<?> returnType;
+    private final List<JavaStackFrame> stackFrames;
+    private final List<StackManipulation> stackManipulations;
+
+    public JavaFunctionContext(List<JavaStackFrame> stackFrames, Class<?> returnType) {
+        this.stackFrames = Objects.requireNonNull(stackFrames);
+        this.returnType = Objects.requireNonNull(returnType);
+        this.stackManipulations = new ArrayList<>();
     }
 
     public Class<?>[] getParameters() {
-        return parameters;
+        return stackFrames.get(0).getObjects().stream()
+                .map(JavaStackObject::getType)
+                .toArray(Class[]::new);
     }
 
     public Class<?> getReturnType() {
         return returnType;
+    }
+
+    public int getStackDepth(int stackFrameIndex) {
+        if (stackFrameIndex < 0) {
+            return 0;
+        }
+        return IntStream.range(0, stackFrameIndex)
+                .map(i -> stackFrames.get(i).getObjects().size())
+                .sum();
+    }
+
+    public List<JavaStackFrame> getStackFrames() {
+        return stackFrames;
+    }
+
+    public List<StackManipulation> getStackManipulations() {
+        return stackManipulations;
     }
 }

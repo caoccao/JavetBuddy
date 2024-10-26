@@ -59,19 +59,18 @@ public final class Ts2JavaAstClassFunction implements ITs2JavaAstTranspile<Swc4j
                 .orElse((Class) Object.class);
         final List<JavaStackFrame> stackFrames = new ArrayList<>();
         final List<JavaStackObject> stackObjects = IntStream.range(0, ast.getParams().size())
-                .mapToObj(i -> Ts2JavaAstParam.getStackObject(i + 1, ast.getParams().get(i)))
+                .mapToObj(i -> Ts2JavaAstParam.getStackObject(i, ast.getParams().get(i)))
                 .collect(Collectors.toList());
-        final JavaStackFrame stackFrame = new JavaStackFrame(0, stackObjects);
-        stackFrames.add(stackFrame);
-        final Class<?>[] parameters = stackFrame.getObjects().stream()
-                .map(JavaStackObject::getType)
-                .toArray(Class[]::new);
-        final List<StackManipulation> stackManipulations = new ArrayList<>();
-        final JavaFunctionContext functionContext = new JavaFunctionContext(parameters, returnType);
-        ast.getBody().ifPresent(blockStmt -> new Ts2JavaAstBlockStmt().manipulate(functionContext, stackManipulations, blockStmt));
+        final JavaStackFrame initialStackFrame = new JavaStackFrame(0, stackObjects);
+        stackFrames.add(initialStackFrame);
+        final JavaFunctionContext functionContext = new JavaFunctionContext(stackFrames, returnType);
+        ast.getBody().ifPresent(blockStmt -> new Ts2JavaAstBlockStmt().manipulate(functionContext, blockStmt));
+        final Class<?>[] parameters = functionContext.getParameters();
+        final StackManipulation[] stackManipulations =
+                functionContext.getStackManipulations().toArray(new StackManipulation[0]);
         builder = builder.defineMethod(name, returnType, visibility)
                 .withParameters(parameters)
-                .intercept(new Implementation.Simple(stackManipulations.toArray(new StackManipulation[0])));
+                .intercept(new Implementation.Simple(stackManipulations));
         return builder;
     }
 }

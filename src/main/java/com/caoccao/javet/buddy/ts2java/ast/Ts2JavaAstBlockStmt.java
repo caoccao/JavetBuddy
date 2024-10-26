@@ -20,20 +20,21 @@ import com.caoccao.javet.buddy.ts2java.Ts2JavaException;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstBlockStmt;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstReturnStmt;
-import net.bytebuddy.implementation.bytecode.StackManipulation;
-
-import java.util.List;
+import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
+import com.caoccao.javet.utils.SimpleMap;
 
 public final class Ts2JavaAstBlockStmt implements ITs2JavaAstStackManipulation<Swc4jAstBlockStmt> {
     @Override
-    public void manipulate(JavaFunctionContext functionContext, List<StackManipulation> stackManipulations, Swc4jAstBlockStmt ast) {
+    public void manipulate(JavaFunctionContext functionContext, Swc4jAstBlockStmt ast) {
         ast.getStmts().forEach(stmt -> {
             switch (stmt.getType()) {
                 case ReturnStmt:
-                    new Ts2JavaAstReturnStmt().manipulate(functionContext, stackManipulations, stmt.as(Swc4jAstReturnStmt.class));
+                    new Ts2JavaAstReturnStmt().manipulate(functionContext, stmt.as(Swc4jAstReturnStmt.class));
                     break;
                 default:
-                    throw new Ts2JavaException(stmt.getType().name() + " is not supported");
+                    throw new Ts2JavaException(
+                            SimpleFreeMarkerFormat.format("BlockStmt type ${type} is not supported",
+                                    SimpleMap.of("type", stmt.getType().name())));
             }
         });
     }

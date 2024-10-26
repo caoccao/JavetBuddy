@@ -21,6 +21,8 @@ import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstClassMethod;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstAccessibility;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstMethodKind;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdentName;
+import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
+import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.dynamic.DynamicType;
 
 public final class Ts2JavaAstClassMethod implements ITs2JavaAstTranspile<Swc4jAstClassMethod> {
@@ -29,13 +31,18 @@ public final class Ts2JavaAstClassMethod implements ITs2JavaAstTranspile<Swc4jAs
             DynamicType.Builder<?> builder,
             Swc4jAstClassMethod ast) {
         if (ast.isStatic()) {
-            throw new Ts2JavaException("Not implemented");
+            throw new Ts2JavaException("Static method is not implemented");
         }
         if (ast.getKind() != Swc4jAstMethodKind.Method) {
-            throw new Ts2JavaException(ast.getKind().name() + " is not supported");
+            throw new Ts2JavaException(
+                    SimpleFreeMarkerFormat.format("ClassMethod kind ${kind} is not supported",
+                            SimpleMap.of("kind", ast.getKind().name())));
         }
         if (!(ast.getKey() instanceof Swc4jAstIdentName)) {
-            throw new Ts2JavaException("Function ident type " + ast.getKey().getClass().getSimpleName() + " is not supported");
+            throw new Ts2JavaException(
+                    SimpleFreeMarkerFormat.format("ClassMethod key type ${keyType} is not supported",
+                            SimpleMap.of("keyType", ast.getKey().getClass().getSimpleName())));
+
         }
         String name = Ts2JavaAstIdentName.getSym(ast.getKey().as(Swc4jAstIdentName.class));
         Swc4jAstAccessibility accessibility = ast.getAccessibility().orElse(Swc4jAstAccessibility.Public);
