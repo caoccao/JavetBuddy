@@ -42,7 +42,7 @@ public final class JavaByteCodeOpLoad {
     private JavaByteCodeOpLoad() {
     }
 
-    public static void generateByteCode(JavaFunctionContext functionContext, String name, MethodVisitor methodVisitor) {
+    public static int generate(JavaFunctionContext functionContext, String name, MethodVisitor methodVisitor) {
         final int size = functionContext.getStackFrames().size();
         JavaStackObject stackObject = null;
         int stackFrameIndex = 0;
@@ -62,5 +62,6 @@ public final class JavaByteCodeOpLoad {
         int stackDepth = functionContext.getStackDepth(stackFrameIndex - 1);
         int index = stackDepth + stackObject.getIndex() + 1;
         methodVisitor.visitVarInsn(opCode, index);
+        return 1;
     }
 }
