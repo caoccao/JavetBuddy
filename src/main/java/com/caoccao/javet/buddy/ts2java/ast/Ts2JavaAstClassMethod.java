@@ -23,7 +23,7 @@ import com.caoccao.javet.swc4j.ast.enums.Swc4jAstMethodKind;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdentName;
 import net.bytebuddy.dynamic.DynamicType;
 
-public final class Ts2JavaAstClassMethod extends BaseTs2JavaAst<Swc4jAstClassMethod> {
+public final class Ts2JavaAstClassMethod implements ITs2JavaAstTranspile<Swc4jAstClassMethod> {
     @Override
     public DynamicType.Builder<?> transpile(
             DynamicType.Builder<?> builder,

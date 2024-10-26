@@ -22,7 +22,8 @@ import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstFunction;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstAccessibility;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.DynamicType;
-import net.bytebuddy.implementation.MethodDelegation;
+import net.bytebuddy.implementation.Implementation;
+import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public final class Ts2JavaAstClassFunction extends BaseTs2JavaAst<Swc4jAstFunction> {
+public final class Ts2JavaAstClassFunction implements ITs2JavaAstTranspile<Swc4jAstFunction> {
     private final Swc4jAstAccessibility accessibility;
     private final String name;
 
@@ -64,10 +65,11 @@ public final class Ts2JavaAstClassFunction extends BaseTs2JavaAst<Swc4jAstFuncti
         final Class<?>[] parameters = stackFrame.getObjects().stream()
                 .map(JavaStackObject::getType)
                 .toArray(Class[]::new);
+        final List<ByteCodeAppender> appenders = new ArrayList<>();
+        ast.getBody().ifPresent(blockStmt -> new Ts2JavaAstBlockStmt().append(appenders, blockStmt));
         builder = builder.defineMethod(name, returnType, visibility)
                 .withParameters(parameters)
-                // TODO
-                .intercept(MethodDelegation.to(this));
+                .intercept(new Implementation.Simple(appenders.toArray(new ByteCodeAppender[0])));
         return builder;
     }
 }

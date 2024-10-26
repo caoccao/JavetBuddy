@@ -20,7 +20,7 @@ import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstClassDecl;
 import com.caoccao.javet.utils.StringUtils;
 import net.bytebuddy.dynamic.DynamicType;
 
-public final class Ts2JavaAstClassDecl extends BaseTs2JavaAst<Swc4jAstClassDecl> {
+public final class Ts2JavaAstClassDecl implements ITs2JavaAstTranspile<Swc4jAstClassDecl> {
     private final String packageName;
 
     public Ts2JavaAstClassDecl(String packageName) {

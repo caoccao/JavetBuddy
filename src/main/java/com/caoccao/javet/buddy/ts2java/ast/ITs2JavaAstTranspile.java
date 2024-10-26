@@ -19,6 +19,6 @@ package com.caoccao.javet.buddy.ts2java.ast;
 import com.caoccao.javet.swc4j.ast.Swc4jAst;
 import net.bytebuddy.dynamic.DynamicType;
 
-public abstract class BaseTs2JavaAst<AST extends Swc4jAst> {
-    public abstract DynamicType.Builder<?> transpile(DynamicType.Builder<?> builder, AST ast);
+public interface ITs2JavaAstTranspile<AST extends Swc4jAst> {
+    DynamicType.Builder<?> transpile(DynamicType.Builder<?> builder, AST ast);
 }
