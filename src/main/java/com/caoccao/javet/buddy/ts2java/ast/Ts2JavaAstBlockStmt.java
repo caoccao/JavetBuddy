@@ -17,19 +17,20 @@
 package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.buddy.ts2java.Ts2JavaException;
+import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstBlockStmt;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstReturnStmt;
-import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
+import net.bytebuddy.implementation.bytecode.StackManipulation;
 
 import java.util.List;
 
-public final class Ts2JavaAstBlockStmt implements ITs2JavaAstAppend<Swc4jAstBlockStmt> {
+public final class Ts2JavaAstBlockStmt implements ITs2JavaAstStackManipulation<Swc4jAstBlockStmt> {
     @Override
-    public void append(List<ByteCodeAppender> appenders, Swc4jAstBlockStmt ast) {
+    public void manipulate(JavaFunctionContext functionContext, List<StackManipulation> stackManipulations, Swc4jAstBlockStmt ast) {
         ast.getStmts().forEach(stmt -> {
             switch (stmt.getType()) {
                 case ReturnStmt:
-                    new Ts2JavaAstReturnStmt().append(appenders, stmt.as(Swc4jAstReturnStmt.class));
+                    new Ts2JavaAstReturnStmt().manipulate(functionContext, stackManipulations, stmt.as(Swc4jAstReturnStmt.class));
                     break;
                 default:
                     throw new Ts2JavaException(stmt.getType().name() + " is not supported");

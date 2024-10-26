@@ -16,11 +16,12 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
+import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.swc4j.ast.Swc4jAst;
-import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
+import net.bytebuddy.implementation.bytecode.StackManipulation;
 
 import java.util.List;
 
-public interface ITs2JavaAstAppend<AST extends Swc4jAst> {
-    void append(List<ByteCodeAppender> appenders, AST ast);
+public interface ITs2JavaAstStackManipulation<AST extends Swc4jAst> {
+    void manipulate(JavaFunctionContext functionContext, List<StackManipulation> stackManipulations, AST ast);
 }

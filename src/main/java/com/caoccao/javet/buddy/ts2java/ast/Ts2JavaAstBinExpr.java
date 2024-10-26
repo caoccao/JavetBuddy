@@ -16,36 +16,27 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
+import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import net.bytebuddy.implementation.Implementation;
-import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
-import net.bytebuddy.implementation.bytecode.member.MethodReturn;
 import net.bytebuddy.jar.asm.MethodVisitor;
 import net.bytebuddy.jar.asm.Opcodes;
 
 import java.util.List;
 
-public final class Ts2JavaAstBinExpr implements ITs2JavaAstAppend<Swc4jAstBinExpr> {
+public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc4jAstBinExpr> {
     @Override
-    public void append(List<ByteCodeAppender> appenders, Swc4jAstBinExpr ast) {
+    public void manipulate(JavaFunctionContext functionContext, List<StackManipulation> stackManipulations, Swc4jAstBinExpr ast) {
         // TODO
-        appenders.add((methodVisitor, implementationContext, instrumentedMethod) -> {
-                    StackManipulation.Size size = new StackManipulation.Compound(
-                            new StackManipulation.Simple((
-                                    MethodVisitor simpleMethodVisitor,
-                                    Implementation.Context simpleImplementationContext) -> {
-                                simpleMethodVisitor.visitVarInsn(Opcodes.ILOAD, 1);
-                                simpleMethodVisitor.visitVarInsn(Opcodes.ILOAD, 2);
-                                simpleMethodVisitor.visitInsn(Opcodes.IADD);
-                                return new StackManipulation.Size(2, 0);
-                            }),
-                            MethodReturn.INTEGER
-                    ).apply(methodVisitor, implementationContext);
-                    return new ByteCodeAppender.Size(
-                            size.getMaximalSize(),
-                            instrumentedMethod.getStackSize());
-                }
-        );
+        StackManipulation stackManipulation = new StackManipulation.Simple((
+                MethodVisitor simpleMethodVisitor,
+                Implementation.Context simpleImplementationContext) -> {
+            simpleMethodVisitor.visitVarInsn(Opcodes.ILOAD, 1);
+            simpleMethodVisitor.visitVarInsn(Opcodes.ILOAD, 2);
+            simpleMethodVisitor.visitInsn(Opcodes.IADD);
+            return new StackManipulation.Size(2, 0);
+        });
+        stackManipulations.add(stackManipulation);
     }
 }

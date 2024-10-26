@@ -16,6 +16,7 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
+import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaStackFrame;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaStackObject;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstFunction;
@@ -23,7 +24,7 @@ import com.caoccao.javet.swc4j.ast.enums.Swc4jAstAccessibility;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.implementation.Implementation;
-import net.bytebuddy.implementation.bytecode.ByteCodeAppender;
+import net.bytebuddy.implementation.bytecode.StackManipulation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,11 +66,12 @@ public final class Ts2JavaAstClassFunction implements ITs2JavaAstTranspile<Swc4j
         final Class<?>[] parameters = stackFrame.getObjects().stream()
                 .map(JavaStackObject::getType)
                 .toArray(Class[]::new);
-        final List<ByteCodeAppender> appenders = new ArrayList<>();
-        ast.getBody().ifPresent(blockStmt -> new Ts2JavaAstBlockStmt().append(appenders, blockStmt));
+        final List<StackManipulation> stackManipulations = new ArrayList<>();
+        final JavaFunctionContext functionContext = new JavaFunctionContext(parameters, returnType);
+        ast.getBody().ifPresent(blockStmt -> new Ts2JavaAstBlockStmt().manipulate(functionContext, stackManipulations, blockStmt));
         builder = builder.defineMethod(name, returnType, visibility)
                 .withParameters(parameters)
-                .intercept(new Implementation.Simple(appenders.toArray(new ByteCodeAppender[0])));
+                .intercept(new Implementation.Simple(stackManipulations.toArray(new StackManipulation[0])));
         return builder;
     }
 }

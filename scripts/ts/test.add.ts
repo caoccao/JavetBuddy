@@ -1,9 +1,9 @@
 import { type int } from "./type.aliases";
 
 class Test {
-  public add(a: int, b: int): int {
+  public add_II_I(a: int, b: int): int {
     return a + b;
   }
 }
 
-console.log(new Test().add(1, 2));
+console.log(new Test().add_II_I(1, 2));

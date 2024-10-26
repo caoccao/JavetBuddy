@@ -16,15 +16,23 @@
 
 package com.caoccao.javet.buddy.ts2java;
 
+import com.caoccao.javet.swc4j.exceptions.Swc4jCoreException;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestAdd extends BaseTestTs2Java {
+    protected Class<?> clazz;
+
+    public TestAdd() {
+        super();
+        init();
+    }
+
     /*
   public add(II)I
    L0
@@ -38,19 +46,31 @@ public class TestAdd extends BaseTestTs2Java {
         return a + b;
     }
 
-    @Test
-    public void testAdd() throws Exception {
-        assertEquals(3, add(1, 2));
-        String tsCode = getTsCode("test.add.ts");
+    protected void init() {
+        String tsCode = null;
+        try {
+            tsCode = getTsCode("test.add.ts");
+        } catch (IOException e) {
+            fail(e);
+        }
         assertNotNull(tsCode);
         Ts2Java ts2Java = new Ts2Java("com.test", tsCode);
-        ts2Java.transpile();
+        try {
+            ts2Java.transpile();
+        } catch (Swc4jCoreException e) {
+            fail(e);
+        }
         List<Class<?>> classes = ts2Java.getClasses();
         assertEquals(1, classes.size());
-        Class<?> clazz = classes.get(0);
+        clazz = classes.get(0);
         assertEquals("Test", clazz.getSimpleName());
         assertEquals("com.test.Test", clazz.getName());
-        Method method = clazz.getMethod("add", int.class, int.class);
+    }
+
+    @Test
+    public void testAdd_II_I() throws Exception {
+        assertEquals(3, add(1, 2));
+        Method method = clazz.getMethod("add_II_I", int.class, int.class);
         assertNotNull(method);
         assertEquals(int.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
