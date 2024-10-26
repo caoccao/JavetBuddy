@@ -36,8 +36,8 @@ public final class Ts2JavaAstClassDecl implements ITs2JavaAstTranspile<Swc4jAstC
             DynamicType.Builder<?> builder,
             Swc4jAstClassDecl ast) {
         String className = StringUtils.isEmpty(packageName)
-                ? Ts2JavaAstIdent.getSym(ast.getIdent())
-                : packageName + "." + Ts2JavaAstIdent.getSym(ast.getIdent());
+                ? ast.getIdent().getSym()
+                : packageName + "." + ast.getIdent().getSym();
         builder = builder.name(className);
         builder = new Ts2JavaAstClass().transpile(builder, ast.getClazz());
         return builder;

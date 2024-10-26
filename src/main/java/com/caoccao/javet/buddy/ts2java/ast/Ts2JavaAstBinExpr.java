@@ -39,7 +39,7 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
             for (ISwc4jAstExpr expr : new ISwc4jAstExpr[]{ast.getLeft(), ast.getRight()}) {
                 switch (expr.getType()) {
                     case Ident:
-                        String name = Ts2JavaAstIdent.getSym(expr.as(Swc4jAstIdent.class));
+                        String name = expr.as(Swc4jAstIdent.class).getSym();
                         stackSize += JavaByteCodeOpLoad.generate(functionContext, name, methodVisitor);
                         break;
                     default:

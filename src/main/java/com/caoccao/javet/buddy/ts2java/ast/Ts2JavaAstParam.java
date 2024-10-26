@@ -32,7 +32,7 @@ public final class Ts2JavaAstParam {
         ISwc4jAstPat pat = ast.getPat();
         switch (pat.getType()) {
             case BindingIdent:
-                String ident = Ts2JavaAstBindingIdent.getIdent(pat.as(Swc4jAstBindingIdent.class));
+                String ident = pat.as(Swc4jAstBindingIdent.class).getId().getSym();
                 Class<?> type = Ts2JavaAstBindingIdent.getClass(pat.as(Swc4jAstBindingIdent.class));
                 return new JavaStackObject(index, ident, type);
             default:

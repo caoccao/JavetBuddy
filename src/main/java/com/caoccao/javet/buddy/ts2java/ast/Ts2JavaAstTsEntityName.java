@@ -26,7 +26,7 @@ public final class Ts2JavaAstTsEntityName {
     public static String getName(ISwc4jAstTsEntityName ast) {
         switch (ast.getType()) {
             case Ident:
-                return Ts2JavaAstIdent.getSym(ast.as(Swc4jAstIdent.class));
+                return ast.as(Swc4jAstIdent.class).getSym();
             default:
                 return null;
         }

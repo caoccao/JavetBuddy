@@ -44,7 +44,7 @@ public final class Ts2JavaAstClassMethod implements ITs2JavaAstTranspile<Swc4jAs
                             SimpleMap.of("keyType", ast.getKey().getClass().getSimpleName())));
 
         }
-        String name = Ts2JavaAstIdentName.getSym(ast.getKey().as(Swc4jAstIdentName.class));
+        String name = ast.getKey().as(Swc4jAstIdentName.class).getSym();
         Swc4jAstAccessibility accessibility = ast.getAccessibility().orElse(Swc4jAstAccessibility.Public);
         builder = new Ts2JavaAstClassFunction(name, accessibility).transpile(builder, ast.getFunction());
         return builder;
