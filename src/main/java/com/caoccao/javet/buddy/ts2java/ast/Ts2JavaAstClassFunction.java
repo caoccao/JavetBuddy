@@ -24,9 +24,9 @@ import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.implementation.MethodDelegation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -55,12 +55,12 @@ public final class Ts2JavaAstClassFunction extends BaseTs2JavaAst<Swc4jAstFuncti
         final Class<?> returnType = ast.getReturnType()
                 .map(Ts2JavaAstTsTypeAnn::getClass)
                 .orElse((Class) Object.class);
-        final Stack<JavaStackFrame> stackFrames = new Stack<>();
+        final List<JavaStackFrame> stackFrames = new ArrayList<>();
         final List<JavaStackObject> stackObjects = IntStream.range(0, ast.getParams().size())
                 .mapToObj(i -> Ts2JavaAstParam.getStackObject(i + 1, ast.getParams().get(i)))
                 .collect(Collectors.toList());
-        final JavaStackFrame stackFrame = new JavaStackFrame(stackObjects);
-        stackFrames.push(stackFrame);
+        final JavaStackFrame stackFrame = new JavaStackFrame(0, stackObjects);
+        stackFrames.add(stackFrame);
         final Class<?>[] parameters = stackFrame.getObjects().stream()
                 .map(JavaStackObject::getType)
                 .toArray(Class[]::new);

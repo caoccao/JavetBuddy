@@ -22,13 +22,19 @@ import java.util.Map;
 import java.util.Objects;
 
 public final class JavaStackFrame {
+    private final int index;
     private final Map<String, JavaStackObject> objectMap;
     private final List<JavaStackObject> objects;
 
-    public JavaStackFrame(List<JavaStackObject> objects) {
+    public JavaStackFrame(int index, List<JavaStackObject> objects) {
+        this.index = index;
         this.objects = Objects.requireNonNull(objects);
         objectMap = new HashMap<>();
         syncObjectMap();
+    }
+
+    public int getIndex() {
+        return index;
     }
 
     public Map<String, JavaStackObject> getObjectMap() {

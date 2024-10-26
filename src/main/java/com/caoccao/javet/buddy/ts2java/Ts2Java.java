@@ -18,7 +18,7 @@ package com.caoccao.javet.buddy.ts2java;
 
 import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaAstClassDecl;
 import com.caoccao.javet.swc4j.Swc4j;
-import com.caoccao.javet.swc4j.ast.program.Swc4jAstScript;
+import com.caoccao.javet.swc4j.ast.program.Swc4jAstModule;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstClassDecl;
 import com.caoccao.javet.swc4j.enums.Swc4jMediaType;
 import com.caoccao.javet.swc4j.enums.Swc4jParseMode;
@@ -38,7 +38,7 @@ public class Ts2Java {
     protected final static Swc4j swc4j = new Swc4j();
     protected final static Swc4jParseOptions swc4jParseOptions = new Swc4jParseOptions()
             .setMediaType(Swc4jMediaType.TypeScript)
-            .setParseMode(Swc4jParseMode.Script)
+            .setParseMode(Swc4jParseMode.Module)
             .setCaptureAst(true);
     protected final String packageName;
     protected final String tsCode;
@@ -65,14 +65,14 @@ public class Ts2Java {
     public void transpile() throws Swc4jCoreException {
         classes.clear();
         Swc4jParseOutput output = swc4j.parse(getTsCode(), swc4jParseOptions);
-        Swc4jAstScript script = (Swc4jAstScript) output.getProgram();
-        if (script == null) {
+        Swc4jAstModule module = (Swc4jAstModule) output.getProgram();
+        if (module == null) {
             throw new Ts2JavaException("The TypeScript code must be a script, not a module.");
         }
-        if (script.getBody().isEmpty()) {
+        if (module.getBody().isEmpty()) {
             throw new Ts2JavaException("The TypeScript code must contain at least one statement.");
         }
-        List<Swc4jAstClassDecl> classDecls = script.getBody().stream()
+        List<Swc4jAstClassDecl> classDecls = module.getBody().stream()
                 .filter(ast -> ast instanceof Swc4jAstClassDecl)
                 .map(ast -> (Swc4jAstClassDecl) ast)
                 .collect(Collectors.toList());
