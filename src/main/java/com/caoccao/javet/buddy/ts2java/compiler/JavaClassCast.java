@@ -16,6 +16,9 @@
 
 package com.caoccao.javet.buddy.ts2java.compiler;
 
+import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
+import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
+import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.bytecode.Addition;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
@@ -39,26 +42,24 @@ public final class JavaClassCast {
     }
 
     public static Class<?> getUpCastClassForMathOp(Class<?>... classes) {
-        Class<?> clazz = int.class;
+        final int length = classes.length;
+        if (length <= 1) {
+            throw new Ts2JavaException("Cannot get up cast class for less than 2 classes");
+        }
         for (Class<?> c : classes) {
-            if (clazz == int.class) {
-                if (c == long.class) {
-                    clazz = long.class;
-                } else if (c == float.class) {
-                    clazz = float.class;
-                } else if (c == double.class) {
-                    clazz = double.class;
-                }
-            } else if (clazz == long.class) {
-                if (c == float.class) {
-                    clazz = float.class;
-                } else if (c == double.class) {
-                    clazz = double.class;
-                }
-            } else if (clazz == float.class) {
-                if (c == double.class) {
-                    clazz = double.class;
-                }
+            if (!c.isPrimitive()) {
+                throw new Ts2JavaException(
+                        SimpleFreeMarkerFormat.format(
+                                "Cannot get up cast class for ${class}",
+                                SimpleMap.of("class", c.getName())));
+            }
+        }
+        Class<?> clazz = classes[0];
+        for (int i = 1; i < length; i++) {
+            Class<?> c = classes[i];
+            if (PrimitiveWideningDelegate.forPrimitive(TypeDescription.ForLoadedType.of(clazz))
+                    .widenTo(TypeDescription.ForLoadedType.of(c)).isValid()) {
+                clazz = c;
             }
         }
         return clazz;

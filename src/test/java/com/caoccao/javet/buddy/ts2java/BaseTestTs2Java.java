@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class BaseTestTs2Java {
     protected String getTsCode(String relativePath) throws IOException {
         Path path = new File(JavetOSUtils.WORKING_DIRECTORY).toPath()
-                .resolve("scripts/ts")
+                .resolve("scripts/ts/test")
                 .resolve(relativePath);
         return Files.readAllLines(path, StandardCharsets.UTF_8).stream()
                 .filter(line -> !line.startsWith("console."))
