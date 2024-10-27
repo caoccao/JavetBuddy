@@ -17,6 +17,7 @@
 package com.caoccao.javet.buddy.ts2java;
 
 import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaAstClassDecl;
+import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
 import com.caoccao.javet.swc4j.Swc4j;
 import com.caoccao.javet.swc4j.ast.program.Swc4jAstModule;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstClassDecl;

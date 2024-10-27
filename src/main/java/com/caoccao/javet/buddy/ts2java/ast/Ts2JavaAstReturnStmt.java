@@ -16,8 +16,8 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
-import com.caoccao.javet.buddy.ts2java.Ts2JavaException;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
+import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstReturnStmt;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
@@ -35,7 +35,8 @@ public final class Ts2JavaAstReturnStmt implements ITs2JavaAstStackManipulation<
                     new Ts2JavaAstBinExpr().manipulate(functionContext, arg.as(Swc4jAstBinExpr.class));
                     break;
                 default:
-                    throw new Ts2JavaException(
+                    throw new Ts2JavaAstException(
+                            arg,
                             SimpleFreeMarkerFormat.format("ReturnStmt arg type ${argType} is not supported",
                                     SimpleMap.of("argType", arg.getType().name())));
             }

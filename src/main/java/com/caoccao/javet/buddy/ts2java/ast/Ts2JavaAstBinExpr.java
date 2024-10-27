@@ -16,9 +16,9 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
-import com.caoccao.javet.buddy.ts2java.Ts2JavaException;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeOpLoad;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
+import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
@@ -40,10 +40,11 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
                 switch (expr.getType()) {
                     case Ident:
                         String name = expr.as(Swc4jAstIdent.class).getSym();
-                        stackSize += JavaByteCodeOpLoad.generate(functionContext, name, methodVisitor);
+                        stackSize += JavaByteCodeOpLoad.visit(functionContext, name, methodVisitor);
                         break;
                     default:
-                        throw new Ts2JavaException(
+                        throw new Ts2JavaAstException(
+                                expr,
                                 SimpleFreeMarkerFormat.format("BinExpr expr type ${exprType} is not supported",
                                         SimpleMap.of("exprType", expr.getType().name())));
                 }
@@ -53,7 +54,8 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
                     methodVisitor.visitInsn(Opcodes.IADD);
                     break;
                 default:
-                    throw new Ts2JavaException(
+                    throw new Ts2JavaAstException(
+                            ast,
                             SimpleFreeMarkerFormat.format("BinExpr op ${op} is not supported",
                                     SimpleMap.of("op", ast.getOp().name())));
             }

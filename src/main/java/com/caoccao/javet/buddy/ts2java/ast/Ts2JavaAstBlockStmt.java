@@ -16,8 +16,8 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
-import com.caoccao.javet.buddy.ts2java.Ts2JavaException;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
+import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstBlockStmt;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstReturnStmt;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
@@ -32,7 +32,8 @@ public final class Ts2JavaAstBlockStmt implements ITs2JavaAstStackManipulation<S
                     new Ts2JavaAstReturnStmt().manipulate(functionContext, stmt.as(Swc4jAstReturnStmt.class));
                     break;
                 default:
-                    throw new Ts2JavaException(
+                    throw new Ts2JavaAstException(
+                            stmt,
                             SimpleFreeMarkerFormat.format("BlockStmt type ${type} is not supported",
                                     SimpleMap.of("type", stmt.getType().name())));
             }

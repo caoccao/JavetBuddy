@@ -16,7 +16,7 @@
 
 package com.caoccao.javet.buddy.ts2java.compiler;
 
-import com.caoccao.javet.buddy.ts2java.Ts2JavaException;
+import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.jar.asm.MethodVisitor;
@@ -42,7 +42,7 @@ public final class JavaByteCodeOpLoad {
     private JavaByteCodeOpLoad() {
     }
 
-    public static int generate(JavaFunctionContext functionContext, String name, MethodVisitor methodVisitor) {
+    public static int visit(JavaFunctionContext functionContext, String name, MethodVisitor methodVisitor) {
         final int size = functionContext.getStackFrames().size();
         JavaStackObject stackObject = null;
         int stackFrameIndex = 0;

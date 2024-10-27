@@ -16,8 +16,11 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
+import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstTsEntityName;
+import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
+import com.caoccao.javet.utils.SimpleMap;
 
 public final class Ts2JavaAstTsEntityName {
     private Ts2JavaAstTsEntityName() {
@@ -28,7 +31,10 @@ public final class Ts2JavaAstTsEntityName {
             case Ident:
                 return ast.as(Swc4jAstIdent.class).getSym();
             default:
-                return null;
+                throw new Ts2JavaAstException(
+                        ast,
+                        SimpleFreeMarkerFormat.format("TsEntityName type ${type} is not supported",
+                                SimpleMap.of("type", ast.getType().name())));
         }
     }
 }

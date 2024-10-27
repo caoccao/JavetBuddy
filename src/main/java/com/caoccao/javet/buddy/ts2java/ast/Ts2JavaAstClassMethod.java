@@ -16,7 +16,7 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
-import com.caoccao.javet.buddy.ts2java.Ts2JavaException;
+import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstClassMethod;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstAccessibility;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstMethodKind;
@@ -31,15 +31,19 @@ public final class Ts2JavaAstClassMethod implements ITs2JavaAstTranspile<Swc4jAs
             DynamicType.Builder<?> builder,
             Swc4jAstClassMethod ast) {
         if (ast.isStatic()) {
-            throw new Ts2JavaException("Static method is not implemented");
+            throw new Ts2JavaAstException(
+                    ast,
+                    "Static method is not implemented");
         }
         if (ast.getKind() != Swc4jAstMethodKind.Method) {
-            throw new Ts2JavaException(
+            throw new Ts2JavaAstException(
+                    ast,
                     SimpleFreeMarkerFormat.format("ClassMethod kind ${kind} is not supported",
                             SimpleMap.of("kind", ast.getKind().name())));
         }
         if (!(ast.getKey() instanceof Swc4jAstIdentName)) {
-            throw new Ts2JavaException(
+            throw new Ts2JavaAstException(
+                    ast,
                     SimpleFreeMarkerFormat.format("ClassMethod key type ${keyType} is not supported",
                             SimpleMap.of("keyType", ast.getKey().getClass().getSimpleName())));
 
