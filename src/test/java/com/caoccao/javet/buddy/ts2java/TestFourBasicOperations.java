@@ -25,10 +25,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestAdd extends BaseTestTs2Java {
+public class TestFourBasicOperations extends BaseTestTs2Java {
     protected Class<?> clazz;
 
-    public TestAdd() {
+    public TestFourBasicOperations() {
         super();
         init();
     }
@@ -46,10 +46,24 @@ public class TestAdd extends BaseTestTs2Java {
         return a + b;
     }
 
+    /*
+  public add(IJ)J
+   L0
+    LINENUMBER 50 L0
+    ILOAD 1
+    I2L
+    LLOAD 2
+    LADD
+    LRETURN
+     */
+    public long add(int a, long b) {
+        return a + b;
+    }
+
     protected void init() {
         String tsCode = null;
         try {
-            tsCode = getTsCode("test.add.ts");
+            tsCode = getTsCode("test.four.basic.operations.ts");
         } catch (IOException e) {
             fail(e);
         }
@@ -80,16 +94,16 @@ public class TestAdd extends BaseTestTs2Java {
         assertEquals(3, method.invoke(object, 1, 2));
     }
 
-//    @Test
-//    public void testAdd_IL_L() throws Exception {
-//        assertEquals(3, add(1, 2));
-//        Method method = clazz.getMethod("add_IL_L", int.class, long.class);
-//        assertNotNull(method);
-//        assertEquals(long.class, method.getReturnType());
-//        assertEquals(2, method.getParameterCount());
-//        assertEquals(int.class, method.getParameters()[0].getType());
-//        assertEquals(long.class, method.getParameters()[1].getType());
-//        Object object = clazz.getConstructor().newInstance();
-//        assertEquals(3L, method.invoke(object, 1, 2L));
-//    }
+    @Test
+    public void testAdd_IL_L() throws Exception {
+        assertEquals(3, add(1, 2L));
+        Method method = clazz.getMethod("add_IL_L", int.class, long.class);
+        assertNotNull(method);
+        assertEquals(long.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(long.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertEquals(3L, method.invoke(object, 1, 2L));
+    }
 }

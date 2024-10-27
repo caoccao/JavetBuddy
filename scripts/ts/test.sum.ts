@@ -1,4 +1,4 @@
-import { type int } from "./type.aliases";
+import { type int } from "./test.type.aliases.ts";
 
 function sum(n: int): int {
   let sum: int = 0;

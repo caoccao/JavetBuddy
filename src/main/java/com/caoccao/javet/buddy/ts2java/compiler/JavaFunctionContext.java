@@ -16,6 +16,9 @@
 
 package com.caoccao.javet.buddy.ts2java.compiler;
 
+import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
+import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
+import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 
 import java.util.ArrayList;
@@ -59,5 +62,18 @@ public final class JavaFunctionContext {
 
     public List<StackManipulation> getStackManipulations() {
         return stackManipulations;
+    }
+
+    public JavaStackObject getStackObject(String name) {
+        for (int stackFrameIndex = stackFrames.size() - 1; stackFrameIndex >= 0; stackFrameIndex--) {
+            JavaStackFrame stackFrame = stackFrames.get(stackFrameIndex);
+            JavaStackObject stackObject = stackFrame.getObjectMap().get(name);
+            if (stackObject != null) {
+                return stackObject;
+            }
+        }
+        throw new Ts2JavaException(
+                SimpleFreeMarkerFormat.format("The variable ${name} is not defined",
+                        SimpleMap.of("name", name)));
     }
 }
