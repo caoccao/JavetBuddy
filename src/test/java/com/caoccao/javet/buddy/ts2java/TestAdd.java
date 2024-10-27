@@ -79,4 +79,17 @@ public class TestAdd extends BaseTestTs2Java {
         Object object = clazz.getConstructor().newInstance();
         assertEquals(3, method.invoke(object, 1, 2));
     }
+
+//    @Test
+//    public void testAdd_IL_L() throws Exception {
+//        assertEquals(3, add(1, 2));
+//        Method method = clazz.getMethod("add_IL_L", int.class, long.class);
+//        assertNotNull(method);
+//        assertEquals(long.class, method.getReturnType());
+//        assertEquals(2, method.getParameterCount());
+//        assertEquals(int.class, method.getParameters()[0].getType());
+//        assertEquals(long.class, method.getParameters()[1].getType());
+//        Object object = clazz.getConstructor().newInstance();
+//        assertEquals(3L, method.invoke(object, 1, 2L));
+//    }
 }

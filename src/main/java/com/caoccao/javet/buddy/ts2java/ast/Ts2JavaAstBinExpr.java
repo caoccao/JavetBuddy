@@ -16,7 +16,7 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
-import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeOpLoad;
+import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeMethodVariableAccess;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
@@ -24,43 +24,34 @@ import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
-import net.bytebuddy.implementation.Implementation;
-import net.bytebuddy.implementation.bytecode.StackManipulation;
-import net.bytebuddy.jar.asm.MethodVisitor;
-import net.bytebuddy.jar.asm.Opcodes;
+import net.bytebuddy.implementation.bytecode.Addition;
 
 public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc4jAstBinExpr> {
     @Override
     public void manipulate(JavaFunctionContext functionContext, Swc4jAstBinExpr ast) {
-        StackManipulation stackManipulation = new StackManipulation.Simple((
-                MethodVisitor methodVisitor,
-                Implementation.Context implementationContext) -> {
-            int stackSize = 0;
-            for (ISwc4jAstExpr expr : new ISwc4jAstExpr[]{ast.getLeft(), ast.getRight()}) {
-                switch (expr.getType()) {
-                    case Ident:
-                        String name = expr.as(Swc4jAstIdent.class).getSym();
-                        stackSize += JavaByteCodeOpLoad.visit(functionContext, name, methodVisitor);
-                        break;
-                    default:
-                        throw new Ts2JavaAstException(
-                                expr,
-                                SimpleFreeMarkerFormat.format("BinExpr expr type ${exprType} is not supported",
-                                        SimpleMap.of("exprType", expr.getType().name())));
-                }
-            }
-            switch (ast.getOp()) {
-                case Add:
-                    methodVisitor.visitInsn(Opcodes.IADD);
+        ISwc4jAstExpr[] expressions = new ISwc4jAstExpr[]{ast.getLeft(), ast.getRight()};
+        for (ISwc4jAstExpr expression : expressions) {
+            switch (expression.getType()) {
+                case Ident:
+                    String name = expression.as(Swc4jAstIdent.class).getSym();
+                    JavaByteCodeMethodVariableAccess.load(functionContext, name);
                     break;
                 default:
                     throw new Ts2JavaAstException(
-                            ast,
-                            SimpleFreeMarkerFormat.format("BinExpr op ${op} is not supported",
-                                    SimpleMap.of("op", ast.getOp().name())));
+                            expression,
+                            SimpleFreeMarkerFormat.format("BinExpr expr type ${exprType} is not supported",
+                                    SimpleMap.of("exprType", expression.getType().name())));
             }
-            return new StackManipulation.Size(stackSize, 0);
-        });
-        functionContext.getStackManipulations().add(stackManipulation);
+        }
+        switch (ast.getOp()) {
+            case Add:
+                functionContext.getStackManipulations().add(Addition.INTEGER);
+                break;
+            default:
+                throw new Ts2JavaAstException(
+                        ast,
+                        SimpleFreeMarkerFormat.format("BinExpr op ${op} is not supported",
+                                SimpleMap.of("op", ast.getOp().name())));
+        }
     }
 }

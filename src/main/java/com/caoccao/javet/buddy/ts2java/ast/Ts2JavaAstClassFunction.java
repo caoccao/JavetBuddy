@@ -33,10 +33,12 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public final class Ts2JavaAstClassFunction implements ITs2JavaAstTranspile<Swc4jAstFunction> {
+    private final boolean _static;
     private final Swc4jAstAccessibility accessibility;
     private final String name;
 
-    public Ts2JavaAstClassFunction(String name, Swc4jAstAccessibility accessibility) {
+    public Ts2JavaAstClassFunction(String name, boolean _static, Swc4jAstAccessibility accessibility) {
+        this._static = _static;
         this.name = Objects.requireNonNull(name);
         this.accessibility = Objects.requireNonNull(accessibility);
     }
@@ -49,6 +51,10 @@ public final class Ts2JavaAstClassFunction implements ITs2JavaAstTranspile<Swc4j
         return name;
     }
 
+    public boolean isStatic() {
+        return _static;
+    }
+
     @Override
     public DynamicType.Builder<?> transpile(
             DynamicType.Builder<?> builder,
@@ -59,7 +65,7 @@ public final class Ts2JavaAstClassFunction implements ITs2JavaAstTranspile<Swc4j
                 .orElse((Class) Object.class);
         final List<JavaStackFrame> stackFrames = new ArrayList<>();
         final List<JavaStackObject> stackObjects = IntStream.range(0, ast.getParams().size())
-                .mapToObj(i -> Ts2JavaAstParam.getStackObject(i, ast.getParams().get(i)))
+                .mapToObj(i -> Ts2JavaAstParam.getStackObject(i + (_static ? 0 : 1), ast.getParams().get(i)))
                 .collect(Collectors.toList());
         final JavaStackFrame initialStackFrame = new JavaStackFrame(0, stackObjects);
         stackFrames.add(initialStackFrame);

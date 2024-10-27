@@ -50,7 +50,7 @@ public final class Ts2JavaAstClassMethod implements ITs2JavaAstTranspile<Swc4jAs
         }
         String name = ast.getKey().as(Swc4jAstIdentName.class).getSym();
         Swc4jAstAccessibility accessibility = ast.getAccessibility().orElse(Swc4jAstAccessibility.Public);
-        builder = new Ts2JavaAstClassFunction(name, accessibility).transpile(builder, ast.getFunction());
+        builder = new Ts2JavaAstClassFunction(name, ast.isStatic(), accessibility).transpile(builder, ast.getFunction());
         return builder;
     }
 }
