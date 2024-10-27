@@ -62,6 +62,15 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
             case Add:
                 stackManipulation = JavaClassCast.getAddition(upCastClass);
                 break;
+            case Div:
+                stackManipulation = JavaClassCast.getDivision(upCastClass);
+                break;
+            case Mul:
+                stackManipulation = JavaClassCast.getMultiplication(upCastClass);
+                break;
+            case Sub:
+                stackManipulation = JavaClassCast.getSubtraction(upCastClass);
+                break;
             default:
                 throw new Ts2JavaAstException(
                         ast,

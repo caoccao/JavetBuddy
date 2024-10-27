@@ -20,8 +20,7 @@ import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
-import net.bytebuddy.implementation.bytecode.Addition;
-import net.bytebuddy.implementation.bytecode.StackManipulation;
+import net.bytebuddy.implementation.bytecode.*;
 import net.bytebuddy.implementation.bytecode.assign.primitive.PrimitiveWideningDelegate;
 
 import java.util.Optional;
@@ -39,6 +38,39 @@ public final class JavaClassCast {
             return Addition.DOUBLE;
         }
         return Addition.INTEGER;
+    }
+
+    public static Division getDivision(Class<?> clazz) {
+        if (clazz == long.class) {
+            return Division.LONG;
+        } else if (clazz == float.class) {
+            return Division.FLOAT;
+        } else if (clazz == double.class) {
+            return Division.DOUBLE;
+        }
+        return Division.INTEGER;
+    }
+
+    public static Multiplication getMultiplication(Class<?> clazz) {
+        if (clazz == long.class) {
+            return Multiplication.LONG;
+        } else if (clazz == float.class) {
+            return Multiplication.FLOAT;
+        } else if (clazz == double.class) {
+            return Multiplication.DOUBLE;
+        }
+        return Multiplication.INTEGER;
+    }
+
+    public static Subtraction getSubtraction(Class<?> clazz) {
+        if (clazz == long.class) {
+            return Subtraction.LONG;
+        } else if (clazz == float.class) {
+            return Subtraction.FLOAT;
+        } else if (clazz == double.class) {
+            return Subtraction.DOUBLE;
+        }
+        return Subtraction.INTEGER;
     }
 
     public static Class<?> getUpCastClassForMathOp(Class<?>... classes) {

@@ -106,4 +106,40 @@ public class TestFourBasicOperations extends BaseTestTs2Java {
         Object object = clazz.getConstructor().newInstance();
         assertEquals(3L, method.invoke(object, 1, 2L));
     }
+
+    @Test
+    public void testDivide_II_I() throws Exception {
+        Method method = clazz.getMethod("divide_II_I", int.class, int.class);
+        assertNotNull(method);
+        assertEquals(int.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(int.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertEquals(1, method.invoke(object, 3, 2));
+    }
+
+    @Test
+    public void testMultiply_II_I() throws Exception {
+        Method method = clazz.getMethod("multiply_II_I", int.class, int.class);
+        assertNotNull(method);
+        assertEquals(int.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(int.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertEquals(6, method.invoke(object, 3, 2));
+    }
+
+    @Test
+    public void testSubtract_II_I() throws Exception {
+        Method method = clazz.getMethod("subtract_II_I", int.class, int.class);
+        assertNotNull(method);
+        assertEquals(int.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(int.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertEquals(1, method.invoke(object, 3, 2));
+    }
 }
