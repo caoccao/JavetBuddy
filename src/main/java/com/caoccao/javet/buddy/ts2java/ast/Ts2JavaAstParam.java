@@ -23,18 +23,20 @@ import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstPat;
 import com.caoccao.javet.swc4j.ast.pat.Swc4jAstBindingIdent;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
+import net.bytebuddy.description.type.TypeDescription;
 
 public final class Ts2JavaAstParam {
     private Ts2JavaAstParam() {
     }
 
-    public static JavaStackObject getStackObject(int index, Swc4jAstParam ast) {
+    public static JavaStackObject getStackObject(Swc4jAstParam ast) {
         ISwc4jAstPat pat = ast.getPat();
         switch (pat.getType()) {
             case BindingIdent:
                 String ident = pat.as(Swc4jAstBindingIdent.class).getId().getSym();
-                Class<?> type = Ts2JavaAstBindingIdent.getClass(pat.as(Swc4jAstBindingIdent.class));
-                return new JavaStackObject(index, ident, type);
+                TypeDescription typeDescription =
+                        Ts2JavaAstBindingIdent.getTypeDescription(pat.as(Swc4jAstBindingIdent.class));
+                return new JavaStackObject(ident, typeDescription);
             default:
                 throw new Ts2JavaAstException(
                         pat,

@@ -19,6 +19,7 @@ package com.caoccao.javet.buddy.ts2java.compiler;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
+import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 
 import java.util.ArrayList;
@@ -27,23 +28,25 @@ import java.util.Objects;
 import java.util.stream.IntStream;
 
 public final class JavaFunctionContext {
-    private final Class<?> returnType;
+    private final boolean _static;
+    private final TypeDescription returnType;
     private final List<JavaStackFrame> stackFrames;
     private final List<StackManipulation> stackManipulations;
 
-    public JavaFunctionContext(List<JavaStackFrame> stackFrames, Class<?> returnType) {
+    public JavaFunctionContext(boolean _static, List<JavaStackFrame> stackFrames, TypeDescription returnType) {
+        this._static = _static;
         this.stackFrames = Objects.requireNonNull(stackFrames);
         this.returnType = Objects.requireNonNull(returnType);
         this.stackManipulations = new ArrayList<>();
     }
 
-    public Class<?>[] getParameters() {
+    public TypeDescription[] getParameters() {
         return stackFrames.get(0).getObjects().stream()
                 .map(JavaStackObject::getType)
-                .toArray(Class[]::new);
+                .toArray(TypeDescription[]::new);
     }
 
-    public Class<?> getReturnType() {
+    public TypeDescription getReturnType() {
         return returnType;
     }
 
@@ -75,5 +78,19 @@ public final class JavaFunctionContext {
         throw new Ts2JavaException(
                 SimpleFreeMarkerFormat.format("The variable ${name} is not defined",
                         SimpleMap.of("name", name)));
+    }
+
+    public boolean isStatic() {
+        return _static;
+    }
+
+    public void syncOffset() {
+        int offset = _static ? 0 : 1;
+        for (JavaStackFrame stackFrame : stackFrames) {
+            for (JavaStackObject stackObject : stackFrame.getObjects()) {
+                stackObject.setOffset(offset);
+                offset += stackObject.getType().getStackSize().getSize();
+            }
+        }
     }
 }

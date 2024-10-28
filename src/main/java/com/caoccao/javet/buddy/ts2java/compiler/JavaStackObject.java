@@ -16,26 +16,33 @@
 
 package com.caoccao.javet.buddy.ts2java.compiler;
 
+import net.bytebuddy.description.type.TypeDescription;
+
 public final class JavaStackObject {
-    private final int index;
     private final String name;
-    private final Class<?> type;
+    private final TypeDescription type;
+    private int offset;
 
-    public JavaStackObject(int index, String name, Class<?> type) {
-        this.index = index;
+    public JavaStackObject(String name, TypeDescription type) {
         this.name = name;
+        this.offset = 0;
         this.type = type;
-    }
-
-    public int getIndex() {
-        return index;
     }
 
     public String getName() {
         return name;
     }
 
-    public Class<?> getType() {
+    public int getOffset() {
+        return offset;
+    }
+
+    public TypeDescription getType() {
         return type;
+    }
+
+    public JavaStackObject setOffset(int offset) {
+        this.offset = offset;
+        return this;
     }
 }

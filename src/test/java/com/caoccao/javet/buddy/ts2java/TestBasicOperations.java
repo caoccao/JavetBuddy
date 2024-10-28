@@ -147,7 +147,7 @@ public class TestBasicOperations extends BaseTestTs2Java {
 
     @Test
     public void testShiftLeft_II_I() throws Exception {
-        Method method = clazz.getMethod("shift_left_II_I", int.class, int.class);
+        Method method = clazz.getMethod("shiftLeft_II_I", int.class, int.class);
         assertNotNull(method);
         assertEquals(int.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -159,7 +159,7 @@ public class TestBasicOperations extends BaseTestTs2Java {
 
     @Test
     public void testShiftRight_II_I() throws Exception {
-        Method method = clazz.getMethod("shift_right_II_I", int.class, int.class);
+        Method method = clazz.getMethod("shiftRight_II_I", int.class, int.class);
         assertNotNull(method);
         assertEquals(int.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());

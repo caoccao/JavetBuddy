@@ -21,25 +21,26 @@ import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstTsType;
 import com.caoccao.javet.swc4j.ast.ts.Swc4jAstTsTypeAnn;
 import com.caoccao.javet.swc4j.ast.ts.Swc4jAstTsTypeRef;
 import com.caoccao.javet.utils.SimpleMap;
+import net.bytebuddy.description.type.TypeDescription;
 
 import java.util.Map;
 
 public final class Ts2JavaAstTsTypeAnn {
-    private static final Map<String, Class<?>> TYPE_MAP = SimpleMap.of(
-            "boolean", boolean.class,
-            "byte", byte.class,
-            "char", char.class,
-            "double", double.class,
-            "float", float.class,
-            "int", int.class,
-            "long", long.class,
-            "short", short.class
+    private static final Map<String, TypeDescription> TYPE_MAP = SimpleMap.of(
+            "boolean", TypeDescription.ForLoadedType.of(boolean.class),
+            "byte", TypeDescription.ForLoadedType.of(byte.class),
+            "char", TypeDescription.ForLoadedType.of(char.class),
+            "double", TypeDescription.ForLoadedType.of(double.class),
+            "float", TypeDescription.ForLoadedType.of(float.class),
+            "int", TypeDescription.ForLoadedType.of(int.class),
+            "long", TypeDescription.ForLoadedType.of(long.class),
+            "short", TypeDescription.ForLoadedType.of(short.class)
     );
 
     private Ts2JavaAstTsTypeAnn() {
     }
 
-    public static Class<?> getClass(Swc4jAstTsTypeAnn ast) {
+    public static TypeDescription getTypeDescription(Swc4jAstTsTypeAnn ast) {
         ISwc4jAstTsType tsType = ast.getTypeAnn();
         switch (tsType.getType()) {
             case TsTypeRef:
@@ -47,7 +48,7 @@ public final class Ts2JavaAstTsTypeAnn {
                 ISwc4jAstTsEntityName tsEntityName = tsTypeRef.getTypeName();
                 return TYPE_MAP.get(Ts2JavaAstTsEntityName.getName(tsEntityName));
             default:
-                return Object.class;
+                return TypeDescription.ForLoadedType.of(Object.class);
         }
     }
 }

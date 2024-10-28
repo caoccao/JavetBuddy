@@ -29,134 +29,134 @@ public final class JavaClassCast {
     private JavaClassCast() {
     }
 
-    public static Addition getAddition(Class<?> clazz) {
-        if (clazz == int.class) {
+    public static Addition getAddition(TypeDescription type) {
+        if (type.isAssignableTo(int.class)) {
             return Addition.INTEGER;
-        } else if (clazz == long.class) {
+        } else if (type.isAssignableTo(long.class)) {
             return Addition.LONG;
-        } else if (clazz == float.class) {
+        } else if (type.isAssignableTo(float.class)) {
             return Addition.FLOAT;
-        } else if (clazz == double.class) {
+        } else if (type.isAssignableTo(double.class)) {
             return Addition.DOUBLE;
         }
         throw new Ts2JavaException(
-                SimpleFreeMarkerFormat.format("Unsupported class ${class} in addition",
-                        SimpleMap.of("class", clazz.getName())));
+                SimpleFreeMarkerFormat.format("Unsupported type ${type} in addition",
+                        SimpleMap.of("type", type.getName())));
     }
 
-    public static Division getDivision(Class<?> clazz) {
-        if (clazz == int.class) {
+    public static Division getDivision(TypeDescription type) {
+        if (type.isAssignableTo(int.class)) {
             return Division.INTEGER;
-        } else if (clazz == long.class) {
+        } else if (type.isAssignableTo(long.class)) {
             return Division.LONG;
-        } else if (clazz == float.class) {
+        } else if (type.isAssignableTo(float.class)) {
             return Division.FLOAT;
-        } else if (clazz == double.class) {
+        } else if (type.isAssignableTo(double.class)) {
             return Division.DOUBLE;
         }
         throw new Ts2JavaException(
-                SimpleFreeMarkerFormat.format("Unsupported class ${class} in division",
-                        SimpleMap.of("class", clazz.getName())));
+                SimpleFreeMarkerFormat.format("Unsupported type ${type} in division",
+                        SimpleMap.of("type", type.getName())));
     }
 
-    public static Multiplication getMultiplication(Class<?> clazz) {
-        if (clazz == int.class) {
+    public static Multiplication getMultiplication(TypeDescription type) {
+        if (type.isAssignableTo(int.class)) {
             return Multiplication.INTEGER;
-        } else if (clazz == long.class) {
+        } else if (type.isAssignableTo(long.class)) {
             return Multiplication.LONG;
-        } else if (clazz == float.class) {
+        } else if (type.isAssignableTo(float.class)) {
             return Multiplication.FLOAT;
-        } else if (clazz == double.class) {
+        } else if (type.isAssignableTo(double.class)) {
             return Multiplication.DOUBLE;
         }
         throw new Ts2JavaException(
-                SimpleFreeMarkerFormat.format("Unsupported class ${class} in multiplication",
-                        SimpleMap.of("class", clazz.getName())));
+                SimpleFreeMarkerFormat.format("Unsupported type ${type} in multiplication",
+                        SimpleMap.of("type", type.getName())));
     }
 
-    public static Remainder getRemainder(Class<?> clazz) {
-        if (clazz == int.class) {
+    public static Remainder getRemainder(TypeDescription type) {
+        if (type.isAssignableTo(int.class)) {
             return Remainder.INTEGER;
-        } else if (clazz == long.class) {
+        } else if (type.isAssignableTo(long.class)) {
             return Remainder.LONG;
-        } else if (clazz == float.class) {
+        } else if (type.isAssignableTo(float.class)) {
             return Remainder.FLOAT;
-        } else if (clazz == double.class) {
+        } else if (type.isAssignableTo(double.class)) {
             return Remainder.DOUBLE;
         }
         throw new Ts2JavaException(
-                SimpleFreeMarkerFormat.format("Unsupported class ${class} in mod",
-                        SimpleMap.of("class", clazz.getName())));
+                SimpleFreeMarkerFormat.format("Unsupported type ${type} in mod",
+                        SimpleMap.of("type", type.getName())));
     }
 
-    public static ShiftLeft getShiftLeft(Class<?> clazz) {
-        if (clazz == int.class) {
+    public static ShiftLeft getShiftLeft(TypeDescription type) {
+        if (type.isAssignableTo(int.class)) {
             return ShiftLeft.INTEGER;
-        } else if (clazz == long.class) {
+        } else if (type.isAssignableTo(long.class)) {
             return ShiftLeft.LONG;
         }
         throw new Ts2JavaException(
-                SimpleFreeMarkerFormat.format("Unsupported class ${class} in left shift",
-                        SimpleMap.of("class", clazz.getName())));
+                SimpleFreeMarkerFormat.format("Unsupported type ${type} in left shift",
+                        SimpleMap.of("type", type.getName())));
     }
 
-    public static ShiftRight getShiftRight(Class<?> clazz) {
-        if (clazz == int.class) {
+    public static ShiftRight getShiftRight(TypeDescription type) {
+        if (type.isAssignableTo(int.class)) {
             return ShiftRight.INTEGER;
-        } else if (clazz == long.class) {
+        } else if (type.isAssignableTo(long.class)) {
             return ShiftRight.LONG;
         }
         throw new Ts2JavaException(
-                SimpleFreeMarkerFormat.format("Unsupported class ${class} in right shift",
-                        SimpleMap.of("class", clazz.getName())));
+                SimpleFreeMarkerFormat.format("Unsupported type ${type} in right shift",
+                        SimpleMap.of("type", type.getName())));
     }
 
-    public static Subtraction getSubtraction(Class<?> clazz) {
-        if (clazz == int.class) {
+    public static Subtraction getSubtraction(TypeDescription type) {
+        if (type.isAssignableTo(int.class)) {
             return Subtraction.INTEGER;
-        } else if (clazz == long.class) {
+        } else if (type.isAssignableTo(long.class)) {
             return Subtraction.LONG;
-        } else if (clazz == float.class) {
+        } else if (type.isAssignableTo(float.class)) {
             return Subtraction.FLOAT;
-        } else if (clazz == double.class) {
+        } else if (type.isAssignableTo(double.class)) {
             return Subtraction.DOUBLE;
         }
         throw new Ts2JavaException(
-                SimpleFreeMarkerFormat.format("Unsupported class ${class} in subtraction",
-                        SimpleMap.of("class", clazz.getName())));
+                SimpleFreeMarkerFormat.format("Unsupported type ${type} in subtraction",
+                        SimpleMap.of("type", type.getName())));
     }
 
-    public static Class<?> getUpCastClassForMathOp(Class<?>... classes) {
-        final int length = classes.length;
-        if (length <= 1) {
-            throw new Ts2JavaException("Cannot get up cast class for less than 2 classes");
-        }
-        for (Class<?> c : classes) {
-            if (!c.isPrimitive()) {
-                throw new Ts2JavaException(
-                        SimpleFreeMarkerFormat.format(
-                                "Cannot get up cast class for ${class}",
-                                SimpleMap.of("class", c.getName())));
-            }
-        }
-        Class<?> clazz = classes[0];
-        for (int i = 1; i < length; i++) {
-            Class<?> c = classes[i];
-            if (PrimitiveWideningDelegate.forPrimitive(TypeDescription.ForLoadedType.of(clazz))
-                    .widenTo(TypeDescription.ForLoadedType.of(c)).isValid()) {
-                clazz = c;
-            }
-        }
-        return clazz;
-    }
-
-    public static Optional<StackManipulation> getUpCastStackManipulation(Class<?> clazz, Class<?> upCastClass) {
-        if (clazz.isPrimitive() && upCastClass.isPrimitive()) {
-            return Optional.of(
-                            PrimitiveWideningDelegate.forPrimitive(TypeDescription.ForLoadedType.of(clazz))
-                                    .widenTo(TypeDescription.ForLoadedType.of(upCastClass)))
+    public static Optional<StackManipulation> getUpCastStackManipulation(
+            TypeDescription fromTypeDescription,
+            TypeDescription toTypeDescription
+    ) {
+        if (fromTypeDescription.isPrimitive() && toTypeDescription.isPrimitive()) {
+            return Optional.of(PrimitiveWideningDelegate.forPrimitive(fromTypeDescription).widenTo(toTypeDescription))
                     .filter(StackManipulation::isValid);
         }
         return Optional.empty();
+    }
+
+    public static TypeDescription getUpCastTypeForMathOp(TypeDescription... types) {
+        final int length = types.length;
+        if (length <= 1) {
+            throw new Ts2JavaException("Cannot get up cast class for less than 2 classes");
+        }
+        for (TypeDescription type : types) {
+            if (!type.isPrimitive()) {
+                throw new Ts2JavaException(
+                        SimpleFreeMarkerFormat.format(
+                                "Cannot get up cast class for ${class}",
+                                SimpleMap.of("class", type.getName())));
+            }
+        }
+        TypeDescription returnType = types[0];
+        for (int i = 1; i < length; i++) {
+            TypeDescription type = types[i];
+            if (PrimitiveWideningDelegate.forPrimitive(returnType).widenTo(type).isValid()) {
+                returnType = type;
+            }
+        }
+        return returnType;
     }
 }

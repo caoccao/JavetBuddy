@@ -16,7 +16,6 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
-import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeMethodVariableAccess;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaClassCast;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaStackObject;
@@ -27,7 +26,9 @@ import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleList;
 import com.caoccao.javet.utils.SimpleMap;
+import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
+import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,35 +51,37 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
                     }
                 })
                 .collect(Collectors.toList());
-        Class<?> upCastClass = JavaClassCast.getUpCastClassForMathOp(
-                stackObjects.stream().map(JavaStackObject::getType).toArray(Class[]::new));
+        TypeDescription upCaseType = JavaClassCast.getUpCastTypeForMathOp(
+                stackObjects.stream().map(JavaStackObject::getType).toArray(TypeDescription[]::new));
         stackObjects.forEach(stackObject -> {
-            functionContext.getStackManipulations().add(JavaByteCodeMethodVariableAccess.load(stackObject));
-            JavaClassCast.getUpCastStackManipulation(stackObject.getType(), upCastClass)
+            functionContext.getStackManipulations().add(
+                    MethodVariableAccess.of(stackObject.getType())
+                            .loadFrom(stackObject.getOffset()));
+            JavaClassCast.getUpCastStackManipulation(stackObject.getType(), upCaseType)
                     .ifPresent(functionContext.getStackManipulations()::add);
         });
         StackManipulation stackManipulation;
         switch (ast.getOp()) {
             case Add:
-                stackManipulation = JavaClassCast.getAddition(upCastClass);
+                stackManipulation = JavaClassCast.getAddition(upCaseType);
                 break;
             case Div:
-                stackManipulation = JavaClassCast.getDivision(upCastClass);
+                stackManipulation = JavaClassCast.getDivision(upCaseType);
                 break;
             case LShift:
-                stackManipulation = JavaClassCast.getShiftLeft(upCastClass);
+                stackManipulation = JavaClassCast.getShiftLeft(upCaseType);
                 break;
             case Mod:
-                stackManipulation = JavaClassCast.getRemainder(upCastClass);
+                stackManipulation = JavaClassCast.getRemainder(upCaseType);
                 break;
             case Mul:
-                stackManipulation = JavaClassCast.getMultiplication(upCastClass);
+                stackManipulation = JavaClassCast.getMultiplication(upCaseType);
                 break;
             case RShift:
-                stackManipulation = JavaClassCast.getShiftRight(upCastClass);
+                stackManipulation = JavaClassCast.getShiftRight(upCaseType);
                 break;
             case Sub:
-                stackManipulation = JavaClassCast.getSubtraction(upCastClass);
+                stackManipulation = JavaClassCast.getSubtraction(upCaseType);
                 break;
             default:
                 throw new Ts2JavaAstException(

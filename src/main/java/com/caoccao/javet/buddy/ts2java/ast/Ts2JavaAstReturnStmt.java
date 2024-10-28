@@ -22,7 +22,6 @@ import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstReturnStmt;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
-import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.implementation.bytecode.member.MethodReturn;
 
@@ -41,8 +40,7 @@ public final class Ts2JavaAstReturnStmt implements ITs2JavaAstStackManipulation<
                                     SimpleMap.of("argType", arg.getType().name())));
             }
         });
-        TypeDescription typeDescription = TypeDescription.ForLoadedType.of(functionContext.getReturnType());
-        StackManipulation stackManipulation = MethodReturn.of(typeDescription);
+        StackManipulation stackManipulation = MethodReturn.of(functionContext.getReturnType());
         functionContext.getStackManipulations().add(stackManipulation);
     }
 }

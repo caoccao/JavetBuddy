@@ -17,14 +17,15 @@
 package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.swc4j.ast.pat.Swc4jAstBindingIdent;
+import net.bytebuddy.description.type.TypeDescription;
 
 public final class Ts2JavaAstBindingIdent {
     private Ts2JavaAstBindingIdent() {
     }
 
-    public static Class<?> getClass(Swc4jAstBindingIdent ast) {
+    public static TypeDescription getTypeDescription(Swc4jAstBindingIdent ast) {
         return ast.getTypeAnn()
-                .map(Ts2JavaAstTsTypeAnn::getClass)
-                .orElse((Class) Object.class);
+                .map(Ts2JavaAstTsTypeAnn::getTypeDescription)
+                .orElse(TypeDescription.ForLoadedType.of(Object.class));
     }
 }
