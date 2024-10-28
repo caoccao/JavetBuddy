@@ -9,6 +9,10 @@ class Test {
     return a + b;
   }
 
+  public add_LI_L(a: long, b: int): long {
+    return a + b;
+  }
+
   public divide_II_I(a: int, b: int): int {
     return a / b;
   }
@@ -36,6 +40,7 @@ class Test {
 
 console.log(new Test().add_II_I(1, 2));
 console.log(new Test().add_IL_L(1, 2));
+console.log(new Test().add_LI_L(1, 2));
 console.log(new Test().divide_II_I(3, 2));
 console.log(new Test().mod_II_I(3, 2));
 console.log(new Test().multiply_II_I(3, 2));

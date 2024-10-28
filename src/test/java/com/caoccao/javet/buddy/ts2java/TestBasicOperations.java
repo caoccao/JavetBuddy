@@ -110,6 +110,18 @@ public class TestBasicOperations extends BaseTestTs2Java {
     }
 
     @Test
+    public void testAdd_LI_L() throws Exception {
+        Method method = clazz.getMethod("add_LI_L", long.class, int.class);
+        assertNotNull(method);
+        assertEquals(long.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(long.class, method.getParameters()[0].getType());
+        assertEquals(int.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertEquals(1L + 2, method.invoke(object, 1L, 2));
+    }
+
+    @Test
     public void testDivide_II_I() throws Exception {
         Method method = clazz.getMethod("divide_II_I", int.class, int.class);
         assertNotNull(method);
