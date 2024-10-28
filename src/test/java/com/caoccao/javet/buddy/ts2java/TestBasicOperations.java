@@ -25,10 +25,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestFourBasicOperations extends BaseTestTs2Java {
-    protected Class<?> clazz;
+public class TestBasicOperations extends BaseTestTs2Java {
+    protected static Class<?> clazz = null;
 
-    public TestFourBasicOperations() {
+    public TestBasicOperations() {
         super();
         init();
     }
@@ -61,24 +61,26 @@ public class TestFourBasicOperations extends BaseTestTs2Java {
     }
 
     protected void init() {
-        String tsCode = null;
-        try {
-            tsCode = getTsCode("test.four.basic.operations.ts");
-        } catch (IOException e) {
-            fail(e);
+        if (clazz == null) {
+            String tsCode = null;
+            try {
+                tsCode = getTsCode("test.basic.operations.ts");
+            } catch (IOException e) {
+                fail(e);
+            }
+            assertNotNull(tsCode);
+            Ts2Java ts2Java = new Ts2Java("com.test", tsCode);
+            try {
+                ts2Java.transpile();
+            } catch (Swc4jCoreException e) {
+                fail(e);
+            }
+            List<Class<?>> classes = ts2Java.getClasses();
+            assertEquals(1, classes.size());
+            clazz = classes.get(0);
+            assertEquals("Test", clazz.getSimpleName());
+            assertEquals("com.test.Test", clazz.getName());
         }
-        assertNotNull(tsCode);
-        Ts2Java ts2Java = new Ts2Java("com.test", tsCode);
-        try {
-            ts2Java.transpile();
-        } catch (Swc4jCoreException e) {
-            fail(e);
-        }
-        List<Class<?>> classes = ts2Java.getClasses();
-        assertEquals(1, classes.size());
-        clazz = classes.get(0);
-        assertEquals("Test", clazz.getSimpleName());
-        assertEquals("com.test.Test", clazz.getName());
     }
 
     @Test
@@ -91,7 +93,7 @@ public class TestFourBasicOperations extends BaseTestTs2Java {
         assertEquals(int.class, method.getParameters()[0].getType());
         assertEquals(int.class, method.getParameters()[1].getType());
         Object object = clazz.getConstructor().newInstance();
-        assertEquals(3, method.invoke(object, 1, 2));
+        assertEquals(1 + 2, method.invoke(object, 1, 2));
     }
 
     @Test
@@ -104,7 +106,7 @@ public class TestFourBasicOperations extends BaseTestTs2Java {
         assertEquals(int.class, method.getParameters()[0].getType());
         assertEquals(long.class, method.getParameters()[1].getType());
         Object object = clazz.getConstructor().newInstance();
-        assertEquals(3L, method.invoke(object, 1, 2L));
+        assertEquals(1 + 2L, method.invoke(object, 1, 2L));
     }
 
     @Test
@@ -116,7 +118,19 @@ public class TestFourBasicOperations extends BaseTestTs2Java {
         assertEquals(int.class, method.getParameters()[0].getType());
         assertEquals(int.class, method.getParameters()[1].getType());
         Object object = clazz.getConstructor().newInstance();
-        assertEquals(1, method.invoke(object, 3, 2));
+        assertEquals(3 / 2, method.invoke(object, 3, 2));
+    }
+
+    @Test
+    public void testMod_II_I() throws Exception {
+        Method method = clazz.getMethod("mod_II_I", int.class, int.class);
+        assertNotNull(method);
+        assertEquals(int.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(int.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertEquals(3 % 2, method.invoke(object, 3, 2));
     }
 
     @Test
@@ -128,7 +142,31 @@ public class TestFourBasicOperations extends BaseTestTs2Java {
         assertEquals(int.class, method.getParameters()[0].getType());
         assertEquals(int.class, method.getParameters()[1].getType());
         Object object = clazz.getConstructor().newInstance();
-        assertEquals(6, method.invoke(object, 3, 2));
+        assertEquals(3 * 2, method.invoke(object, 3, 2));
+    }
+
+    @Test
+    public void testShiftLeft_II_I() throws Exception {
+        Method method = clazz.getMethod("shift_left_II_I", int.class, int.class);
+        assertNotNull(method);
+        assertEquals(int.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(int.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertEquals(3 << 2, method.invoke(object, 3, 2));
+    }
+
+    @Test
+    public void testShiftRight_II_I() throws Exception {
+        Method method = clazz.getMethod("shift_right_II_I", int.class, int.class);
+        assertNotNull(method);
+        assertEquals(int.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(int.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertEquals(3 >> 1, method.invoke(object, 3, 1));
     }
 
     @Test
@@ -140,6 +178,6 @@ public class TestFourBasicOperations extends BaseTestTs2Java {
         assertEquals(int.class, method.getParameters()[0].getType());
         assertEquals(int.class, method.getParameters()[1].getType());
         Object object = clazz.getConstructor().newInstance();
-        assertEquals(1, method.invoke(object, 3, 2));
+        assertEquals(3 - 2, method.invoke(object, 3, 2));
     }
 }

@@ -65,8 +65,17 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
             case Div:
                 stackManipulation = JavaClassCast.getDivision(upCastClass);
                 break;
+            case LShift:
+                stackManipulation = JavaClassCast.getShiftLeft(upCastClass);
+                break;
+            case Mod:
+                stackManipulation = JavaClassCast.getRemainder(upCastClass);
+                break;
             case Mul:
                 stackManipulation = JavaClassCast.getMultiplication(upCastClass);
+                break;
+            case RShift:
+                stackManipulation = JavaClassCast.getShiftRight(upCastClass);
                 break;
             case Sub:
                 stackManipulation = JavaClassCast.getSubtraction(upCastClass);
