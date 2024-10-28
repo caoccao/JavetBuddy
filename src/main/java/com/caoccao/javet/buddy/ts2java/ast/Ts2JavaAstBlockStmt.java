@@ -22,10 +22,13 @@ import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstBlockStmt;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstReturnStmt;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
+import net.bytebuddy.description.type.TypeDescription;
+
+import java.util.Optional;
 
 public final class Ts2JavaAstBlockStmt implements ITs2JavaAstStackManipulation<Swc4jAstBlockStmt> {
     @Override
-    public void manipulate(JavaFunctionContext functionContext, Swc4jAstBlockStmt ast) {
+    public Optional<TypeDescription> manipulate(JavaFunctionContext functionContext, Swc4jAstBlockStmt ast) {
         ast.getStmts().forEach(stmt -> {
             switch (stmt.getType()) {
                 case ReturnStmt:
@@ -38,5 +41,6 @@ public final class Ts2JavaAstBlockStmt implements ITs2JavaAstStackManipulation<S
                                     SimpleMap.of("type", stmt.getType().name())));
             }
         });
+        return Optional.empty();
     }
 }

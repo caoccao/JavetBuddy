@@ -18,7 +18,10 @@ package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAst;
+import net.bytebuddy.description.type.TypeDescription;
+
+import java.util.Optional;
 
 public interface ITs2JavaAstStackManipulation<AST extends ISwc4jAst> {
-    void manipulate(JavaFunctionContext functionContext, AST ast);
+    Optional<TypeDescription> manipulate(JavaFunctionContext functionContext, AST ast);
 }

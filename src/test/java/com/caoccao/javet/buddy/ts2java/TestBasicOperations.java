@@ -97,6 +97,19 @@ public class TestBasicOperations extends BaseTestTs2Java {
     }
 
     @Test
+    public void testAdd_II_L() throws Exception {
+        assertEquals(3, add(1, 2));
+        Method method = clazz.getMethod("add_II_L", int.class, int.class);
+        assertNotNull(method);
+        assertEquals(long.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(int.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertEquals(1L + 2L, method.invoke(object, 1, 2));
+    }
+
+    @Test
     public void testAdd_IL_L() throws Exception {
         assertEquals(3, add(1, 2L));
         Method method = clazz.getMethod("add_IL_L", int.class, long.class);

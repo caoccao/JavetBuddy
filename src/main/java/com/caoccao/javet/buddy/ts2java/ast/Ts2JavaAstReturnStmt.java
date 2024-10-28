@@ -16,22 +16,29 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
+import com.caoccao.javet.buddy.ts2java.compiler.JavaClassCast;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
+import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstReturnStmt;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
+import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.implementation.bytecode.member.MethodReturn;
 
+import java.util.Optional;
+
 public final class Ts2JavaAstReturnStmt implements ITs2JavaAstStackManipulation<Swc4jAstReturnStmt> {
     @Override
-    public void manipulate(JavaFunctionContext functionContext, Swc4jAstReturnStmt ast) {
-        ast.getArg().ifPresent(arg -> {
+    public Optional<TypeDescription> manipulate(JavaFunctionContext functionContext, Swc4jAstReturnStmt ast) {
+        Optional<TypeDescription> fromType = Optional.empty();
+        if (ast.getArg().isPresent()) {
+            ISwc4jAstExpr arg = ast.getArg().get();
             switch (arg.getType()) {
                 case BinExpr:
-                    new Ts2JavaAstBinExpr().manipulate(functionContext, arg.as(Swc4jAstBinExpr.class));
+                    fromType = new Ts2JavaAstBinExpr().manipulate(functionContext, arg.as(Swc4jAstBinExpr.class));
                     break;
                 default:
                     throw new Ts2JavaAstException(
@@ -39,8 +46,15 @@ public final class Ts2JavaAstReturnStmt implements ITs2JavaAstStackManipulation<
                             SimpleFreeMarkerFormat.format("ReturnStmt arg type ${argType} is not supported",
                                     SimpleMap.of("argType", arg.getType().name())));
             }
-        });
-        StackManipulation stackManipulation = MethodReturn.of(functionContext.getReturnType());
+        }
+        if (!fromType.isPresent()) {
+            throw new Ts2JavaAstException(ast, "ReturnStmt type is unknown");
+        }
+        TypeDescription returnType = functionContext.getReturnType();
+        JavaClassCast.getUpCastStackManipulation(fromType.get(), returnType)
+                .ifPresent(functionContext.getStackManipulations()::add);
+        StackManipulation stackManipulation = MethodReturn.of(returnType);
         functionContext.getStackManipulations().add(stackManipulation);
+        return Optional.of(returnType);
     }
 }

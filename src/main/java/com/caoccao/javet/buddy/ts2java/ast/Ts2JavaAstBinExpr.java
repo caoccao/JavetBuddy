@@ -31,11 +31,12 @@ import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc4jAstBinExpr> {
     @Override
-    public void manipulate(JavaFunctionContext functionContext, Swc4jAstBinExpr ast) {
+    public Optional<TypeDescription> manipulate(JavaFunctionContext functionContext, Swc4jAstBinExpr ast) {
         List<ISwc4jAstExpr> expressions = SimpleList.of(ast.getLeft(), ast.getRight());
         List<JavaStackObject> stackObjects = expressions.stream()
                 .map(expression -> {
@@ -90,5 +91,6 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
                                 SimpleMap.of("op", ast.getOp().name())));
         }
         functionContext.getStackManipulations().add(stackManipulation);
+        return Optional.of(upCaseType);
     }
 }
