@@ -70,7 +70,7 @@ public final class Ts2JavaAstVarDecl implements ITs2JavaAstStackManipulation<Swc
                         optionalFromType.ifPresent(fromType ->
                                 JavaClassCast.upCast(fromType, toType, functionContext::addStackManipulation));
                         JavaLocalVariable localVariable = new JavaLocalVariable(name, toType);
-                        MethodVariableAccess methodVariableAccess = MethodVariableAccess.of(localVariable.getType());
+                        MethodVariableAccess methodVariableAccess = MethodVariableAccess.of(toType);
                         StackManipulation stackManipulation = methodVariableAccess.storeAt(functionContext.getNextOffset());
                         functionContext.addStackManipulation(stackManipulation);
                         functionContext.addLocalVariable(localVariable);

@@ -142,7 +142,8 @@ public final class JavaClassCast {
         TypeDescription returnType = types[0];
         for (int i = 1; i < length; i++) {
             TypeDescription type = types[i];
-            if (PrimitiveWideningDelegate.forPrimitive(returnType).widenTo(type).isValid()) {
+            StackManipulation stackManipulation = PrimitiveWideningDelegate.forPrimitive(returnType).widenTo(type);
+            if (stackManipulation.isValid() && stackManipulation != StackManipulation.Trivial.INSTANCE) {
                 returnType = type;
             }
         }
@@ -150,11 +151,10 @@ public final class JavaClassCast {
     }
 
     public static boolean upCast(
-            TypeDescription fromTypeDescription,
-            TypeDescription toTypeDescription,
+            TypeDescription fromType,
+            TypeDescription toType,
             Consumer<StackManipulation> stackManipulationConsumer) {
-        StackManipulation stackManipulation =
-                PrimitiveWideningDelegate.forPrimitive(fromTypeDescription).widenTo(toTypeDescription);
+        StackManipulation stackManipulation = PrimitiveWideningDelegate.forPrimitive(fromType).widenTo(toType);
         if (stackManipulation.isValid() && stackManipulation != StackManipulation.Trivial.INSTANCE) {
             stackManipulationConsumer.accept(stackManipulation);
         }
