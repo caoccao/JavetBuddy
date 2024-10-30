@@ -154,9 +154,12 @@ public final class JavaClassCast {
             TypeDescription fromType,
             TypeDescription toType,
             Consumer<StackManipulation> stackManipulationConsumer) {
-        StackManipulation stackManipulation = PrimitiveWideningDelegate.forPrimitive(fromType).widenTo(toType);
-        if (stackManipulation.isValid() && stackManipulation != StackManipulation.Trivial.INSTANCE) {
-            stackManipulationConsumer.accept(stackManipulation);
+        if (fromType.isPrimitive() && toType.isPrimitive()) {
+            StackManipulation stackManipulation = PrimitiveWideningDelegate.forPrimitive(fromType).widenTo(toType);
+            if (stackManipulation.isValid() && stackManipulation != StackManipulation.Trivial.INSTANCE) {
+                stackManipulationConsumer.accept(stackManipulation);
+                return true;
+            }
         }
         return false;
     }
