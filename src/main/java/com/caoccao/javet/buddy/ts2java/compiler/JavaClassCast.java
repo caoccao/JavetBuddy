@@ -23,7 +23,7 @@ import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.bytecode.*;
 import net.bytebuddy.implementation.bytecode.assign.primitive.PrimitiveWideningDelegate;
 
-import java.util.Optional;
+import java.util.function.Consumer;
 
 public final class JavaClassCast {
     private JavaClassCast() {
@@ -126,20 +126,6 @@ public final class JavaClassCast {
                         SimpleMap.of("type", type.getName())));
     }
 
-    public static Optional<StackManipulation> getUpCastStackManipulation(
-            TypeDescription fromTypeDescription,
-            TypeDescription toTypeDescription
-    ) {
-        Optional<StackManipulation> optionalStackManipulation = Optional.empty();
-        if (fromTypeDescription.isPrimitive() && toTypeDescription.isPrimitive()) {
-            optionalStackManipulation = Optional.of(
-                            PrimitiveWideningDelegate.forPrimitive(fromTypeDescription).widenTo(toTypeDescription))
-                    .filter(StackManipulation::isValid)
-                    .filter(stackManipulation -> stackManipulation != StackManipulation.Trivial.INSTANCE);
-        }
-        return optionalStackManipulation;
-    }
-
     public static TypeDescription getUpCastTypeForMathOp(TypeDescription... types) {
         final int length = types.length;
         if (length <= 1) {
@@ -161,5 +147,17 @@ public final class JavaClassCast {
             }
         }
         return returnType;
+    }
+
+    public static boolean upCast(
+            TypeDescription fromTypeDescription,
+            TypeDescription toTypeDescription,
+            Consumer<StackManipulation> stackManipulationConsumer) {
+        StackManipulation stackManipulation =
+                PrimitiveWideningDelegate.forPrimitive(fromTypeDescription).widenTo(toTypeDescription);
+        if (stackManipulation.isValid() && stackManipulation != StackManipulation.Trivial.INSTANCE) {
+            stackManipulationConsumer.accept(stackManipulation);
+        }
+        return false;
     }
 }

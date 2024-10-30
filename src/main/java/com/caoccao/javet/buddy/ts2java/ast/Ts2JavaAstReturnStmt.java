@@ -25,7 +25,6 @@ import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstReturnStmt;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
-import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.implementation.bytecode.member.MethodReturn;
 
 import java.util.Optional;
@@ -50,12 +49,10 @@ public final class Ts2JavaAstReturnStmt implements ITs2JavaAstStackManipulation<
         if (!optionalFromType.isPresent()) {
             throw new Ts2JavaAstException(ast, "ReturnStmt type is unknown");
         }
-        TypeDescription fromType = optionalFromType.get();
         TypeDescription returnType = functionContext.getReturnType();
-        JavaClassCast.getUpCastStackManipulation(fromType, returnType)
-                .ifPresent(functionContext::addStackManipulation);
-        StackManipulation stackManipulation = MethodReturn.of(returnType);
-        functionContext.addStackManipulation(stackManipulation);
+        optionalFromType.ifPresent((fromType) ->
+                JavaClassCast.upCast(fromType, returnType, functionContext::addStackManipulation));
+        functionContext.addStackManipulation(MethodReturn.of(returnType));
         return Optional.of(returnType);
     }
 }

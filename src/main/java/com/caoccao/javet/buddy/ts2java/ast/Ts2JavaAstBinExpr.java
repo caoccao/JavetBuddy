@@ -55,10 +55,9 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
         TypeDescription upCaseType = JavaClassCast.getUpCastTypeForMathOp(
                 localVariables.stream().map(JavaLocalVariable::getType).toArray(TypeDescription[]::new));
         localVariables.forEach(localVariable -> {
-            MethodVariableAccess methodVariableAccess = MethodVariableAccess.of(localVariable.getType());
-            functionContext.addStackManipulation(methodVariableAccess.loadFrom(localVariable.getOffset()));
-            JavaClassCast.getUpCastStackManipulation(localVariable.getType(), upCaseType)
-                    .ifPresent(functionContext::addStackManipulation);
+            functionContext.addStackManipulation(
+                    MethodVariableAccess.of(localVariable.getType()).loadFrom(localVariable.getOffset()));
+            JavaClassCast.upCast(localVariable.getType(), upCaseType, functionContext::addStackManipulation);
         });
         StackManipulation stackManipulation;
         switch (ast.getOp()) {
