@@ -18,15 +18,17 @@ package com.caoccao.javet.buddy.ts2java.compiler;
 
 import net.bytebuddy.description.type.TypeDescription;
 
-public final class JavaStackObject {
+import java.util.Objects;
+
+public final class JavaLocalVariable {
     private final String name;
     private final TypeDescription type;
     private int offset;
 
-    public JavaStackObject(String name, TypeDescription type) {
-        this.name = name;
-        this.offset = 0;
-        this.type = type;
+    public JavaLocalVariable(String name, TypeDescription type) {
+        this.name = Objects.requireNonNull(name);
+        this.type = Objects.requireNonNull(type);
+        offset = 0;
     }
 
     public String getName() {
@@ -41,8 +43,7 @@ public final class JavaStackObject {
         return type;
     }
 
-    public JavaStackObject setOffset(int offset) {
+    void setOffset(int offset) {
         this.offset = offset;
-        return this;
     }
 }

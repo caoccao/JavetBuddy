@@ -40,7 +40,7 @@ public final class JavaClassCast {
             return Addition.DOUBLE;
         }
         throw new Ts2JavaException(
-                SimpleFreeMarkerFormat.format("Unsupported type ${type} in addition",
+                SimpleFreeMarkerFormat.format("Unsupported type ${type} in addition.",
                         SimpleMap.of("type", type.getName())));
     }
 
@@ -55,7 +55,7 @@ public final class JavaClassCast {
             return Division.DOUBLE;
         }
         throw new Ts2JavaException(
-                SimpleFreeMarkerFormat.format("Unsupported type ${type} in division",
+                SimpleFreeMarkerFormat.format("Unsupported type ${type} in division.",
                         SimpleMap.of("type", type.getName())));
     }
 
@@ -70,7 +70,7 @@ public final class JavaClassCast {
             return Multiplication.DOUBLE;
         }
         throw new Ts2JavaException(
-                SimpleFreeMarkerFormat.format("Unsupported type ${type} in multiplication",
+                SimpleFreeMarkerFormat.format("Unsupported type ${type} in multiplication.",
                         SimpleMap.of("type", type.getName())));
     }
 
@@ -85,7 +85,7 @@ public final class JavaClassCast {
             return Remainder.DOUBLE;
         }
         throw new Ts2JavaException(
-                SimpleFreeMarkerFormat.format("Unsupported type ${type} in mod",
+                SimpleFreeMarkerFormat.format("Unsupported type ${type} in mod.",
                         SimpleMap.of("type", type.getName())));
     }
 
@@ -96,7 +96,7 @@ public final class JavaClassCast {
             return ShiftLeft.LONG;
         }
         throw new Ts2JavaException(
-                SimpleFreeMarkerFormat.format("Unsupported type ${type} in left shift",
+                SimpleFreeMarkerFormat.format("Unsupported type ${type} in left shift.",
                         SimpleMap.of("type", type.getName())));
     }
 
@@ -107,7 +107,7 @@ public final class JavaClassCast {
             return ShiftRight.LONG;
         }
         throw new Ts2JavaException(
-                SimpleFreeMarkerFormat.format("Unsupported type ${type} in right shift",
+                SimpleFreeMarkerFormat.format("Unsupported type ${type} in right shift.",
                         SimpleMap.of("type", type.getName())));
     }
 
@@ -122,7 +122,7 @@ public final class JavaClassCast {
             return Subtraction.DOUBLE;
         }
         throw new Ts2JavaException(
-                SimpleFreeMarkerFormat.format("Unsupported type ${type} in subtraction",
+                SimpleFreeMarkerFormat.format("Unsupported type ${type} in subtraction.",
                         SimpleMap.of("type", type.getName())));
     }
 
@@ -130,11 +130,14 @@ public final class JavaClassCast {
             TypeDescription fromTypeDescription,
             TypeDescription toTypeDescription
     ) {
+        Optional<StackManipulation> optionalStackManipulation = Optional.empty();
         if (fromTypeDescription.isPrimitive() && toTypeDescription.isPrimitive()) {
-            return Optional.of(PrimitiveWideningDelegate.forPrimitive(fromTypeDescription).widenTo(toTypeDescription))
-                    .filter(StackManipulation::isValid);
+            optionalStackManipulation = Optional.of(
+                            PrimitiveWideningDelegate.forPrimitive(fromTypeDescription).widenTo(toTypeDescription))
+                    .filter(StackManipulation::isValid)
+                    .filter(stackManipulation -> stackManipulation != StackManipulation.Trivial.INSTANCE);
         }
-        return Optional.empty();
+        return optionalStackManipulation;
     }
 
     public static TypeDescription getUpCastTypeForMathOp(TypeDescription... types) {

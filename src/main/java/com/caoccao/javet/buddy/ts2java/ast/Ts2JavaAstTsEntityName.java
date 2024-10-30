@@ -33,7 +33,7 @@ public final class Ts2JavaAstTsEntityName {
             default:
                 throw new Ts2JavaAstException(
                         ast,
-                        SimpleFreeMarkerFormat.format("TsEntityName type ${type} is not supported",
+                        SimpleFreeMarkerFormat.format("TsEntityName type ${type} is not supported.",
                                 SimpleMap.of("type", ast.getType().name())));
         }
     }

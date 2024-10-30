@@ -16,38 +16,37 @@
 
 package com.caoccao.javet.buddy.ts2java.compiler;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public final class JavaStackFrame {
     private final int index;
-    private final Map<String, JavaStackObject> objectMap;
-    private final List<JavaStackObject> objects;
+    private final Map<String, JavaLocalVariable> localVariableMap;
 
-    public JavaStackFrame(int index, List<JavaStackObject> objects) {
+    public JavaStackFrame(int index) {
         this.index = index;
-        this.objects = Objects.requireNonNull(objects);
-        objectMap = new HashMap<>();
-        syncObjectMap();
+        localVariableMap = new LinkedHashMap<>();
     }
 
     public int getIndex() {
         return index;
     }
 
-    public Map<String, JavaStackObject> getObjectMap() {
-        return objectMap;
+    public JavaLocalVariable getLocalVariable(String name) {
+        return localVariableMap.get(name);
     }
 
-    public List<JavaStackObject> getObjects() {
-        return objects;
+    public List<JavaLocalVariable> getLocalVariables() {
+        return new ArrayList<>(localVariableMap.values());
     }
 
-    public JavaStackFrame syncObjectMap() {
-        objectMap.clear();
-        objects.forEach(object -> objectMap.put(object.getName(), object));
-        return this;
+    public boolean hasLocalVariable(String name) {
+        return localVariableMap.containsKey(name);
+    }
+
+    public void putLocalVariable(JavaLocalVariable localVariable) {
+        localVariableMap.put(localVariable.getName(), localVariable);
     }
 }

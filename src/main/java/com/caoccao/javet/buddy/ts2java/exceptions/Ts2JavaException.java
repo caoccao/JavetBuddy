@@ -18,7 +18,7 @@ package com.caoccao.javet.buddy.ts2java.exceptions;
 
 public class Ts2JavaException extends RuntimeException {
     public Ts2JavaException(String message) {
-        super(message);
+        this(message, null);
     }
 
     public Ts2JavaException(String message, Throwable cause) {

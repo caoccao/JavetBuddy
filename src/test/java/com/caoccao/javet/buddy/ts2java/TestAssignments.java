@@ -16,7 +16,14 @@
 
 package com.caoccao.javet.buddy.ts2java;
 
+import com.caoccao.javet.swc4j.exceptions.Swc4jCoreException;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestAssignments extends BaseTestTs2Java {
     protected static Class<?> clazz = null;
@@ -52,48 +59,38 @@ public class TestAssignments extends BaseTestTs2Java {
     }
 
     protected void init() {
-    }
-
-    /*
-  public sum(I)I
-   L0
-    LINENUMBER 42 L0
-    ICONST_0
-    ISTORE 2
-   L1
-    LINENUMBER 43 L1
-    ICONST_0
-    ISTORE 3
-   L2
-   FRAME APPEND [I I]
-    ILOAD 3
-    ILOAD 1
-    IF_ICMPGE L3
-   L4
-    LINENUMBER 44 L4
-    ILOAD 2
-    ILOAD 3
-    IADD
-    ISTORE 2
-   L5
-    LINENUMBER 43 L5
-    IINC 3 1
-    GOTO L2
-   L3
-    LINENUMBER 46 L3
-   FRAME CHOP 1
-    ILOAD 2
-    IRETURN
-     */
-    public int sum(int a) {
-        int sum = 0;
-        for (int i = 0; i < a; i++) {
-            sum += i;
+        if (clazz == null) {
+            String tsCode = null;
+            try {
+                tsCode = getTsCode("test.assignments.ts");
+            } catch (IOException e) {
+                fail(e);
+            }
+            assertNotNull(tsCode);
+            Ts2Java ts2Java = new Ts2Java("com.test", tsCode);
+            try {
+                ts2Java.transpile();
+            } catch (Swc4jCoreException e) {
+                fail(e);
+            }
+            List<Class<?>> classes = ts2Java.getClasses();
+            assertEquals(1, classes.size());
+            clazz = classes.get(0);
+            assertEquals("Test", clazz.getSimpleName());
+            assertEquals("com.test.Test", clazz.getName());
         }
-        return sum;
     }
 
-    @Test
+//    @Test
     public void testAssignAndCast() throws Exception {
+        assertEquals(3L, assignAndCast(1, 2L));
+        Method method = clazz.getMethod("assignAndCast", int.class, long.class);
+        assertNotNull(method);
+        assertEquals(double.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(long.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertEquals(1 + 2L, method.invoke(object, 1, 2L));
     }
 }

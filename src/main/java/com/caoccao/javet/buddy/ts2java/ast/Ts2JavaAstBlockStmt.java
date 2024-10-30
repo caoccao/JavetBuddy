@@ -18,8 +18,10 @@ package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
+import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstStmt;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstBlockStmt;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstReturnStmt;
+import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstVarDecl;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
@@ -29,18 +31,22 @@ import java.util.Optional;
 public final class Ts2JavaAstBlockStmt implements ITs2JavaAstStackManipulation<Swc4jAstBlockStmt> {
     @Override
     public Optional<TypeDescription> manipulate(JavaFunctionContext functionContext, Swc4jAstBlockStmt ast) {
-        ast.getStmts().forEach(stmt -> {
+        Optional<TypeDescription> returnType = Optional.empty();
+        for (ISwc4jAstStmt stmt : ast.getStmts()) {
             switch (stmt.getType()) {
+                case VarDecl:
+                    returnType = new Ts2JavaAstVarDecl().manipulate(functionContext, stmt.as(Swc4jAstVarDecl.class));
+                    break;
                 case ReturnStmt:
-                    new Ts2JavaAstReturnStmt().manipulate(functionContext, stmt.as(Swc4jAstReturnStmt.class));
+                    returnType = new Ts2JavaAstReturnStmt().manipulate(functionContext, stmt.as(Swc4jAstReturnStmt.class));
                     break;
                 default:
                     throw new Ts2JavaAstException(
                             stmt,
-                            SimpleFreeMarkerFormat.format("BlockStmt type ${type} is not supported",
+                            SimpleFreeMarkerFormat.format("BlockStmt type ${type} is not supported.",
                                     SimpleMap.of("type", stmt.getType().name())));
             }
-        });
-        return Optional.empty();
+        }
+        return returnType;
     }
 }

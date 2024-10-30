@@ -17,8 +17,6 @@
 package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
-import com.caoccao.javet.buddy.ts2java.compiler.JavaStackFrame;
-import com.caoccao.javet.buddy.ts2java.compiler.JavaStackObject;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstFunction;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstAccessibility;
 import net.bytebuddy.description.modifier.Visibility;
@@ -27,10 +25,8 @@ import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public final class Ts2JavaAstClassFunction implements ITs2JavaAstTranspile<Swc4jAstFunction> {
     private final boolean _static;
@@ -63,20 +59,17 @@ public final class Ts2JavaAstClassFunction implements ITs2JavaAstTranspile<Swc4j
         final TypeDescription returnType = ast.getReturnType()
                 .map(Ts2JavaAstTsTypeAnn::getTypeDescription)
                 .orElse(TypeDescription.ForLoadedType.of(Object.class));
-        final List<JavaStackFrame> stackFrames = new ArrayList<>();
-        final List<JavaStackObject> stackObjects = ast.getParams().stream()
-                .map(Ts2JavaAstParam::getStackObject)
-                .collect(Collectors.toList());
-        final JavaStackFrame initialStackFrame = new JavaStackFrame(0, stackObjects);
-        stackFrames.add(initialStackFrame);
-        final JavaFunctionContext functionContext = new JavaFunctionContext(_static, stackFrames, returnType);
-        functionContext.syncOffset();
+        final JavaFunctionContext functionContext = new JavaFunctionContext(_static, returnType);
+        ast.getParams().stream()
+                .map(Ts2JavaAstParam::getLocalVariable)
+                .forEach(functionContext::addLocalVariable);
+        final List<TypeDescription> parameters = functionContext.getParameters();
+        functionContext.addStackFrame();
         ast.getBody().ifPresent(blockStmt -> new Ts2JavaAstBlockStmt().manipulate(functionContext, blockStmt));
-        final TypeDescription[] parameters = functionContext.getParameters();
         final StackManipulation[] stackManipulations =
                 functionContext.getStackManipulations().toArray(new StackManipulation[0]);
         builder = builder.defineMethod(name, returnType, visibility)
-                .withParameters(parameters)
+                .withParameters(parameters.toArray(new TypeDescription[0]))
                 .intercept(new Implementation.Simple(stackManipulations));
         return builder;
     }

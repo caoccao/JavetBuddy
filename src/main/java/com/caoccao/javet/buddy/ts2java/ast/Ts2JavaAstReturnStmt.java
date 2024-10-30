@@ -33,28 +33,29 @@ import java.util.Optional;
 public final class Ts2JavaAstReturnStmt implements ITs2JavaAstStackManipulation<Swc4jAstReturnStmt> {
     @Override
     public Optional<TypeDescription> manipulate(JavaFunctionContext functionContext, Swc4jAstReturnStmt ast) {
-        Optional<TypeDescription> fromType = Optional.empty();
+        Optional<TypeDescription> optionalFromType = Optional.empty();
         if (ast.getArg().isPresent()) {
             ISwc4jAstExpr arg = ast.getArg().get();
             switch (arg.getType()) {
                 case BinExpr:
-                    fromType = new Ts2JavaAstBinExpr().manipulate(functionContext, arg.as(Swc4jAstBinExpr.class));
+                    optionalFromType = new Ts2JavaAstBinExpr().manipulate(functionContext, arg.as(Swc4jAstBinExpr.class));
                     break;
                 default:
                     throw new Ts2JavaAstException(
                             arg,
-                            SimpleFreeMarkerFormat.format("ReturnStmt arg type ${argType} is not supported",
+                            SimpleFreeMarkerFormat.format("ReturnStmt arg type ${argType} is not supported.",
                                     SimpleMap.of("argType", arg.getType().name())));
             }
         }
-        if (!fromType.isPresent()) {
+        if (!optionalFromType.isPresent()) {
             throw new Ts2JavaAstException(ast, "ReturnStmt type is unknown");
         }
+        TypeDescription fromType = optionalFromType.get();
         TypeDescription returnType = functionContext.getReturnType();
-        JavaClassCast.getUpCastStackManipulation(fromType.get(), returnType)
-                .ifPresent(functionContext.getStackManipulations()::add);
+        JavaClassCast.getUpCastStackManipulation(fromType, returnType)
+                .ifPresent(functionContext::addStackManipulation);
         StackManipulation stackManipulation = MethodReturn.of(returnType);
-        functionContext.getStackManipulations().add(stackManipulation);
+        functionContext.addStackManipulation(stackManipulation);
         return Optional.of(returnType);
     }
 }

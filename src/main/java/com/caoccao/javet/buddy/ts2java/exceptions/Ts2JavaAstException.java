@@ -17,6 +17,8 @@
 package com.caoccao.javet.buddy.ts2java.exceptions;
 
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAst;
+import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
+import com.caoccao.javet.utils.SimpleMap;
 
 import java.util.Objects;
 
@@ -24,13 +26,20 @@ public class Ts2JavaAstException extends Ts2JavaException {
     protected ISwc4jAst ast;
 
     public Ts2JavaAstException(ISwc4jAst ast, String message) {
-        super(message);
-        this.ast = Objects.requireNonNull(ast);
+        this(ast, message, null);
     }
 
     public Ts2JavaAstException(ISwc4jAst ast, String message, Throwable cause) {
-        super(message, cause);
-        this.ast = Objects.requireNonNull(ast);
+        super(SimpleFreeMarkerFormat.format(
+                        "${message}\nLine: ${line}\nColumn: ${column}\nStart: ${start}\nEnd: ${end}",
+                        SimpleMap.of(
+                                "message", message,
+                                "line", Objects.requireNonNull(ast).getSpan().getLine(),
+                                "column", ast.getSpan().getColumn(),
+                                "start", ast.getSpan().getStart(),
+                                "end", ast.getSpan().getEnd())),
+                cause);
+        this.ast = ast;
     }
 
     public ISwc4jAst getAst() {

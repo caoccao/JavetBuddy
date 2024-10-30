@@ -38,13 +38,13 @@ public final class Ts2JavaAstClassMethod implements ITs2JavaAstTranspile<Swc4jAs
         if (ast.getKind() != Swc4jAstMethodKind.Method) {
             throw new Ts2JavaAstException(
                     ast,
-                    SimpleFreeMarkerFormat.format("ClassMethod kind ${kind} is not supported",
+                    SimpleFreeMarkerFormat.format("ClassMethod kind ${kind} is not supported.",
                             SimpleMap.of("kind", ast.getKind().name())));
         }
         if (!(ast.getKey() instanceof Swc4jAstIdentName)) {
             throw new Ts2JavaAstException(
                     ast,
-                    SimpleFreeMarkerFormat.format("ClassMethod key type ${keyType} is not supported",
+                    SimpleFreeMarkerFormat.format("ClassMethod key type ${keyType} is not supported.",
                             SimpleMap.of("keyType", ast.getKey().getClass().getSimpleName())));
 
         }

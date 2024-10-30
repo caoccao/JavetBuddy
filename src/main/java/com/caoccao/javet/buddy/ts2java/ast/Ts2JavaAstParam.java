@@ -16,7 +16,7 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
-import com.caoccao.javet.buddy.ts2java.compiler.JavaStackObject;
+import com.caoccao.javet.buddy.ts2java.compiler.JavaLocalVariable;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstParam;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstPat;
@@ -29,18 +29,18 @@ public final class Ts2JavaAstParam {
     private Ts2JavaAstParam() {
     }
 
-    public static JavaStackObject getStackObject(Swc4jAstParam ast) {
+    public static JavaLocalVariable getLocalVariable(Swc4jAstParam ast) {
         ISwc4jAstPat pat = ast.getPat();
         switch (pat.getType()) {
             case BindingIdent:
                 String ident = pat.as(Swc4jAstBindingIdent.class).getId().getSym();
                 TypeDescription typeDescription =
                         Ts2JavaAstBindingIdent.getTypeDescription(pat.as(Swc4jAstBindingIdent.class));
-                return new JavaStackObject(ident, typeDescription);
+                return new JavaLocalVariable(ident, typeDescription);
             default:
                 throw new Ts2JavaAstException(
                         pat,
-                        SimpleFreeMarkerFormat.format("Param pat type ${patType} is not supported",
+                        SimpleFreeMarkerFormat.format("Param pat type ${patType} is not supported.",
                                 SimpleMap.of("patType", pat.getType().name())));
         }
     }
