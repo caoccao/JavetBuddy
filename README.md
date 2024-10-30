@@ -47,6 +47,7 @@ implementation 'net.bytebuddy:byte-buddy:1.15.5'
 
 * [Access the Whole JVM](https://www.caoccao.com/Javet/tutorial/advanced/access_the_whole_jvm.html)
 * [Dynamic: Anonymous Object for Class](https://www.caoccao.com/Javet/reference/converters/proxy_converter.html#dynamic-anonymous-object-for-class)
+* [Development](docs/development.md)
 * [Release Notes](docs/release_notes.md)
 
 ## License
