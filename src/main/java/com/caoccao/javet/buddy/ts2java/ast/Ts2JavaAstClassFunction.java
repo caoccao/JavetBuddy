@@ -64,13 +64,16 @@ public final class Ts2JavaAstClassFunction implements ITs2JavaAstTranspile<Swc4j
                 .map(Ts2JavaAstParam::getLocalVariable)
                 .forEach(functionContext::addLocalVariable);
         final List<TypeDescription> parameters = functionContext.getParameters();
-        functionContext.addStackFrame();
+        final int initialOffset = functionContext.getMaxOffset();
+        functionContext.pushStackFrame();
         ast.getBody().ifPresent(blockStmt -> new Ts2JavaAstBlockStmt().manipulate(functionContext, blockStmt));
         final StackManipulation[] stackManipulations =
                 functionContext.getStackManipulations().toArray(new StackManipulation[0]);
         builder = builder.defineMethod(name, returnType, visibility)
                 .withParameters(parameters.toArray(new TypeDescription[0]))
-                .intercept(new Implementation.Simple(stackManipulations));
+                .intercept(Implementation.Simple.of(
+                        (implementationTarget, instrumentedMethod) -> new StackManipulation.Compound(stackManipulations),
+                        functionContext.getMaxOffset() - initialOffset));
         return builder;
     }
 }

@@ -51,6 +51,14 @@ public class TestAssignments extends BaseTestTs2Java {
     LADD
     L2D
     DRETURN
+   L3
+    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/TestAssignments; L0 L3 0
+    LOCALVARIABLE a I L0 L3 1
+    LOCALVARIABLE b J L0 L3 2
+    LOCALVARIABLE c J L1 L3 4
+    LOCALVARIABLE d J L2 L3 6
+    MAXSTACK = 4
+    MAXLOCALS = 8
      */
     public double assignAndCast(int a, long b) {
         long c = a;
@@ -81,7 +89,7 @@ public class TestAssignments extends BaseTestTs2Java {
         }
     }
 
-//    @Test
+    @Test
     public void testAssignAndCast() throws Exception {
         assertEquals(3L, assignAndCast(1, 2L));
         Method method = clazz.getMethod("assignAndCast", int.class, long.class);
@@ -91,6 +99,6 @@ public class TestAssignments extends BaseTestTs2Java {
         assertEquals(int.class, method.getParameters()[0].getType());
         assertEquals(long.class, method.getParameters()[1].getType());
         Object object = clazz.getConstructor().newInstance();
-        assertEquals(1 + 2L, method.invoke(object, 1, 2L));
+        assertEquals(3.0D, (double) method.invoke(object, 1, 2L), 0.001D);
     }
 }
