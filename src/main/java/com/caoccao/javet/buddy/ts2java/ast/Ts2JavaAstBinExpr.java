@@ -47,25 +47,35 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
         StackManipulation stackManipulation;
         switch (ast.getOp()) {
             case Add:
-                stackManipulation = JavaClassCast.getAddition(upCaseType);
+                stackManipulation = Ts2JavaAstBinaryOp.getAddition(upCaseType);
                 break;
             case Div:
-                stackManipulation = JavaClassCast.getDivision(upCaseType);
+                stackManipulation = Ts2JavaAstBinaryOp.getDivision(upCaseType);
                 break;
             case LShift:
-                stackManipulation = JavaClassCast.getShiftLeft(upCaseType);
+                stackManipulation = Ts2JavaAstBinaryOp.getShiftLeft(upCaseType);
                 break;
             case Mod:
-                stackManipulation = JavaClassCast.getRemainder(upCaseType);
+                stackManipulation = Ts2JavaAstBinaryOp.getRemainder(upCaseType);
                 break;
             case Mul:
-                stackManipulation = JavaClassCast.getMultiplication(upCaseType);
+                stackManipulation = Ts2JavaAstBinaryOp.getMultiplication(upCaseType);
                 break;
             case RShift:
-                stackManipulation = JavaClassCast.getShiftRight(upCaseType);
+                stackManipulation = Ts2JavaAstBinaryOp.getShiftRight(upCaseType);
                 break;
             case Sub:
-                stackManipulation = JavaClassCast.getSubtraction(upCaseType);
+                stackManipulation = Ts2JavaAstBinaryOp.getSubtraction(upCaseType);
+                break;
+            case Gt:
+            case GtEq:
+            case Lt:
+            case LtEq:
+            case EqEq:
+            case EqEqEq:
+            case NotEq:
+            case NotEqEq:
+                stackManipulation = Ts2JavaAstBinaryOp.getLogicalStackManipulation(ast.getOp(), upCaseType);
                 break;
             default:
                 throw new Ts2JavaAstException(

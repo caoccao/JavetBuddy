@@ -1,0 +1,98 @@
+/*
+ * Copyright (c) 2024. caoccao.com Sam Cao
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.caoccao.javet.buddy.ts2java;
+
+import com.caoccao.javet.swc4j.exceptions.Swc4jCoreException;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+public class TestLogicalOperations extends BaseTestTs2Java {
+    protected static Class<?> clazz = null;
+
+    public TestLogicalOperations() {
+        super();
+        init();
+    }
+
+    protected void init() {
+        if (clazz == null) {
+            String tsCode = null;
+            try {
+                tsCode = getTsCode("test.logical.operations.ts");
+            } catch (IOException e) {
+                fail(e);
+            }
+            assertNotNull(tsCode);
+            Ts2Java ts2Java = new Ts2Java("com.test", tsCode);
+            try {
+                ts2Java.transpile();
+            } catch (Swc4jCoreException e) {
+                fail(e);
+            }
+            List<Class<?>> classes = ts2Java.getClasses();
+            assertEquals(1, classes.size());
+            clazz = classes.get(0);
+            assertEquals("Test", clazz.getSimpleName());
+            assertEquals("com.test.Test", clazz.getName());
+        }
+    }
+
+    /*
+  public logicalGT_II_Z(II)Z
+   L0
+    LINENUMBER 69 L0
+    ILOAD 1
+    ILOAD 2
+    IF_ICMPLE L1
+    ICONST_1
+    GOTO L2
+   L1
+   FRAME SAME
+    ICONST_0
+   L2
+   FRAME SAME1 I
+    IRETURN
+   L3
+    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/TestLogicalOperations; L0 L3 0
+    LOCALVARIABLE a I L0 L3 1
+    LOCALVARIABLE b I L0 L3 2
+    MAXSTACK = 2
+    MAXLOCALS = 3
+     */
+    public boolean logicalGT_II_Z(int a, int b) {
+        return a > b;
+    }
+
+    @Test
+    public void testLogicalGT_II_Z() throws Exception {
+        assertFalse(logicalGT_II_Z(1, 2));
+        Method method = clazz.getMethod("logicalGT_II_Z", int.class, int.class);
+        assertNotNull(method);
+        assertEquals(boolean.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(int.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertFalse((boolean) method.invoke(object, 1, 2));
+        assertTrue((boolean) method.invoke(object, 2, 1));
+    }
+}

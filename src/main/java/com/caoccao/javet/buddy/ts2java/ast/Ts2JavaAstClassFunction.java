@@ -58,7 +58,7 @@ public final class Ts2JavaAstClassFunction implements ITs2JavaAstTranspile<Swc4j
         final Visibility visibility = Ts2JavaAstAccessibility.getVisibility(accessibility);
         final TypeDescription returnType = ast.getReturnType()
                 .map(Ts2JavaAstTsTypeAnn::getTypeDescription)
-                .orElse(TypeDescription.ForLoadedType.of(Object.class));
+                .orElse(TypeDescription.ForLoadedType.of(void.class));
         final JavaFunctionContext functionContext = new JavaFunctionContext(_static, returnType);
         ast.getParams().stream()
                 .map(Ts2JavaAstParam::getLocalVariable)

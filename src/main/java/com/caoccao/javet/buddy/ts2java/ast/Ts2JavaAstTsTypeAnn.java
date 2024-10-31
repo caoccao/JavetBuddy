@@ -16,18 +16,23 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
+import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstTsEntityName;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstTsType;
+import com.caoccao.javet.swc4j.ast.ts.Swc4jAstTsKeywordType;
 import com.caoccao.javet.swc4j.ast.ts.Swc4jAstTsTypeAnn;
 import com.caoccao.javet.swc4j.ast.ts.Swc4jAstTsTypeRef;
+import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
 
 import java.util.Map;
 
 public final class Ts2JavaAstTsTypeAnn {
-    private static final Map<String, TypeDescription> TYPE_MAP = SimpleMap.of(
+    private static final Map<String, TypeDescription> TS_KEYWORD_TYPE_MAP = SimpleMap.of(
             "boolean", TypeDescription.ForLoadedType.of(boolean.class),
+            "string", TypeDescription.ForLoadedType.of(String.class));
+    private static final Map<String, TypeDescription> TS_TYPE_REF_MAP = SimpleMap.of(
             "byte", TypeDescription.ForLoadedType.of(byte.class),
             "char", TypeDescription.ForLoadedType.of(char.class),
             "double", TypeDescription.ForLoadedType.of(double.class),
@@ -41,14 +46,27 @@ public final class Ts2JavaAstTsTypeAnn {
     }
 
     public static TypeDescription getTypeDescription(Swc4jAstTsTypeAnn ast) {
+        TypeDescription type = null;
         ISwc4jAstTsType tsType = ast.getTypeAnn();
         switch (tsType.getType()) {
+            case TsKeywordType:
+                Swc4jAstTsKeywordType tsKeywordType = tsType.as(Swc4jAstTsKeywordType.class);
+                type = TS_KEYWORD_TYPE_MAP.get(tsKeywordType.getKind().getName());
+                break;
             case TsTypeRef:
                 Swc4jAstTsTypeRef tsTypeRef = tsType.as(Swc4jAstTsTypeRef.class);
                 ISwc4jAstTsEntityName tsEntityName = tsTypeRef.getTypeName();
-                return TYPE_MAP.get(Ts2JavaAstTsEntityName.getName(tsEntityName));
+                type = TS_TYPE_REF_MAP.get(Ts2JavaAstTsEntityName.getName(tsEntityName));
+                break;
             default:
-                return TypeDescription.ForLoadedType.of(Object.class);
+                break;
         }
+        if (type == null) {
+            throw new Ts2JavaAstException(
+                    ast,
+                    SimpleFreeMarkerFormat.format("Unsupported ts type ann ${typeAnn}.",
+                            SimpleMap.of("typeAnn", tsType.getType().name())));
+        }
+        return type;
     }
 }
