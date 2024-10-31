@@ -32,10 +32,6 @@ import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
-import net.bytebuddy.implementation.bytecode.constant.DoubleConstant;
-import net.bytebuddy.implementation.bytecode.constant.FloatConstant;
-import net.bytebuddy.implementation.bytecode.constant.IntegerConstant;
-import net.bytebuddy.implementation.bytecode.constant.LongConstant;
 import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 
 public final class Ts2JavaAstVarDecl implements ITs2JavaAstStackManipulation<Swc4jAstVarDecl> {
@@ -55,23 +51,8 @@ public final class Ts2JavaAstVarDecl implements ITs2JavaAstStackManipulation<Swc
                             ISwc4jAstExpr expression = varDeclarator.getInit().get();
                             switch (expression.getType()) {
                                 case Number: {
-                                    Swc4jAstNumber value = expression.as(Swc4jAstNumber.class);
-                                    StackManipulation stackManipulation;
-                                    if (variableType.represents(int.class)) {
-                                        stackManipulation = IntegerConstant.forValue(value.asInt());
-                                    } else if (variableType.represents(long.class)) {
-                                        stackManipulation = LongConstant.forValue(value.asLong());
-                                    } else if (variableType.represents(float.class)) {
-                                        stackManipulation = FloatConstant.forValue(value.asFloat());
-                                    } else if (variableType.represents(double.class)) {
-                                        stackManipulation = DoubleConstant.forValue(value.asDouble());
-                                    } else {
-                                        throw new Ts2JavaAstException(
-                                                expression,
-                                                SimpleFreeMarkerFormat.format("VarDecl init type ${type} is not supported.",
-                                                        SimpleMap.of("type", expression.getType().name())));
-                                    }
-                                    functionContext.getStackManipulations().add(stackManipulation);
+                                    new Ts2JavaAstNumber(variableType)
+                                            .manipulate(functionContext, expression.as(Swc4jAstNumber.class));
                                     break;
                                 }
                                 case Ident: {
