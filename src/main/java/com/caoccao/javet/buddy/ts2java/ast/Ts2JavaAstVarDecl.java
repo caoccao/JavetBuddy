@@ -21,6 +21,7 @@ import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLocalVariable;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
+import com.caoccao.javet.swc4j.ast.expr.lit.Swc4jAstNumber;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstPat;
 import com.caoccao.javet.swc4j.ast.pat.Swc4jAstBindingIdent;
@@ -31,6 +32,10 @@ import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
+import net.bytebuddy.implementation.bytecode.constant.DoubleConstant;
+import net.bytebuddy.implementation.bytecode.constant.FloatConstant;
+import net.bytebuddy.implementation.bytecode.constant.IntegerConstant;
+import net.bytebuddy.implementation.bytecode.constant.LongConstant;
 import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 
 import java.util.Optional;
@@ -39,46 +44,65 @@ public final class Ts2JavaAstVarDecl implements ITs2JavaAstStackManipulation<Swc
     @Override
     public Optional<TypeDescription> manipulate(JavaFunctionContext functionContext, Swc4jAstVarDecl ast) {
         for (Swc4jAstVarDeclarator varDeclarator : ast.getDecls()) {
-            Optional<TypeDescription> optionalFromType = Optional.empty();
-            if (varDeclarator.getInit().isPresent()) {
-                ISwc4jAstExpr expression = varDeclarator.getInit().get();
-                switch (expression.getType()) {
-                    case Ident: {
-                        String name = expression.as(Swc4jAstIdent.class).getSym();
-                        JavaLocalVariable localVariable = functionContext.getLocalVariable(name);
-                        MethodVariableAccess methodVariableAccess = MethodVariableAccess.of(localVariable.getType());
-                        StackManipulation stackManipulation = methodVariableAccess.loadFrom(localVariable.getOffset());
-                        functionContext.addStackManipulation(stackManipulation);
-                        optionalFromType = Optional.of(localVariable.getType());
-                        break;
-                    }
-                    default:
-                        throw new Ts2JavaAstException(
-                                expression,
-                                SimpleFreeMarkerFormat.format("VarDecl init type ${type} is not supported.",
-                                        SimpleMap.of("type", expression.getType().name())));
-                }
-            }
             ISwc4jAstPat pat = varDeclarator.getName();
             switch (pat.getType()) {
                 case BindingIdent: {
                     Swc4jAstBindingIdent bindingIdent = pat.as(Swc4jAstBindingIdent.class);
-                    String name = bindingIdent.getId().getSym();
+                    String variableName = bindingIdent.getId().getSym();
                     if (bindingIdent.getTypeAnn().isPresent()) {
                         Swc4jAstTsTypeAnn tsTypeAnn = bindingIdent.getTypeAnn().get();
-                        TypeDescription toType = Ts2JavaAstTsTypeAnn.getTypeDescription(tsTypeAnn);
-                        optionalFromType.ifPresent(fromType ->
-                                JavaClassCast.upCast(fromType, toType, functionContext::addStackManipulation));
-                        JavaLocalVariable localVariable = new JavaLocalVariable(name, toType);
-                        MethodVariableAccess methodVariableAccess = MethodVariableAccess.of(toType);
+                        TypeDescription variableType = Ts2JavaAstTsTypeAnn.getTypeDescription(tsTypeAnn);
+                        if (varDeclarator.getInit().isPresent()) {
+                            ISwc4jAstExpr expression = varDeclarator.getInit().get();
+                            switch (expression.getType()) {
+                                case Number: {
+                                    Swc4jAstNumber value = expression.as(Swc4jAstNumber.class);
+                                    StackManipulation stackManipulation;
+                                    if (variableType.represents(int.class)) {
+                                        stackManipulation = IntegerConstant.forValue(value.asInt());
+                                    } else if (variableType.represents(long.class)) {
+                                        stackManipulation = LongConstant.forValue(value.asLong());
+                                    } else if (variableType.represents(float.class)) {
+                                        stackManipulation = FloatConstant.forValue(value.asFloat());
+                                    } else if (variableType.represents(double.class)) {
+                                        stackManipulation = DoubleConstant.forValue(value.asDouble());
+                                    } else {
+                                        throw new Ts2JavaAstException(
+                                                expression,
+                                                SimpleFreeMarkerFormat.format("VarDecl init type ${type} is not supported.",
+                                                        SimpleMap.of("type", expression.getType().name())));
+                                    }
+                                    functionContext.getStackManipulations().add(stackManipulation);
+                                    break;
+                                }
+                                case Ident: {
+                                    String valueName = expression.as(Swc4jAstIdent.class).getSym();
+                                    JavaLocalVariable localVariable = functionContext.getLocalVariable(valueName);
+                                    MethodVariableAccess methodVariableAccess = MethodVariableAccess.of(localVariable.getType());
+                                    StackManipulation stackManipulation = methodVariableAccess.loadFrom(localVariable.getOffset());
+                                    functionContext.getStackManipulations().add(stackManipulation);
+                                    TypeDescription valueType = localVariable.getType();
+                                    JavaClassCast.getUpCastStackManipulation(valueType, variableType)
+                                            .ifPresent(functionContext.getStackManipulations()::add);
+                                    break;
+                                }
+                                default:
+                                    throw new Ts2JavaAstException(
+                                            expression,
+                                            SimpleFreeMarkerFormat.format("VarDecl init type ${type} is not supported.",
+                                                    SimpleMap.of("type", expression.getType().name())));
+                            }
+                        }
+                        JavaLocalVariable localVariable = new JavaLocalVariable(variableName, variableType);
+                        MethodVariableAccess methodVariableAccess = MethodVariableAccess.of(variableType);
                         StackManipulation stackManipulation = methodVariableAccess.storeAt(functionContext.getNextOffset());
-                        functionContext.addStackManipulation(stackManipulation);
+                        functionContext.getStackManipulations().add(stackManipulation);
                         functionContext.addLocalVariable(localVariable);
                     } else {
                         throw new Ts2JavaAstException(
                                 bindingIdent,
                                 SimpleFreeMarkerFormat.format("VarDecl name ${name} type annotation is missing.",
-                                        SimpleMap.of("name", name)));
+                                        SimpleMap.of("name", variableName)));
                     }
                     break;
                 }

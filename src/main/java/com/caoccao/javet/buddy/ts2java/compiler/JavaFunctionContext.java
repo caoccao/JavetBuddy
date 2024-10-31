@@ -56,10 +56,6 @@ public final class JavaFunctionContext {
         }
     }
 
-    public void addStackManipulation(StackManipulation stackManipulation) {
-        stackManipulations.add(stackManipulation);
-    }
-
     public JavaLocalVariable getLocalVariable(String name) {
         for (int lexicalScopeIndex = lexicalScopes.size() - 1; lexicalScopeIndex >= 0; lexicalScopeIndex--) {
             JavaLexicalScope lexicalScope = lexicalScopes.get(lexicalScopeIndex);
@@ -93,7 +89,7 @@ public final class JavaFunctionContext {
     }
 
     public List<StackManipulation> getStackManipulations() {
-        return new ArrayList<>(stackManipulations);
+        return stackManipulations;
     }
 
     public boolean isStatic() {

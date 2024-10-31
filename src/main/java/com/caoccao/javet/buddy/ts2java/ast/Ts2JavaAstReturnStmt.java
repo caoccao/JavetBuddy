@@ -50,9 +50,10 @@ public final class Ts2JavaAstReturnStmt implements ITs2JavaAstStackManipulation<
             throw new Ts2JavaAstException(ast, "ReturnStmt type is unknown");
         }
         TypeDescription returnType = functionContext.getReturnType();
-        optionalFromType.ifPresent((fromType) ->
-                JavaClassCast.upCast(fromType, returnType, functionContext::addStackManipulation));
-        functionContext.addStackManipulation(MethodReturn.of(returnType));
+        optionalFromType
+                .flatMap(fromType -> JavaClassCast.getUpCastStackManipulation(fromType, returnType))
+                .ifPresent(functionContext.getStackManipulations()::add);
+        functionContext.getStackManipulations().add(MethodReturn.of(returnType));
         return Optional.of(returnType);
     }
 }

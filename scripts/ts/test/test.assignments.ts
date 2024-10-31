@@ -14,7 +14,14 @@ class Test {
     let d: long = b;
     return c + d;
   }
+
+  public assignConst(a: int, b: long): long {
+    const c: int = 100;
+    const d: long = 2;
+    return a + b + c + d;
+  }
 }
 
 // console.log(new Test().sum(10));
 console.log(new Test().assignAndCast(1, 2));
+console.log(new Test().assignConst(1, 2));

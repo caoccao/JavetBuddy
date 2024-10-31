@@ -23,7 +23,7 @@ import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.bytecode.*;
 import net.bytebuddy.implementation.bytecode.assign.primitive.PrimitiveWideningDelegate;
 
-import java.util.function.Consumer;
+import java.util.Optional;
 
 public final class JavaClassCast {
     private JavaClassCast() {
@@ -126,6 +126,18 @@ public final class JavaClassCast {
                         SimpleMap.of("type", type.getName())));
     }
 
+    public static Optional<StackManipulation> getUpCastStackManipulation(
+            TypeDescription fromType,
+            TypeDescription toType) {
+        if (fromType.isPrimitive() && toType.isPrimitive()) {
+            StackManipulation stackManipulation = PrimitiveWideningDelegate.forPrimitive(fromType).widenTo(toType);
+            if (stackManipulation.isValid() && stackManipulation != StackManipulation.Trivial.INSTANCE) {
+                return Optional.of(stackManipulation);
+            }
+        }
+        return Optional.empty();
+    }
+
     public static TypeDescription getUpCastTypeForMathOp(TypeDescription... types) {
         final int length = types.length;
         if (length <= 1) {
@@ -148,19 +160,5 @@ public final class JavaClassCast {
             }
         }
         return returnType;
-    }
-
-    public static boolean upCast(
-            TypeDescription fromType,
-            TypeDescription toType,
-            Consumer<StackManipulation> stackManipulationConsumer) {
-        if (fromType.isPrimitive() && toType.isPrimitive()) {
-            StackManipulation stackManipulation = PrimitiveWideningDelegate.forPrimitive(fromType).widenTo(toType);
-            if (stackManipulation.isValid() && stackManipulation != StackManipulation.Trivial.INSTANCE) {
-                stackManipulationConsumer.accept(stackManipulation);
-                return true;
-            }
-        }
-        return false;
     }
 }

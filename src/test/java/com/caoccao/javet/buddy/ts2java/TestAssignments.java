@@ -66,6 +66,43 @@ public class TestAssignments extends BaseTestTs2Java {
         return c + d;
     }
 
+    /*
+  public assignConst(IJ)J
+   L0
+    LINENUMBER 97 L0
+    BIPUSH 100
+    ISTORE 4
+   L1
+    LINENUMBER 98 L1
+    LDC 2
+    LSTORE 5
+   L2
+    LINENUMBER 99 L2
+    ILOAD 1
+    I2L
+    LLOAD 2
+    LADD
+    ILOAD 4
+    I2L
+    LADD
+    LLOAD 5
+    LADD
+    LRETURN
+   L3
+    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/TestAssignments; L0 L3 0
+    LOCALVARIABLE a I L0 L3 1
+    LOCALVARIABLE b J L0 L3 2
+    LOCALVARIABLE c I L1 L3 4
+    LOCALVARIABLE d J L2 L3 5
+    MAXSTACK = 4
+    MAXLOCALS = 7
+     */
+    public long assignConst(int a, long b) {
+        int c = 100;
+        long d = 2;
+        return a + b + c + d;
+    }
+
     protected void init() {
         if (clazz == null) {
             String tsCode = null;
@@ -100,5 +137,18 @@ public class TestAssignments extends BaseTestTs2Java {
         assertEquals(long.class, method.getParameters()[1].getType());
         Object object = clazz.getConstructor().newInstance();
         assertEquals(3.0D, (double) method.invoke(object, 1, 2L), 0.001D);
+    }
+
+    @Test
+    public void testAssignConst() throws Exception {
+        assertEquals(105L, assignConst(1, 2L));
+        Method method = clazz.getMethod("assignConst", int.class, long.class);
+        assertNotNull(method);
+        assertEquals(long.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(long.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertEquals(105L, method.invoke(object, 1, 2L));
     }
 }
