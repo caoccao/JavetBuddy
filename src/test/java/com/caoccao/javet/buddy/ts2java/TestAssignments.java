@@ -91,7 +91,7 @@ public class TestAssignments extends BaseTestTs2Java {
 
     @Test
     public void testAssignAndCast() throws Exception {
-        assertEquals(3L, assignAndCast(1, 2L));
+        assertEquals(3.0D, assignAndCast(1, 2L), 0.001D);
         Method method = clazz.getMethod("assignAndCast", int.class, long.class);
         assertNotNull(method);
         assertEquals(double.class, method.getReturnType());

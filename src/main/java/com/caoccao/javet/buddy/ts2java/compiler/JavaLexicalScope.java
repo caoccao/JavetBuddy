@@ -21,11 +21,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class JavaStackFrame {
+public final class JavaLexicalScope {
     private final int index;
     private final Map<String, JavaLocalVariable> localVariableMap;
 
-    public JavaStackFrame(int index) {
+    public JavaLexicalScope(int index) {
         this.index = index;
         localVariableMap = new LinkedHashMap<>();
     }

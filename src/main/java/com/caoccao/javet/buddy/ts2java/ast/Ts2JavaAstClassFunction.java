@@ -21,11 +21,11 @@ import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstFunction;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstAccessibility;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.description.type.TypeDescription;
+import net.bytebuddy.description.type.TypeList;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 
-import java.util.List;
 import java.util.Objects;
 
 public final class Ts2JavaAstClassFunction implements ITs2JavaAstTranspile<Swc4jAstFunction> {
@@ -63,9 +63,9 @@ public final class Ts2JavaAstClassFunction implements ITs2JavaAstTranspile<Swc4j
         ast.getParams().stream()
                 .map(Ts2JavaAstParam::getLocalVariable)
                 .forEach(functionContext::addLocalVariable);
-        final List<TypeDescription> parameters = functionContext.getParameters();
+        final TypeList parameters = functionContext.getParameters();
         final int initialOffset = functionContext.getMaxOffset();
-        functionContext.pushStackFrame();
+        functionContext.pushLexicalScope();
         ast.getBody().ifPresent(blockStmt -> new Ts2JavaAstBlockStmt().manipulate(functionContext, blockStmt));
         final StackManipulation[] stackManipulations =
                 functionContext.getStackManipulations().toArray(new StackManipulation[0]);

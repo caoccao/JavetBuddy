@@ -21,6 +21,7 @@ import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleList;
 import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
+import net.bytebuddy.description.type.TypeList;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 
 import java.util.ArrayList;
@@ -30,8 +31,8 @@ import java.util.stream.Collectors;
 
 public final class JavaFunctionContext {
     private final boolean _static;
+    private final List<JavaLexicalScope> lexicalScopes;
     private final TypeDescription returnType;
-    private final List<JavaStackFrame> stackFrames;
     private final List<StackManipulation> stackManipulations;
     private int maxOffset;
     private int nextOffset;
@@ -40,14 +41,14 @@ public final class JavaFunctionContext {
         this._static = _static;
         nextOffset = _static ? 0 : 1;
         maxOffset = nextOffset;
-        this.stackFrames = SimpleList.of(new JavaStackFrame(0));
+        this.lexicalScopes = SimpleList.of(new JavaLexicalScope(0));
         this.returnType = Objects.requireNonNull(returnType);
         this.stackManipulations = new ArrayList<>();
     }
 
     public void addLocalVariable(JavaLocalVariable localVariable) {
-        JavaStackFrame stackFrame = stackFrames.get(stackFrames.size() - 1);
-        stackFrame.putLocalVariable(localVariable);
+        JavaLexicalScope lexicalScope = lexicalScopes.get(lexicalScopes.size() - 1);
+        lexicalScope.putLocalVariable(localVariable);
         localVariable.setOffset(nextOffset);
         nextOffset += localVariable.getType().getStackSize().getSize();
         if (nextOffset > maxOffset) {
@@ -60,9 +61,9 @@ public final class JavaFunctionContext {
     }
 
     public JavaLocalVariable getLocalVariable(String name) {
-        for (int stackFrameIndex = stackFrames.size() - 1; stackFrameIndex >= 0; stackFrameIndex--) {
-            JavaStackFrame stackFrame = stackFrames.get(stackFrameIndex);
-            JavaLocalVariable localVariable = stackFrame.getLocalVariable(name);
+        for (int lexicalScopeIndex = lexicalScopes.size() - 1; lexicalScopeIndex >= 0; lexicalScopeIndex--) {
+            JavaLexicalScope lexicalScope = lexicalScopes.get(lexicalScopeIndex);
+            JavaLocalVariable localVariable = lexicalScope.getLocalVariable(name);
             if (localVariable != null) {
                 return localVariable;
             }
@@ -80,10 +81,11 @@ public final class JavaFunctionContext {
         return nextOffset;
     }
 
-    public List<TypeDescription> getParameters() {
-        return stackFrames.get(0).getLocalVariables().stream()
-                .map(JavaLocalVariable::getType)
-                .collect(Collectors.toList());
+    public TypeList getParameters() {
+        return new TypeList.Explicit(
+                lexicalScopes.get(0).getLocalVariables().stream()
+                        .map(JavaLocalVariable::getType)
+                        .collect(Collectors.toList()));
     }
 
     public TypeDescription getReturnType() {
@@ -98,14 +100,14 @@ public final class JavaFunctionContext {
         return _static;
     }
 
-    public void popStackFrame() {
-        JavaStackFrame stackFrame = stackFrames.remove(stackFrames.size() - 1);
-        nextOffset -= stackFrame.getLocalVariables().stream()
+    public void popLexicalScope() {
+        JavaLexicalScope lexicalScope = lexicalScopes.remove(lexicalScopes.size() - 1);
+        nextOffset -= lexicalScope.getLocalVariables().stream()
                 .mapToInt(v -> v.getType().getStackSize().getSize())
                 .sum();
     }
 
-    public void pushStackFrame() {
-        stackFrames.add(new JavaStackFrame(stackFrames.size()));
+    public void pushLexicalScope() {
+        lexicalScopes.add(new JavaLexicalScope(lexicalScopes.size()));
     }
 }
