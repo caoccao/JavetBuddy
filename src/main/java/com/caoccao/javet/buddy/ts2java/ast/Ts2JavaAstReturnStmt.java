@@ -27,17 +27,16 @@ import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.bytecode.member.MethodReturn;
 
-import java.util.Optional;
-
 public final class Ts2JavaAstReturnStmt implements ITs2JavaAstStackManipulation<Swc4jAstReturnStmt> {
     @Override
-    public Optional<TypeDescription> manipulate(JavaFunctionContext functionContext, Swc4jAstReturnStmt ast) {
-        Optional<TypeDescription> optionalFromType = Optional.empty();
+    public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstReturnStmt ast) {
+        TypeDescription returnType = TypeDescription.ForLoadedType.of(void.class);
         if (ast.getArg().isPresent()) {
+            TypeDescription fromType;
             ISwc4jAstExpr arg = ast.getArg().get();
             switch (arg.getType()) {
                 case BinExpr:
-                    optionalFromType = new Ts2JavaAstBinExpr().manipulate(functionContext, arg.as(Swc4jAstBinExpr.class));
+                    fromType = new Ts2JavaAstBinExpr().manipulate(functionContext, arg.as(Swc4jAstBinExpr.class));
                     break;
                 default:
                     throw new Ts2JavaAstException(
@@ -45,15 +44,11 @@ public final class Ts2JavaAstReturnStmt implements ITs2JavaAstStackManipulation<
                             SimpleFreeMarkerFormat.format("ReturnStmt arg type ${argType} is not supported.",
                                     SimpleMap.of("argType", arg.getType().name())));
             }
+            returnType = functionContext.getReturnType();
+            JavaClassCast.getUpCastStackManipulation(fromType, returnType)
+                    .ifPresent(functionContext.getStackManipulations()::add);
+            functionContext.getStackManipulations().add(MethodReturn.of(returnType));
         }
-        if (!optionalFromType.isPresent()) {
-            throw new Ts2JavaAstException(ast, "ReturnStmt type is unknown");
-        }
-        TypeDescription returnType = functionContext.getReturnType();
-        optionalFromType
-                .flatMap(fromType -> JavaClassCast.getUpCastStackManipulation(fromType, returnType))
-                .ifPresent(functionContext.getStackManipulations()::add);
-        functionContext.getStackManipulations().add(MethodReturn.of(returnType));
-        return Optional.of(returnType);
+        return returnType;
     }
 }

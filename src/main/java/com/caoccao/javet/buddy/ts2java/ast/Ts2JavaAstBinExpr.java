@@ -29,21 +29,21 @@ import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 
-import java.util.Optional;
+import java.util.List;
 
 public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc4jAstBinExpr> {
     @Override
-    public Optional<TypeDescription> manipulate(JavaFunctionContext functionContext, Swc4jAstBinExpr ast) {
+    public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstBinExpr ast) {
+        final List<StackManipulation> stackManipulations = functionContext.getStackManipulations();
         final TypeDescription leftType = manipulateExpression(functionContext, ast.getLeft());
-        final int stackManipulationSize = functionContext.getStackManipulations().size();
+        final int stackManipulationSize = stackManipulations.size();
         final TypeDescription rightType = manipulateExpression(functionContext, ast.getRight());
         TypeDescription upCaseType = JavaClassCast.getUpCastTypeForMathOp(leftType, rightType);
-        // Insert the type cast.
+        // Insert the type cast for left expression if possible.
         JavaClassCast.getUpCastStackManipulation(leftType, upCaseType)
-                .ifPresent(stackManipulation ->
-                        functionContext.getStackManipulations().add(stackManipulationSize, stackManipulation));
-        JavaClassCast.getUpCastStackManipulation(rightType, upCaseType)
-                .ifPresent(functionContext.getStackManipulations()::add);
+                .ifPresent(stackManipulation -> stackManipulations.add(stackManipulationSize, stackManipulation));
+        // Add the type cast for right expression if possible.
+        JavaClassCast.getUpCastStackManipulation(rightType, upCaseType).ifPresent(stackManipulations::add);
         StackManipulation stackManipulation;
         switch (ast.getOp()) {
             case Add:
@@ -73,23 +73,14 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
                         SimpleFreeMarkerFormat.format("BinExpr op ${op} is not supported.",
                                 SimpleMap.of("op", ast.getOp().name())));
         }
-        functionContext.getStackManipulations().add(stackManipulation);
-        return Optional.of(upCaseType);
+        stackManipulations.add(stackManipulation);
+        return upCaseType;
     }
 
     private TypeDescription manipulateExpression(JavaFunctionContext functionContext, ISwc4jAstExpr expression) {
         switch (expression.getType()) {
             case BinExpr:
-                Optional<TypeDescription> optionalType =
-                        new Ts2JavaAstBinExpr().manipulate(functionContext, expression.as(Swc4jAstBinExpr.class));
-                if (optionalType.isPresent()) {
-                    return optionalType.get();
-                } else {
-                    throw new Ts2JavaAstException(
-                            expression,
-                            SimpleFreeMarkerFormat.format("BinExpr left expr type ${exprType} is invalid.",
-                                    SimpleMap.of("exprType", expression.getType().name())));
-                }
+                return new Ts2JavaAstBinExpr().manipulate(functionContext, expression.as(Swc4jAstBinExpr.class));
             case Ident: {
                 String name = expression.as(Swc4jAstIdent.class).getSym();
                 JavaLocalVariable localVariable = functionContext.getLocalVariable(name);

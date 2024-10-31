@@ -38,11 +38,10 @@ import net.bytebuddy.implementation.bytecode.constant.IntegerConstant;
 import net.bytebuddy.implementation.bytecode.constant.LongConstant;
 import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 
-import java.util.Optional;
-
 public final class Ts2JavaAstVarDecl implements ITs2JavaAstStackManipulation<Swc4jAstVarDecl> {
     @Override
-    public Optional<TypeDescription> manipulate(JavaFunctionContext functionContext, Swc4jAstVarDecl ast) {
+    public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstVarDecl ast) {
+        TypeDescription returnType = TypeDescription.ForLoadedType.of(void.class);
         for (Swc4jAstVarDeclarator varDeclarator : ast.getDecls()) {
             ISwc4jAstPat pat = varDeclarator.getName();
             switch (pat.getType()) {
@@ -98,6 +97,7 @@ public final class Ts2JavaAstVarDecl implements ITs2JavaAstStackManipulation<Swc
                         StackManipulation stackManipulation = methodVariableAccess.storeAt(functionContext.getNextOffset());
                         functionContext.getStackManipulations().add(stackManipulation);
                         functionContext.addLocalVariable(localVariable);
+                        returnType = localVariable.getType();
                     } else {
                         throw new Ts2JavaAstException(
                                 bindingIdent,
@@ -113,6 +113,6 @@ public final class Ts2JavaAstVarDecl implements ITs2JavaAstStackManipulation<Swc
                                     SimpleMap.of("type", pat.getType().name())));
             }
         }
-        return Optional.empty();
+        return returnType;
     }
 }

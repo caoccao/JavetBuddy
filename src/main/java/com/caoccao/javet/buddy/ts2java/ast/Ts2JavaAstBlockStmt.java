@@ -26,12 +26,10 @@ import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
 
-import java.util.Optional;
-
 public final class Ts2JavaAstBlockStmt implements ITs2JavaAstStackManipulation<Swc4jAstBlockStmt> {
     @Override
-    public Optional<TypeDescription> manipulate(JavaFunctionContext functionContext, Swc4jAstBlockStmt ast) {
-        Optional<TypeDescription> returnType = Optional.empty();
+    public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstBlockStmt ast) {
+        TypeDescription returnType = TypeDescription.ForLoadedType.of(void.class);
         for (ISwc4jAstStmt stmt : ast.getStmts()) {
             switch (stmt.getType()) {
                 case VarDecl:
