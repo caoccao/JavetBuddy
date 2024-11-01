@@ -137,6 +137,48 @@ public final class Ts2JavaAstBinaryOp {
                 methodVisitor.visitJumpInsn(opcodeCompare, labelFalse);
                 return new StackManipulation.Size(-2, 0);
             }));
+        } else if (type.isAssignableTo(float.class)) {
+            int opcodeCompare1;
+            int opcodeCompare2;
+            switch (binaryOp) {
+                case Gt:
+                    opcodeCompare1 = Opcodes.FCMPL;
+                    opcodeCompare2 = Opcodes.IFLE;
+                    break;
+                case GtEq:
+                    opcodeCompare1 = Opcodes.FCMPL;
+                    opcodeCompare2 = Opcodes.IFLT;
+                    break;
+                case Lt:
+                    opcodeCompare1 = Opcodes.FCMPG;
+                    opcodeCompare2 = Opcodes.IFGE;
+                    break;
+                case LtEq:
+                    opcodeCompare1 = Opcodes.FCMPG;
+                    opcodeCompare2 = Opcodes.IFGT;
+                    break;
+                case EqEq:
+                case EqEqEq:
+                    opcodeCompare1 = Opcodes.FCMPL;
+                    opcodeCompare2 = Opcodes.IFNE;
+                    break;
+                case NotEq:
+                case NotEqEq:
+                    opcodeCompare1 = Opcodes.FCMPL;
+                    opcodeCompare2 = Opcodes.IFEQ;
+                    break;
+                default:
+                    throw new Ts2JavaException(
+                            SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} for type ${type} in logical operation.",
+                                    SimpleMap.of("binaryOp", binaryOp.name(), "type", type.getName())));
+            }
+            stackManipulations.add(new StackManipulation.Simple((
+                    MethodVisitor methodVisitor,
+                    Implementation.Context implementationContext) -> {
+                methodVisitor.visitInsn(opcodeCompare1);
+                methodVisitor.visitJumpInsn(opcodeCompare2, labelFalse);
+                return new StackManipulation.Size(-1, 0);
+            }));
         } else {
             throw new Ts2JavaException(
                     SimpleFreeMarkerFormat.format("Unsupported type ${type} in logical operation.",
