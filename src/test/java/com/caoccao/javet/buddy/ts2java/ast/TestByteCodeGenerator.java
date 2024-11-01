@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.caoccao.javet.buddy.ts2java;
+package com.caoccao.javet.buddy.ts2java.ast;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.modifier.Visibility;

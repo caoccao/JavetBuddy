@@ -1,4 +1,12 @@
-import { type float, double, int, long } from "./test.type.aliases.ts";
+import {
+  type byte,
+  char,
+  float,
+  double,
+  int,
+  long,
+  short,
+} from "./test.type.aliases.ts";
 
 class Test {
   public logicalEQEQ_DD_Z(a: double, b: double): boolean {
@@ -33,6 +41,14 @@ class Test {
     return a == b;
   }
 
+  public logicalGE_BB_Z(a: byte, b: byte): boolean {
+    return a >= b;
+  }
+
+  public logicalGE_CC_Z(a: char, b: char): boolean {
+    return a >= b;
+  }
+
   public logicalGE_DD_Z(a: double, b: double): boolean {
     return a >= b;
   }
@@ -48,6 +64,10 @@ class Test {
   public logicalGE_IL_Z(a: int, b: long): boolean {
     const c: boolean = a >= b;
     return c;
+  }
+
+  public logicalGE_SS_Z(a: short, b: short): boolean {
+    return a >= b;
   }
 
   public logicalGT_DD_Z(a: double, b: double): boolean {
@@ -139,10 +159,13 @@ console.log(new Test().logicalEQ_DD_Z(1, 2));
 console.log(new Test().logicalEQ_FF_Z(1, 2));
 console.log(new Test().logicalEQ_II_Z(1, 2));
 console.log(new Test().logicalEQ_IL_Z(1, 2));
+console.log(new Test().logicalGE_BB_Z(1, 2));
+console.log(new Test().logicalGE_CC_Z(1, 2));
 console.log(new Test().logicalGE_DD_Z(1, 2));
 console.log(new Test().logicalGE_FF_Z(1, 2));
 console.log(new Test().logicalGE_II_Z(1, 2));
 console.log(new Test().logicalGE_IL_Z(1, 2));
+console.log(new Test().logicalGE_SS_Z(1, 2));
 console.log(new Test().logicalGT_DD_Z(1, 2));
 console.log(new Test().logicalGT_FF_Z(1, 2));
 console.log(new Test().logicalGT_II_Z(1, 2));

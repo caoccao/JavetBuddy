@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024. caoccao.com Sam Cao
+ * Copyright (c) 2024-2024. caoccao.com Sam Cao
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package com.caoccao.javet.buddy.ts2java;
+package com.caoccao.javet.buddy.ts2java.ast;
 
+import com.caoccao.javet.buddy.ts2java.BaseTestTs2Java;
+import com.caoccao.javet.buddy.ts2java.Ts2Java;
 import com.caoccao.javet.swc4j.exceptions.Swc4jCoreException;
 import org.junit.jupiter.api.Test;
 
@@ -287,6 +289,34 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
+    public void testLogicalGE_BB_Z() throws Exception {
+        Method method = clazz.getMethod("logicalGE_BB_Z", byte.class, byte.class);
+        assertNotNull(method);
+        assertEquals(boolean.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(byte.class, method.getParameters()[0].getType());
+        assertEquals(byte.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertFalse((boolean) method.invoke(object, (byte) 1, (byte) 2));
+        assertTrue((boolean) method.invoke(object, (byte) 2, (byte) 1));
+        assertTrue((boolean) method.invoke(object, (byte) 1, (byte) 1));
+    }
+
+    @Test
+    public void testLogicalGE_CC_Z() throws Exception {
+        Method method = clazz.getMethod("logicalGE_CC_Z", char.class, char.class);
+        assertNotNull(method);
+        assertEquals(boolean.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(char.class, method.getParameters()[0].getType());
+        assertEquals(char.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertFalse((boolean) method.invoke(object, (char) 1, (char) 2));
+        assertTrue((boolean) method.invoke(object, (char) 2, (char) 1));
+        assertTrue((boolean) method.invoke(object, (char) 1, (char) 1));
+    }
+
+    @Test
     public void testLogicalGE_DD_Z() throws Exception {
         Method method = clazz.getMethod("logicalGE_DD_Z", double.class, double.class);
         assertNotNull(method);
@@ -343,6 +373,20 @@ public class TestLogicalOperations extends BaseTestTs2Java {
         assertFalse((boolean) method.invoke(object, 1, 2L));
         assertTrue((boolean) method.invoke(object, 2, 2L));
         assertTrue((boolean) method.invoke(object, 2, 1L));
+    }
+
+    @Test
+    public void testLogicalGE_SS_Z() throws Exception {
+        Method method = clazz.getMethod("logicalGE_SS_Z", short.class, short.class);
+        assertNotNull(method);
+        assertEquals(boolean.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(short.class, method.getParameters()[0].getType());
+        assertEquals(short.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertFalse((boolean) method.invoke(object, (short) 1, (short) 2));
+        assertTrue((boolean) method.invoke(object, (short) 2, (short) 1));
+        assertTrue((boolean) method.invoke(object, (short) 1, (short) 1));
     }
 
     @Test

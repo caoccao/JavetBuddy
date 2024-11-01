@@ -35,13 +35,13 @@ public final class Ts2JavaAstBinaryOp {
     }
 
     public static Addition getAddition(TypeDescription type) {
-        if (type.isAssignableTo(int.class)) {
+        if (type.represents(int.class)) {
             return Addition.INTEGER;
-        } else if (type.isAssignableTo(long.class)) {
+        } else if (type.represents(long.class)) {
             return Addition.LONG;
-        } else if (type.isAssignableTo(float.class)) {
+        } else if (type.represents(float.class)) {
             return Addition.FLOAT;
-        } else if (type.isAssignableTo(double.class)) {
+        } else if (type.represents(double.class)) {
             return Addition.DOUBLE;
         }
         throw new Ts2JavaException(
@@ -50,13 +50,13 @@ public final class Ts2JavaAstBinaryOp {
     }
 
     public static Division getDivision(TypeDescription type) {
-        if (type.isAssignableTo(int.class)) {
+        if (type.represents(int.class)) {
             return Division.INTEGER;
-        } else if (type.isAssignableTo(long.class)) {
+        } else if (type.represents(long.class)) {
             return Division.LONG;
-        } else if (type.isAssignableTo(float.class)) {
+        } else if (type.represents(float.class)) {
             return Division.FLOAT;
-        } else if (type.isAssignableTo(double.class)) {
+        } else if (type.represents(double.class)) {
             return Division.DOUBLE;
         }
         throw new Ts2JavaException(
@@ -68,7 +68,10 @@ public final class Ts2JavaAstBinaryOp {
         Label labelFalse = new Label();
         Label labelTrue = new Label();
         List<StackManipulation> stackManipulations = new ArrayList<>();
-        if (type.isAssignableTo(int.class)) {
+        if (type.represents(int.class)
+                || type.represents(short.class)
+                || type.represents(byte.class)
+                || type.represents(char.class)) {
             int opcodeCompare;
             switch (binaryOp) {
                 case Gt:
@@ -102,7 +105,7 @@ public final class Ts2JavaAstBinaryOp {
                 methodVisitor.visitJumpInsn(opcodeCompare, labelFalse);
                 return new StackManipulation.Size(-1, 0);
             }));
-        } else if (type.isAssignableTo(long.class)) {
+        } else if (type.represents(long.class)) {
             int opcodeCompare;
             switch (binaryOp) {
                 case Gt:
@@ -137,7 +140,7 @@ public final class Ts2JavaAstBinaryOp {
                 methodVisitor.visitJumpInsn(opcodeCompare, labelFalse);
                 return new StackManipulation.Size(-2, 0);
             }));
-        } else if (type.isAssignableTo(float.class)) {
+        } else if (type.represents(float.class)) {
             int opcodeCompare1;
             int opcodeCompare2;
             switch (binaryOp) {
@@ -179,7 +182,7 @@ public final class Ts2JavaAstBinaryOp {
                 methodVisitor.visitJumpInsn(opcodeCompare2, labelFalse);
                 return new StackManipulation.Size(-1, 0);
             }));
-        } else if (type.isAssignableTo(double.class)) {
+        } else if (type.represents(double.class)) {
             int opcodeCompare1;
             int opcodeCompare2;
             switch (binaryOp) {
@@ -242,13 +245,13 @@ public final class Ts2JavaAstBinaryOp {
     }
 
     public static Multiplication getMultiplication(TypeDescription type) {
-        if (type.isAssignableTo(int.class)) {
+        if (type.represents(int.class)) {
             return Multiplication.INTEGER;
-        } else if (type.isAssignableTo(long.class)) {
+        } else if (type.represents(long.class)) {
             return Multiplication.LONG;
-        } else if (type.isAssignableTo(float.class)) {
+        } else if (type.represents(float.class)) {
             return Multiplication.FLOAT;
-        } else if (type.isAssignableTo(double.class)) {
+        } else if (type.represents(double.class)) {
             return Multiplication.DOUBLE;
         }
         throw new Ts2JavaException(
@@ -257,13 +260,13 @@ public final class Ts2JavaAstBinaryOp {
     }
 
     public static Remainder getRemainder(TypeDescription type) {
-        if (type.isAssignableTo(int.class)) {
+        if (type.represents(int.class)) {
             return Remainder.INTEGER;
-        } else if (type.isAssignableTo(long.class)) {
+        } else if (type.represents(long.class)) {
             return Remainder.LONG;
-        } else if (type.isAssignableTo(float.class)) {
+        } else if (type.represents(float.class)) {
             return Remainder.FLOAT;
-        } else if (type.isAssignableTo(double.class)) {
+        } else if (type.represents(double.class)) {
             return Remainder.DOUBLE;
         }
         throw new Ts2JavaException(
@@ -272,9 +275,9 @@ public final class Ts2JavaAstBinaryOp {
     }
 
     public static ShiftLeft getShiftLeft(TypeDescription type) {
-        if (type.isAssignableTo(int.class)) {
+        if (type.represents(int.class)) {
             return ShiftLeft.INTEGER;
-        } else if (type.isAssignableTo(long.class)) {
+        } else if (type.represents(long.class)) {
             return ShiftLeft.LONG;
         }
         throw new Ts2JavaException(
@@ -283,9 +286,9 @@ public final class Ts2JavaAstBinaryOp {
     }
 
     public static ShiftRight getShiftRight(TypeDescription type) {
-        if (type.isAssignableTo(int.class)) {
+        if (type.represents(int.class)) {
             return ShiftRight.INTEGER;
-        } else if (type.isAssignableTo(long.class)) {
+        } else if (type.represents(long.class)) {
             return ShiftRight.LONG;
         }
         throw new Ts2JavaException(
@@ -294,13 +297,13 @@ public final class Ts2JavaAstBinaryOp {
     }
 
     public static Subtraction getSubtraction(TypeDescription type) {
-        if (type.isAssignableTo(int.class)) {
+        if (type.represents(int.class)) {
             return Subtraction.INTEGER;
-        } else if (type.isAssignableTo(long.class)) {
+        } else if (type.represents(long.class)) {
             return Subtraction.LONG;
-        } else if (type.isAssignableTo(float.class)) {
+        } else if (type.represents(float.class)) {
             return Subtraction.FLOAT;
-        } else if (type.isAssignableTo(double.class)) {
+        } else if (type.represents(double.class)) {
             return Subtraction.DOUBLE;
         }
         throw new Ts2JavaException(
