@@ -27,6 +27,9 @@ import net.bytebuddy.jar.asm.Label;
 import net.bytebuddy.jar.asm.MethodVisitor;
 import net.bytebuddy.jar.asm.Opcodes;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class Ts2JavaAstBinaryOp {
     private Ts2JavaAstBinaryOp() {
     }
@@ -64,8 +67,9 @@ public final class Ts2JavaAstBinaryOp {
     public static StackManipulation getLogicalStackManipulation(Swc4jAstBinaryOp binaryOp, TypeDescription type) {
         Label labelFalse = new Label();
         Label labelTrue = new Label();
-        int opcodeCompare;
+        List<StackManipulation> stackManipulations = new ArrayList<>();
         if (type.isAssignableTo(int.class)) {
+            int opcodeCompare;
             switch (binaryOp) {
                 case Gt:
                     opcodeCompare = Opcodes.IF_ICMPLE;
@@ -88,15 +92,51 @@ public final class Ts2JavaAstBinaryOp {
                             SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} for type ${type} in logical operation.",
                                     SimpleMap.of("binaryOp", binaryOp.name(), "type", type.getName())));
             }
+            stackManipulations.add(new StackManipulation.Simple((
+                    MethodVisitor methodVisitor,
+                    Implementation.Context implementationContext) -> {
+                methodVisitor.visitJumpInsn(opcodeCompare, labelFalse);
+                return new StackManipulation.Size(-1, 0);
+            }));
+        } else if (type.isAssignableTo(long.class)) {
+            int opcodeCompare;
+            switch (binaryOp) {
+                case Gt:
+                    opcodeCompare = Opcodes.IFLE;
+                    break;
+                case GtEq:
+                    opcodeCompare = Opcodes.IFLT;
+                    break;
+                case Lt:
+                    opcodeCompare = Opcodes.IFGE;
+                    break;
+                case LtEq:
+                    opcodeCompare = Opcodes.IFGT;
+                    break;
+                case EqEq:
+                case EqEqEq:
+                case NotEq:
+                case NotEqEq:
+                default:
+                    throw new Ts2JavaException(
+                            SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} for type ${type} in logical operation.",
+                                    SimpleMap.of("binaryOp", binaryOp.name(), "type", type.getName())));
+            }
+            stackManipulations.add(new StackManipulation.Simple((
+                    MethodVisitor methodVisitor,
+                    Implementation.Context implementationContext) -> {
+                methodVisitor.visitInsn(Opcodes.LCMP);
+                methodVisitor.visitJumpInsn(opcodeCompare, labelFalse);
+                return new StackManipulation.Size(-2, 0);
+            }));
         } else {
             throw new Ts2JavaException(
                     SimpleFreeMarkerFormat.format("Unsupported type ${type} in logical operation.",
                             SimpleMap.of("type", type.getName())));
         }
-        return new StackManipulation.Simple((
+        stackManipulations.add(new StackManipulation.Simple((
                 MethodVisitor methodVisitor,
                 Implementation.Context implementationContext) -> {
-            methodVisitor.visitJumpInsn(opcodeCompare, labelFalse);
             methodVisitor.visitInsn(Opcodes.ICONST_1);
             methodVisitor.visitJumpInsn(Opcodes.GOTO, labelTrue);
             methodVisitor.visitLabel(labelFalse);
@@ -105,7 +145,8 @@ public final class Ts2JavaAstBinaryOp {
             methodVisitor.visitLabel(labelTrue);
             methodVisitor.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[]{Opcodes.INTEGER});
             return StackManipulation.Size.ZERO;
-        });
+        }));
+        return new StackManipulation.Compound(stackManipulations);
     }
 
     public static Multiplication getMultiplication(TypeDescription type) {

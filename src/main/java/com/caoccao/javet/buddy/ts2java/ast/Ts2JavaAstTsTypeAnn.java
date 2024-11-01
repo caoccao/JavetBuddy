@@ -32,6 +32,7 @@ public final class Ts2JavaAstTsTypeAnn {
     private static final Map<String, TypeDescription> TS_KEYWORD_TYPE_MAP = SimpleMap.of(
             "boolean", TypeDescription.ForLoadedType.of(boolean.class),
             "string", TypeDescription.ForLoadedType.of(String.class));
+
     private static final Map<String, TypeDescription> TS_TYPE_REF_MAP = SimpleMap.of(
             "byte", TypeDescription.ForLoadedType.of(byte.class),
             "char", TypeDescription.ForLoadedType.of(char.class),

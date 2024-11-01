@@ -20,6 +20,7 @@ import com.caoccao.javet.buddy.ts2java.compiler.JavaClassCast;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLocalVariable;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
+import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
 import com.caoccao.javet.swc4j.ast.expr.lit.Swc4jAstNumber;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
@@ -49,21 +50,21 @@ public final class Ts2JavaAstVarDecl implements ITs2JavaAstStackManipulation<Swc
                         TypeDescription variableType = Ts2JavaAstTsTypeAnn.getTypeDescription(tsTypeAnn);
                         if (varDeclarator.getInit().isPresent()) {
                             ISwc4jAstExpr expression = varDeclarator.getInit().get();
+                            TypeDescription valueType;
                             switch (expression.getType()) {
+                                case BinExpr: {
+                                    valueType = new Ts2JavaAstBinExpr().manipulate(
+                                            functionContext, expression.as(Swc4jAstBinExpr.class));
+                                    break;
+                                }
                                 case Number: {
-                                    new Ts2JavaAstNumber(variableType)
-                                            .manipulate(functionContext, expression.as(Swc4jAstNumber.class));
+                                    valueType = new Ts2JavaAstNumber(variableType).manipulate(
+                                            functionContext, expression.as(Swc4jAstNumber.class));
                                     break;
                                 }
                                 case Ident: {
-                                    String valueName = expression.as(Swc4jAstIdent.class).getSym();
-                                    JavaLocalVariable localVariable = functionContext.getLocalVariable(valueName);
-                                    MethodVariableAccess methodVariableAccess = MethodVariableAccess.of(localVariable.getType());
-                                    StackManipulation stackManipulation = methodVariableAccess.loadFrom(localVariable.getOffset());
-                                    functionContext.getStackManipulations().add(stackManipulation);
-                                    TypeDescription valueType = localVariable.getType();
-                                    JavaClassCast.getUpCastStackManipulation(valueType, variableType)
-                                            .ifPresent(functionContext.getStackManipulations()::add);
+                                    valueType = new Ts2JavaAstIdent().manipulate(
+                                            functionContext, expression.as(Swc4jAstIdent.class));
                                     break;
                                 }
                                 default:
@@ -72,6 +73,8 @@ public final class Ts2JavaAstVarDecl implements ITs2JavaAstStackManipulation<Swc
                                             SimpleFreeMarkerFormat.format("VarDecl init type ${type} is not supported.",
                                                     SimpleMap.of("type", expression.getType().name())));
                             }
+                            JavaClassCast.getUpCastStackManipulation(valueType, variableType)
+                                    .ifPresent(functionContext.getStackManipulations()::add);
                         }
                         JavaLocalVariable localVariable = new JavaLocalVariable(variableName, variableType);
                         MethodVariableAccess methodVariableAccess = MethodVariableAccess.of(variableType);

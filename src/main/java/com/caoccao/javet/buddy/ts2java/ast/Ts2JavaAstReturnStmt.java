@@ -20,6 +20,7 @@ import com.caoccao.javet.buddy.ts2java.compiler.JavaClassCast;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
+import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstReturnStmt;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
@@ -37,6 +38,9 @@ public final class Ts2JavaAstReturnStmt implements ITs2JavaAstStackManipulation<
             switch (arg.getType()) {
                 case BinExpr:
                     fromType = new Ts2JavaAstBinExpr().manipulate(functionContext, arg.as(Swc4jAstBinExpr.class));
+                    break;
+                case Ident:
+                    fromType = new Ts2JavaAstIdent().manipulate(functionContext, arg.as(Swc4jAstIdent.class));
                     break;
                 default:
                     throw new Ts2JavaAstException(

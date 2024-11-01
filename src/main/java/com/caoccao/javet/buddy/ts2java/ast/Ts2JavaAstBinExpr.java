@@ -18,7 +18,6 @@ package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.buddy.ts2java.compiler.JavaClassCast;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
-import com.caoccao.javet.buddy.ts2java.compiler.JavaLocalVariable;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
@@ -27,7 +26,6 @@ import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
-import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 
 import java.util.List;
 
@@ -92,11 +90,7 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
             case BinExpr:
                 return new Ts2JavaAstBinExpr().manipulate(functionContext, expression.as(Swc4jAstBinExpr.class));
             case Ident: {
-                String name = expression.as(Swc4jAstIdent.class).getSym();
-                JavaLocalVariable localVariable = functionContext.getLocalVariable(name);
-                functionContext.getStackManipulations().add(
-                        MethodVariableAccess.of(localVariable.getType()).loadFrom(localVariable.getOffset()));
-                return localVariable.getType();
+                return new Ts2JavaAstIdent().manipulate(functionContext, expression.as(Swc4jAstIdent.class));
             }
             default:
                 throw new Ts2JavaAstException(

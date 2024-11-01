@@ -55,14 +55,14 @@ public final class JavaClassCast {
                                 SimpleMap.of("class", type.getName())));
             }
         }
-        TypeDescription returnType = types[0];
+        TypeDescription upCaseType = types[0];
         for (int i = 1; i < length; i++) {
             TypeDescription type = types[i];
-            StackManipulation stackManipulation = PrimitiveWideningDelegate.forPrimitive(returnType).widenTo(type);
+            StackManipulation stackManipulation = PrimitiveWideningDelegate.forPrimitive(upCaseType).widenTo(type);
             if (stackManipulation.isValid() && stackManipulation != StackManipulation.Trivial.INSTANCE) {
-                returnType = type;
+                upCaseType = type;
             }
         }
-        return returnType;
+        return upCaseType;
     }
 }
