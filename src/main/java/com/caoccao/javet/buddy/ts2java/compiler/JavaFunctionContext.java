@@ -23,6 +23,7 @@ import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.description.type.TypeList;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
+import net.bytebuddy.jar.asm.Label;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +33,10 @@ import java.util.stream.Collectors;
 public final class JavaFunctionContext {
     private final boolean _static;
     private final List<JavaLexicalScope> lexicalScopes;
+    private final List<Label> logicalLabels;
     private final TypeDescription returnType;
     private final List<StackManipulation> stackManipulations;
+    private int logicalDepth;
     private int maxOffset;
     private int nextOffset;
 
@@ -42,6 +45,8 @@ public final class JavaFunctionContext {
         nextOffset = _static ? 0 : 1;
         maxOffset = nextOffset;
         this.lexicalScopes = SimpleList.of(new JavaLexicalScope(0));
+        logicalDepth = 0;
+        logicalLabels = new ArrayList<>();
         this.returnType = Objects.requireNonNull(returnType);
         this.stackManipulations = new ArrayList<>();
     }
@@ -56,6 +61,14 @@ public final class JavaFunctionContext {
         }
     }
 
+    public void decreaseLogicalDepth() {
+        logicalDepth--;
+        if (logicalDepth <= 0) {
+            logicalDepth = 0;
+            logicalLabels.clear();
+        }
+    }
+
     public JavaLocalVariable getLocalVariable(String name) {
         for (int lexicalScopeIndex = lexicalScopes.size() - 1; lexicalScopeIndex >= 0; lexicalScopeIndex--) {
             JavaLexicalScope lexicalScope = lexicalScopes.get(lexicalScopeIndex);
@@ -67,6 +80,14 @@ public final class JavaFunctionContext {
         throw new Ts2JavaException(
                 SimpleFreeMarkerFormat.format("The variable ${name} is not defined.",
                         SimpleMap.of("name", name)));
+    }
+
+    public int getLogicalDepth() {
+        return logicalDepth;
+    }
+
+    public List<Label> getLogicalLabels() {
+        return logicalLabels;
     }
 
     public int getMaxOffset() {
@@ -90,6 +111,14 @@ public final class JavaFunctionContext {
 
     public List<StackManipulation> getStackManipulations() {
         return stackManipulations;
+    }
+
+    public void increaseLogicalDepth() {
+        logicalDepth++;
+        if (logicalDepth == 1) {
+            logicalLabels.add(new Label()); // Label for False
+            logicalLabels.add(new Label()); // Label for Return
+        }
     }
 
     public boolean isStatic() {

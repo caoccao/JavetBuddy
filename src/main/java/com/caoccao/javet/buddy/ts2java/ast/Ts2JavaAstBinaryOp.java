@@ -16,6 +16,7 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
+import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
@@ -49,6 +50,24 @@ public final class Ts2JavaAstBinaryOp {
                         SimpleMap.of("type", type.getName())));
     }
 
+    public static StackManipulation getBitAndStackManipulation(JavaFunctionContext functionContext) {
+        return new StackManipulation.Simple((
+                MethodVisitor methodVisitor,
+                Implementation.Context implementationContext) -> {
+            // TODO
+            return new StackManipulation.Size(-1, 0);
+        });
+    }
+
+    public static StackManipulation getBitOrStackManipulation(JavaFunctionContext functionContext) {
+        return new StackManipulation.Simple((
+                MethodVisitor methodVisitor,
+                Implementation.Context implementationContext) -> {
+            // TODO
+            return new StackManipulation.Size(-1, 0);
+        });
+    }
+
     public static Division getDivision(TypeDescription type) {
         if (type.represents(int.class)) {
             return Division.INTEGER;
@@ -64,9 +83,12 @@ public final class Ts2JavaAstBinaryOp {
                         SimpleMap.of("type", type.getName())));
     }
 
-    public static StackManipulation getLogicalStackManipulation(Swc4jAstBinaryOp binaryOp, TypeDescription type) {
-        Label labelFalse = new Label();
-        Label labelTrue = new Label();
+    public static StackManipulation getLogicalStackManipulation(
+            JavaFunctionContext functionContext,
+            Swc4jAstBinaryOp binaryOp,
+            TypeDescription type) {
+        functionContext.increaseLogicalDepth();
+        Label labelFalse = functionContext.getLogicalLabels().get(functionContext.getLogicalLabels().size() - 2);
         List<StackManipulation> stackManipulations = new ArrayList<>();
         if (type.represents(int.class)
                 || type.represents(short.class)
@@ -229,19 +251,36 @@ public final class Ts2JavaAstBinaryOp {
                     SimpleFreeMarkerFormat.format("Unsupported type ${type} in logical operation.",
                             SimpleMap.of("type", type.getName())));
         }
-        stackManipulations.add(new StackManipulation.Simple((
+        if (functionContext.getLogicalDepth() == 1) {
+            stackManipulations.add(getLogicalStackManipulationEnd(functionContext.getLogicalLabels()));
+        }
+        functionContext.decreaseLogicalDepth();
+        return new StackManipulation.Compound(stackManipulations);
+    }
+
+    private static StackManipulation getLogicalStackManipulationEnd(List<Label> logicalLabels) {
+        // Make a copy.
+        final List<Label> labels = new ArrayList<>(logicalLabels);
+        return new StackManipulation.Simple((
                 MethodVisitor methodVisitor,
                 Implementation.Context implementationContext) -> {
+            final int size = labels.size();
+            if (size >= 3) {
+                Label labelTrue = labels.get(size - 3);
+                methodVisitor.visitLabel(labelTrue);
+            }
+            Label labelFalse = labels.get(size - 2);
+            Label labelEnd = labels.get(size - 1);
+            methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
             methodVisitor.visitInsn(Opcodes.ICONST_1);
-            methodVisitor.visitJumpInsn(Opcodes.GOTO, labelTrue);
+            methodVisitor.visitJumpInsn(Opcodes.GOTO, labelEnd);
             methodVisitor.visitLabel(labelFalse);
             methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
             methodVisitor.visitInsn(Opcodes.ICONST_0);
-            methodVisitor.visitLabel(labelTrue);
+            methodVisitor.visitLabel(labelEnd);
             methodVisitor.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[]{Opcodes.INTEGER});
             return StackManipulation.Size.ZERO;
-        }));
-        return new StackManipulation.Compound(stackManipulations);
+        });
     }
 
     public static Multiplication getMultiplication(TypeDescription type) {
