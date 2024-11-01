@@ -73,7 +73,7 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
             case EqEqEq:
             case NotEq:
             case NotEqEq:
-                stackManipulation = Ts2JavaAstBinaryOp.getLogicalStackManipulation(
+                stackManipulation = Ts2JavaAstBinaryOp.getLogical(
                         functionContext, ast.getOp(), upCaseType);
                 break;
 //            case BitAnd:

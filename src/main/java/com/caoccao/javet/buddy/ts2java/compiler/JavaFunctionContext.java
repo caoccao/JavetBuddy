@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 public final class JavaFunctionContext {
     private final boolean _static;
     private final List<JavaLexicalScope> lexicalScopes;
-    private final List<Label> logicalLabels;
+    private final List<Label> logicalLabels; // 0: LabelEnd, 1: LabelFalse, 2: LabelTrue
     private final TypeDescription returnType;
     private final List<StackManipulation> stackManipulations;
     private int logicalDepth;
@@ -65,7 +65,6 @@ public final class JavaFunctionContext {
         logicalDepth--;
         if (logicalDepth <= 0) {
             logicalDepth = 0;
-            logicalLabels.clear();
         }
     }
 
@@ -116,8 +115,9 @@ public final class JavaFunctionContext {
     public void increaseLogicalDepth() {
         logicalDepth++;
         if (logicalDepth == 1) {
-            logicalLabels.add(new Label()); // Label for False
+            logicalLabels.clear();
             logicalLabels.add(new Label()); // Label for Return
+            logicalLabels.add(new Label()); // Label for False
         }
     }
 
