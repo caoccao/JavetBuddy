@@ -89,9 +89,8 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
         switch (expression.getType()) {
             case BinExpr:
                 return new Ts2JavaAstBinExpr().manipulate(functionContext, expression.as(Swc4jAstBinExpr.class));
-            case Ident: {
+            case Ident:
                 return new Ts2JavaAstIdent().manipulate(functionContext, expression.as(Swc4jAstIdent.class));
-            }
             default:
                 throw new Ts2JavaAstException(
                         expression,

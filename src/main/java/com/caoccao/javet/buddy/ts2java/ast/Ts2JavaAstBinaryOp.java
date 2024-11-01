@@ -119,8 +119,12 @@ public final class Ts2JavaAstBinaryOp {
                     break;
                 case EqEq:
                 case EqEqEq:
+                    opcodeCompare = Opcodes.IFNE;
+                    break;
                 case NotEq:
                 case NotEqEq:
+                    opcodeCompare = Opcodes.IFEQ;
+                    break;
                 default:
                     throw new Ts2JavaException(
                             SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} for type ${type} in logical operation.",
