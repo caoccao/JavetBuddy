@@ -41,6 +41,14 @@ class Test {
     return a * b;
   }
 
+  public pow_DD_D(a: double, b: double): double {
+    return a ** b;
+  }
+
+  public pow_II_D(a: int, b: int): double {
+    return a ** b;
+  }
+
   public shiftLeft_II_I(a: int, b: int): int {
     return a << b;
   }
@@ -64,6 +72,8 @@ console.log(new Test().divide_II_I(3, 2));
 console.log(new Test().minus_II_I(3, 2));
 console.log(new Test().mod_II_I(3, 2));
 console.log(new Test().multiply_II_I(3, 2));
+console.log(new Test().pow_DD_D(3, 2));
+console.log(new Test().pow_II_D(3, 2));
 console.log(new Test().shiftLeft_II_I(3, 2));
 console.log(new Test().shiftRight_II_I(3, 1));
 console.log(new Test().subtract_II_I(3, 2));

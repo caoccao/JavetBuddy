@@ -105,6 +105,25 @@ public class TestBasicOperations extends BaseTestTs2Java {
         return -(a + b);
     }
 
+    /*
+  public pow(DD)D
+   L0
+    LINENUMBER 109 L0
+    DLOAD 1
+    DLOAD 3
+    INVOKESTATIC java/lang/Math.pow (DD)D
+    DRETURN
+   L1
+    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/ast/TestBasicOperations; L0 L1 0
+    LOCALVARIABLE a D L0 L1 1
+    LOCALVARIABLE b D L0 L1 3
+    MAXSTACK = 4
+    MAXLOCALS = 5
+     */
+    public double pow(double a, double b) {
+        return Math.pow(a, b);
+    }
+
     @Test
     public void testAdd_DD_I() throws Exception {
         Method method = clazz.getMethod("add_DD_I", double.class, double.class);
@@ -230,6 +249,31 @@ public class TestBasicOperations extends BaseTestTs2Java {
         assertEquals(int.class, method.getParameters()[1].getType());
         Object object = clazz.getConstructor().newInstance();
         assertEquals(3 * 2, method.invoke(object, 3, 2));
+    }
+
+    @Test
+    public void testPow_DD_D() throws Exception {
+        assertEquals(8D, pow(2D, 3D), 0.001D);
+        Method method = clazz.getMethod("pow_DD_D", double.class, double.class);
+        assertNotNull(method);
+        assertEquals(double.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(double.class, method.getParameters()[0].getType());
+        assertEquals(double.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertEquals(8D, (double) method.invoke(object, 2D, 3D), 0.001D);
+    }
+
+    @Test
+    public void testPow_II_D() throws Exception {
+        Method method = clazz.getMethod("pow_II_D", int.class, int.class);
+        assertNotNull(method);
+        assertEquals(double.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(int.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertEquals(8D, (double) method.invoke(object, 2, 3), 0.001D);
     }
 
     @Test

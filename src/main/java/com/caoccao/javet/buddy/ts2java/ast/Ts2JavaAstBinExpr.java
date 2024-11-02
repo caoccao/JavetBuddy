@@ -49,7 +49,15 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
         final TypeDescription leftType = manipulateExpression(functionContext, leftExpression);
         final int stackManipulationSize = stackManipulations.size();
         final TypeDescription rightType = manipulateExpression(functionContext, rightExpression);
-        TypeDescription upCaseType = JavaClassCast.getUpCastTypeForMathOp(leftType, rightType);
+        TypeDescription upCaseType;
+        switch (ast.getOp()) {
+            case Exp:
+                upCaseType = TypeDescription.ForLoadedType.of(double.class);
+                break;
+            default:
+                upCaseType = JavaClassCast.getUpCastTypeForMathOp(leftType, rightType);
+                break;
+        }
         // Insert the type cast for left expression if possible.
         JavaClassCast.getUpCastStackManipulation(leftType, upCaseType)
                 .ifPresent(stackManipulation -> stackManipulations.add(stackManipulationSize, stackManipulation));
@@ -77,6 +85,9 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
                 break;
             case Sub:
                 stackManipulation = Ts2JavaAstBinaryOp.getSubtraction(upCaseType);
+                break;
+            case Exp:
+                stackManipulation = Ts2JavaAstBinaryOp.getExp();
                 break;
             case Gt:
             case GtEq:

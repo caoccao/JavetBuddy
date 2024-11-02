@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class Ts2JavaAstBinaryOp {
+    public static final String JAVA_LANG_MATH = "java/lang/Math";
+
     private Ts2JavaAstBinaryOp() {
     }
 
@@ -81,6 +83,20 @@ public final class Ts2JavaAstBinaryOp {
         throw new Ts2JavaException(
                 SimpleFreeMarkerFormat.format("Unsupported type ${type} in division.",
                         SimpleMap.of("type", type.getName())));
+    }
+
+    public static StackManipulation getExp() {
+        return new StackManipulation.Simple((
+                MethodVisitor methodVisitor,
+                Implementation.Context implementationContext) -> {
+            methodVisitor.visitMethodInsn(
+                    Opcodes.INVOKESTATIC,
+                    JAVA_LANG_MATH,
+                    "pow",
+                    "(DD)D",
+                    false);
+            return new StackManipulation.Size(-2, 0);
+        });
     }
 
     public static StackManipulation getLogical(
