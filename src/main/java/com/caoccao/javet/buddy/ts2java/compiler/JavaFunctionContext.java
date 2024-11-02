@@ -23,7 +23,6 @@ import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.description.type.TypeList;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
-import net.bytebuddy.jar.asm.Label;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +32,7 @@ import java.util.stream.Collectors;
 public final class JavaFunctionContext {
     private final boolean _static;
     private final List<JavaLexicalScope> lexicalScopes;
-    private final List<Label> logicalLabels; // 0: LabelEnd, 1: LabelFalse, 2: LabelTrue
+    private final JavaLogicalLabels logicalLabels;
     private final TypeDescription returnType;
     private final List<StackManipulation> stackManipulations;
     private int logicalDepth;
@@ -46,7 +45,7 @@ public final class JavaFunctionContext {
         maxOffset = nextOffset;
         this.lexicalScopes = SimpleList.of(new JavaLexicalScope(0));
         logicalDepth = 0;
-        logicalLabels = new ArrayList<>();
+        logicalLabels = new JavaLogicalLabels();
         this.returnType = Objects.requireNonNull(returnType);
         this.stackManipulations = new ArrayList<>();
     }
@@ -85,7 +84,7 @@ public final class JavaFunctionContext {
         return logicalDepth;
     }
 
-    public List<Label> getLogicalLabels() {
+    public JavaLogicalLabels getLogicalLabels() {
         return logicalLabels;
     }
 
@@ -115,9 +114,7 @@ public final class JavaFunctionContext {
     public void increaseLogicalDepth() {
         logicalDepth++;
         if (logicalDepth == 1) {
-            logicalLabels.clear();
-            logicalLabels.add(new Label()); // Label for Return
-            logicalLabels.add(new Label()); // Label for False
+            logicalLabels.reset();
         }
     }
 

@@ -17,6 +17,7 @@
 package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
+import com.caoccao.javet.buddy.ts2java.compiler.JavaLogicalLabels;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
@@ -105,7 +106,7 @@ public final class Ts2JavaAstBinaryOp {
             TypeDescription type,
             boolean logicalNot) {
         functionContext.increaseLogicalDepth();
-        Label labelFalse = functionContext.getLogicalLabels().get(1);
+        Label labelFalse = functionContext.getLogicalLabels().getLabelFalse();
         List<StackManipulation> stackManipulations = new ArrayList<>();
         if (type.represents(int.class)
                 || type.represents(short.class)
@@ -275,7 +276,7 @@ public final class Ts2JavaAstBinaryOp {
         return new StackManipulation.Compound(stackManipulations);
     }
 
-    private static StackManipulation getLogicalEnd(List<Label> logicalLabels) {
+    private static StackManipulation getLogicalEnd(JavaLogicalLabels logicalLabels) {
         return new StackManipulation.Simple((
                 MethodVisitor methodVisitor,
                 Implementation.Context implementationContext) -> {
@@ -284,8 +285,8 @@ public final class Ts2JavaAstBinaryOp {
                 Label labelTrue = logicalLabels.get(2);
                 methodVisitor.visitLabel(labelTrue);
             }
-            Label labelFalse = logicalLabels.get(1);
-            Label labelEnd = logicalLabels.get(0);
+            Label labelFalse = logicalLabels.getLabelFalse();
+            Label labelEnd = logicalLabels.getLabelEnd();
             methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
             methodVisitor.visitInsn(Opcodes.ICONST_1);
             methodVisitor.visitJumpInsn(Opcodes.GOTO, labelEnd);
