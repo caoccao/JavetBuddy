@@ -20,6 +20,7 @@ import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstUnaryExpr;
+import com.caoccao.javet.swc4j.ast.expr.lit.Swc4jAstNumber;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
@@ -38,7 +39,18 @@ public final class Ts2JavaAstUnaryExpr implements ITs2JavaAstStackManipulation<S
                     default:
                         throw new Ts2JavaAstException(
                                 arg,
-                                SimpleFreeMarkerFormat.format("UnaryExpr arg type ${argType} is not supported.",
+                                SimpleFreeMarkerFormat.format("UnaryExpr arg type ${argType} for ! is not supported.",
+                                        SimpleMap.of("argType", arg.getType().name())));
+                }
+            case Minus:
+                switch (arg.getType()) {
+                    case Number:
+                        return new Ts2JavaAstNumber().setNegative(true).manipulate(
+                                functionContext, arg.as(Swc4jAstNumber.class));
+                    default:
+                        throw new Ts2JavaAstException(
+                                arg,
+                                SimpleFreeMarkerFormat.format("UnaryExpr arg type ${argType} for - is not supported.",
                                         SimpleMap.of("argType", arg.getType().name())));
                 }
             default:

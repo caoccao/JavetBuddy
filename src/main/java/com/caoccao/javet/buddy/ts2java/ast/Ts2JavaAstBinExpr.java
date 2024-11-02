@@ -21,6 +21,7 @@ import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
+import com.caoccao.javet.swc4j.ast.expr.Swc4jAstUnaryExpr;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
@@ -43,9 +44,11 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
     @Override
     public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstBinExpr ast) {
         final List<StackManipulation> stackManipulations = functionContext.getStackManipulations();
-        final TypeDescription leftType = manipulateExpression(functionContext, ast.getLeft());
+        final ISwc4jAstExpr leftExpression = ast.getLeft().unParenExpr();
+        final ISwc4jAstExpr rightExpression = ast.getRight().unParenExpr();
+        final TypeDescription leftType = manipulateExpression(functionContext, leftExpression);
         final int stackManipulationSize = stackManipulations.size();
-        final TypeDescription rightType = manipulateExpression(functionContext, ast.getRight());
+        final TypeDescription rightType = manipulateExpression(functionContext, rightExpression);
         TypeDescription upCaseType = JavaClassCast.getUpCastTypeForMathOp(leftType, rightType);
         // Insert the type cast for left expression if possible.
         JavaClassCast.getUpCastStackManipulation(leftType, upCaseType)
@@ -108,6 +111,8 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
                 return new Ts2JavaAstBinExpr().manipulate(functionContext, expression.as(Swc4jAstBinExpr.class));
             case Ident:
                 return new Ts2JavaAstIdent().manipulate(functionContext, expression.as(Swc4jAstIdent.class));
+            case UnaryExpr:
+                return new Ts2JavaAstUnaryExpr().manipulate(functionContext, expression.as(Swc4jAstUnaryExpr.class));
             default:
                 throw new Ts2JavaAstException(
                         expression,

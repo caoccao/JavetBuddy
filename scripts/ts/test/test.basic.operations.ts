@@ -1,6 +1,14 @@
-import { type int, long } from "./test.type.aliases.ts";
+import { double, float, type int, long } from "./test.type.aliases.ts";
 
 class Test {
+  public add_DD_I(a: double, b: double): double {
+    return a + b + (-1);
+  }
+
+  public add_FF_I(a: float, b: float): float {
+    return a + b + (-1);
+  }
+
   public add_II_I(a: int, b: int): int {
     return a + b;
   }
@@ -42,6 +50,8 @@ class Test {
   }
 }
 
+console.log(new Test().add_DD_I(1, 2));
+console.log(new Test().add_FF_I(1, 2));
 console.log(new Test().add_II_I(1, 2));
 console.log(new Test().add_II_L(1, 2));
 console.log(new Test().add_IL_L(1, 2));
