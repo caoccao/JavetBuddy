@@ -86,6 +86,9 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
             case Sub:
                 stackManipulation = Ts2JavaAstBinaryOp.getSubtraction(upCaseType);
                 break;
+            case ZeroFillRShift:
+                stackManipulation = Ts2JavaAstBinaryOp.getZeroFillShiftRight(upCaseType);
+                break;
             case Exp:
                 stackManipulation = Ts2JavaAstBinaryOp.getExp();
                 break;

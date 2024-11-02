@@ -21,7 +21,7 @@ class Test {
     return a === b;
   }
 
-  public logicalEQEQ_IL_Z(a: int, b: long): boolean {
+  public logicalEQEQ_IJ_Z(a: int, b: long): boolean {
     return a === b;
   }
 
@@ -37,7 +37,7 @@ class Test {
     return a == b;
   }
 
-  public logicalEQ_IL_Z(a: int, b: long): boolean {
+  public logicalEQ_IJ_Z(a: int, b: long): boolean {
     return a == b;
   }
 
@@ -61,7 +61,7 @@ class Test {
     return a >= b;
   }
 
-  public logicalGE_IL_Z(a: int, b: long): boolean {
+  public logicalGE_IJ_Z(a: int, b: long): boolean {
     const c: boolean = a >= b;
     return c;
   }
@@ -82,7 +82,7 @@ class Test {
     return a > b;
   }
 
-  public logicalGT_IL_Z(a: int, b: long): boolean {
+  public logicalGT_IJ_Z(a: int, b: long): boolean {
     return a > b;
   }
 
@@ -98,7 +98,7 @@ class Test {
     return a <= b;
   }
 
-  public logicalLE_IL_Z(a: int, b: long): boolean {
+  public logicalLE_IJ_Z(a: int, b: long): boolean {
     return a <= b;
   }
 
@@ -114,7 +114,7 @@ class Test {
     return a < b;
   }
 
-  public logicalLT_IL_Z(a: int, b: long): boolean {
+  public logicalLT_IJ_Z(a: int, b: long): boolean {
     return a < b;
   }
 
@@ -130,7 +130,7 @@ class Test {
     return a !== b;
   }
 
-  public logicalNotEQEQ_IL_Z(a: int, b: long): boolean {
+  public logicalNotEQEQ_IJ_Z(a: int, b: long): boolean {
     return a !== b;
   }
 
@@ -146,7 +146,7 @@ class Test {
     return a != b;
   }
 
-  public logicalNotEQ_IL_Z(a: int, b: long): boolean {
+  public logicalNotEQ_IJ_Z(a: int, b: long): boolean {
     return a != b;
   }
 
@@ -162,7 +162,7 @@ class Test {
     return !(a === b);
   }
 
-  public logicalNot_EQEQ_IL_Z(a: int, b: long): boolean {
+  public logicalNot_EQEQ_IJ_Z(a: int, b: long): boolean {
     return !(a === b);
   }
 
@@ -178,7 +178,7 @@ class Test {
     return !(a == b);
   }
 
-  public logicalNot_EQ_IL_Z(a: int, b: long): boolean {
+  public logicalNot_EQ_IJ_Z(a: int, b: long): boolean {
     return !(a == b);
   }
 
@@ -194,7 +194,7 @@ class Test {
     return !(a >= b);
   }
 
-  public logicalNot_GE_IL_Z(a: int, b: long): boolean {
+  public logicalNot_GE_IJ_Z(a: int, b: long): boolean {
     return !(a >= b);
   }
 
@@ -210,39 +210,39 @@ class Test {
     return !(a > b);
   }
 
-  public logicalNot_GT_IL_Z(a: int, b: long): boolean {
+  public logicalNot_GT_IJ_Z(a: int, b: long): boolean {
     return !(a > b);
   }
 
-  public logicalNot_LE_DD_Z(a: double, b: double): boolean {
+  public logicalNot_JE_DD_Z(a: double, b: double): boolean {
     return !(a <= b);
   }
 
-  public logicalNot_LE_FF_Z(a: float, b: float): boolean {
+  public logicalNot_JE_FF_Z(a: float, b: float): boolean {
     return !(a <= b);
   }
 
-  public logicalNot_LE_II_Z(a: int, b: int): boolean {
+  public logicalNot_JE_II_Z(a: int, b: int): boolean {
     return !(a <= b);
   }
 
-  public logicalNot_LE_IL_Z(a: int, b: long): boolean {
+  public logicalNot_JE_IJ_Z(a: int, b: long): boolean {
     return !(a <= b);
   }
 
-  public logicalNot_LT_DD_Z(a: double, b: double): boolean {
+  public logicalNot_JT_DD_Z(a: double, b: double): boolean {
     return !(a < b);
   }
 
-  public logicalNot_LT_FF_Z(a: float, b: float): boolean {
+  public logicalNot_JT_FF_Z(a: float, b: float): boolean {
     return !(a < b);
   }
 
-  public logicalNot_LT_II_Z(a: int, b: int): boolean {
+  public logicalNot_JT_II_Z(a: int, b: int): boolean {
     return !(a < b);
   }
 
-  public logicalNot_LT_IL_Z(a: int, b: long): boolean {
+  public logicalNot_JT_IJ_Z(a: int, b: long): boolean {
     return !(a < b);
   }
 }
@@ -250,59 +250,59 @@ class Test {
 console.log(new Test().logicalEQEQ_DD_Z(1, 2));
 console.log(new Test().logicalEQEQ_FF_Z(1, 2));
 console.log(new Test().logicalEQEQ_II_Z(1, 2));
-console.log(new Test().logicalEQEQ_IL_Z(1, 2));
+console.log(new Test().logicalEQEQ_IJ_Z(1, 2));
 console.log(new Test().logicalEQ_DD_Z(1, 2));
 console.log(new Test().logicalEQ_FF_Z(1, 2));
 console.log(new Test().logicalEQ_II_Z(1, 2));
-console.log(new Test().logicalEQ_IL_Z(1, 2));
+console.log(new Test().logicalEQ_IJ_Z(1, 2));
 console.log(new Test().logicalGE_BB_Z(1, 2));
 console.log(new Test().logicalGE_CC_Z(1, 2));
 console.log(new Test().logicalGE_DD_Z(1, 2));
 console.log(new Test().logicalGE_FF_Z(1, 2));
 console.log(new Test().logicalGE_II_Z(1, 2));
-console.log(new Test().logicalGE_IL_Z(1, 2));
+console.log(new Test().logicalGE_IJ_Z(1, 2));
 console.log(new Test().logicalGE_SS_Z(1, 2));
 console.log(new Test().logicalGT_DD_Z(1, 2));
 console.log(new Test().logicalGT_FF_Z(1, 2));
 console.log(new Test().logicalGT_II_Z(1, 2));
-console.log(new Test().logicalGT_IL_Z(1, 2));
+console.log(new Test().logicalGT_IJ_Z(1, 2));
 console.log(new Test().logicalLE_DD_Z(1, 2));
 console.log(new Test().logicalLE_FF_Z(1, 2));
 console.log(new Test().logicalLE_II_Z(1, 2));
-console.log(new Test().logicalLE_IL_Z(1, 2));
+console.log(new Test().logicalLE_IJ_Z(1, 2));
 console.log(new Test().logicalLT_DD_Z(1, 2));
 console.log(new Test().logicalLT_FF_Z(1, 2));
 console.log(new Test().logicalLT_II_Z(1, 2));
-console.log(new Test().logicalLT_IL_Z(1, 2));
+console.log(new Test().logicalLT_IJ_Z(1, 2));
 console.log(new Test().logicalNotEQEQ_DD_Z(1, 2));
 console.log(new Test().logicalNotEQEQ_FF_Z(1, 2));
 console.log(new Test().logicalNotEQEQ_II_Z(1, 2));
-console.log(new Test().logicalNotEQEQ_IL_Z(1, 2));
+console.log(new Test().logicalNotEQEQ_IJ_Z(1, 2));
 console.log(new Test().logicalNotEQ_DD_Z(1, 2));
 console.log(new Test().logicalNotEQ_FF_Z(1, 2));
 console.log(new Test().logicalNotEQ_II_Z(1, 2));
-console.log(new Test().logicalNotEQ_IL_Z(1, 2));
+console.log(new Test().logicalNotEQ_IJ_Z(1, 2));
 console.log(new Test().logicalNot_EQEQ_DD_Z(1, 2));
 console.log(new Test().logicalNot_EQEQ_FF_Z(1, 2));
 console.log(new Test().logicalNot_EQEQ_II_Z(1, 2));
-console.log(new Test().logicalNot_EQEQ_IL_Z(1, 2));
+console.log(new Test().logicalNot_EQEQ_IJ_Z(1, 2));
 console.log(new Test().logicalNot_EQ_DD_Z(1, 2));
 console.log(new Test().logicalNot_EQ_FF_Z(1, 2));
 console.log(new Test().logicalNot_EQ_II_Z(1, 2));
-console.log(new Test().logicalNot_EQ_IL_Z(1, 2));
+console.log(new Test().logicalNot_EQ_IJ_Z(1, 2));
 console.log(new Test().logicalNot_GE_DD_Z(1, 2));
 console.log(new Test().logicalNot_GE_FF_Z(1, 2));
 console.log(new Test().logicalNot_GE_II_Z(1, 2));
-console.log(new Test().logicalNot_GE_IL_Z(1, 2));
+console.log(new Test().logicalNot_GE_IJ_Z(1, 2));
 console.log(new Test().logicalNot_GT_DD_Z(1, 2));
 console.log(new Test().logicalNot_GT_FF_Z(1, 2));
 console.log(new Test().logicalNot_GT_II_Z(1, 2));
-console.log(new Test().logicalNot_GT_IL_Z(1, 2));
-console.log(new Test().logicalNot_LT_DD_Z(1, 2));
-console.log(new Test().logicalNot_LT_FF_Z(1, 2));
-console.log(new Test().logicalNot_LT_II_Z(1, 2));
-console.log(new Test().logicalNot_LT_IL_Z(1, 2));
-console.log(new Test().logicalNot_LE_DD_Z(1, 2));
-console.log(new Test().logicalNot_LE_FF_Z(1, 2));
-console.log(new Test().logicalNot_LE_II_Z(1, 2));
-console.log(new Test().logicalNot_LE_IL_Z(1, 2));
+console.log(new Test().logicalNot_GT_IJ_Z(1, 2));
+console.log(new Test().logicalNot_JT_DD_Z(1, 2));
+console.log(new Test().logicalNot_JT_FF_Z(1, 2));
+console.log(new Test().logicalNot_JT_II_Z(1, 2));
+console.log(new Test().logicalNot_JT_IJ_Z(1, 2));
+console.log(new Test().logicalNot_JE_DD_Z(1, 2));
+console.log(new Test().logicalNot_JE_FF_Z(1, 2));
+console.log(new Test().logicalNot_JE_II_Z(1, 2));
+console.log(new Test().logicalNot_JE_IJ_Z(1, 2));

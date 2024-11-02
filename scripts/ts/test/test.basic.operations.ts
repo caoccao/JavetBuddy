@@ -13,15 +13,15 @@ class Test {
     return a + b;
   }
 
-  public add_II_L(a: int, b: int): long {
+  public add_II_J(a: int, b: int): long {
     return a + b;
   }
 
-  public add_IL_L(a: int, b: long): long {
+  public add_IJ_J(a: int, b: long): long {
     return a + b;
   }
 
-  public add_LI_L(a: long, b: int): long {
+  public add_JI_J(a: long, b: int): long {
     return a + b;
   }
 
@@ -60,14 +60,22 @@ class Test {
   public subtract_II_I(a: int, b: int): int {
     return a - b;
   }
+
+  public zeroFillShiftRight_II_I(a: int, b: int): int {
+    return a >>> b;
+  }
+
+  public zeroFillShiftRight_JJ_J(a: long, b: long): long {
+    return a >>> b;
+  }
 }
 
 console.log(new Test().add_DD_I(1, 2));
 console.log(new Test().add_FF_I(1, 2));
 console.log(new Test().add_II_I(1, 2));
-console.log(new Test().add_II_L(1, 2));
-console.log(new Test().add_IL_L(1, 2));
-console.log(new Test().add_LI_L(1, 2));
+console.log(new Test().add_II_J(1, 2));
+console.log(new Test().add_IJ_J(1, 2));
+console.log(new Test().add_JI_J(1, 2));
 console.log(new Test().divide_II_I(3, 2));
 console.log(new Test().minus_II_I(3, 2));
 console.log(new Test().mod_II_I(3, 2));
@@ -77,3 +85,5 @@ console.log(new Test().pow_II_D(3, 2));
 console.log(new Test().shiftLeft_II_I(3, 2));
 console.log(new Test().shiftRight_II_I(3, 1));
 console.log(new Test().subtract_II_I(3, 2));
+console.log(new Test().zeroFillShiftRight_II_I(3, 1));
+console.log(new Test().zeroFillShiftRight_JJ_J(3, 1));

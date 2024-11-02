@@ -165,9 +165,9 @@ public class TestBasicOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testAdd_II_L() throws Exception {
+    public void testAdd_II_J() throws Exception {
         assertEquals(3, add(1, 2));
-        Method method = clazz.getMethod("add_II_L", int.class, int.class);
+        Method method = clazz.getMethod("add_II_J", int.class, int.class);
         assertNotNull(method);
         assertEquals(long.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -178,9 +178,9 @@ public class TestBasicOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testAdd_IL_L() throws Exception {
+    public void testAdd_IJ_J() throws Exception {
         assertEquals(3, add(1, 2L));
-        Method method = clazz.getMethod("add_IL_L", int.class, long.class);
+        Method method = clazz.getMethod("add_IJ_J", int.class, long.class);
         assertNotNull(method);
         assertEquals(long.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -191,8 +191,8 @@ public class TestBasicOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testAdd_LI_L() throws Exception {
-        Method method = clazz.getMethod("add_LI_L", long.class, int.class);
+    public void testAdd_JI_J() throws Exception {
+        Method method = clazz.getMethod("add_JI_J", long.class, int.class);
         assertNotNull(method);
         assertEquals(long.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -310,5 +310,31 @@ public class TestBasicOperations extends BaseTestTs2Java {
         assertEquals(int.class, method.getParameters()[1].getType());
         Object object = clazz.getConstructor().newInstance();
         assertEquals(3 - 2, method.invoke(object, 3, 2));
+    }
+
+    @Test
+    public void testZeroFillShiftRight_II_I() throws Exception {
+        Method method = clazz.getMethod("zeroFillShiftRight_II_I", int.class, int.class);
+        assertNotNull(method);
+        assertEquals(int.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(int.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertEquals(3 >>> 2, method.invoke(object, 3, 2));
+        assertEquals(-3 >>> 2, method.invoke(object, -3, 2));
+    }
+
+    @Test
+    public void testZeroFillShiftRight_JJ_J() throws Exception {
+        Method method = clazz.getMethod("zeroFillShiftRight_JJ_J", long.class, long.class);
+        assertNotNull(method);
+        assertEquals(long.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(long.class, method.getParameters()[0].getType());
+        assertEquals(long.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertEquals(3L >>> 2L, method.invoke(object, 3L, 2L));
+        assertEquals(-3L >>> 2L, method.invoke(object, -3L, 2L));
     }
 }

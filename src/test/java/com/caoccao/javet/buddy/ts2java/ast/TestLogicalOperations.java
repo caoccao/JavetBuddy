@@ -114,7 +114,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     /*
-  public logicalGE_IL_Z(IJ)Z
+  public logicalGE_IJ_Z(IJ)Z
    L0
     LINENUMBER 115 L0
     ILOAD 1
@@ -142,7 +142,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     MAXSTACK = 4
     MAXLOCALS = 5
      */
-    public boolean logicalGE_IL_Z(int a, long b) {
+    public boolean logicalGE_IJ_Z(int a, long b) {
         boolean c = a >= b;
         return c;
     }
@@ -302,8 +302,8 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalEQEQ_IL_Z() throws Exception {
-        Method method = clazz.getMethod("logicalEQEQ_IL_Z", int.class, long.class);
+    public void testLogicalEQEQ_IJ_Z() throws Exception {
+        Method method = clazz.getMethod("logicalEQEQ_IJ_Z", int.class, long.class);
         assertNotNull(method);
         assertEquals(boolean.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -361,8 +361,8 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalEQ_IL_Z() throws Exception {
-        Method method = clazz.getMethod("logicalEQ_IL_Z", int.class, long.class);
+    public void testLogicalEQ_IJ_Z() throws Exception {
+        Method method = clazz.getMethod("logicalEQ_IJ_Z", int.class, long.class);
         assertNotNull(method);
         assertEquals(boolean.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -447,9 +447,9 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalGE_IL_Z() throws Exception {
-        assertFalse(logicalGE_IL_Z(1, 2L));
-        Method method = clazz.getMethod("logicalGE_IL_Z", int.class, long.class);
+    public void testLogicalGE_IJ_Z() throws Exception {
+        assertFalse(logicalGE_IJ_Z(1, 2L));
+        Method method = clazz.getMethod("logicalGE_IJ_Z", int.class, long.class);
         assertNotNull(method);
         assertEquals(boolean.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -520,8 +520,8 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalGT_IL_Z() throws Exception {
-        Method method = clazz.getMethod("logicalGT_IL_Z", int.class, long.class);
+    public void testLogicalGT_IJ_Z() throws Exception {
+        Method method = clazz.getMethod("logicalGT_IJ_Z", int.class, long.class);
         assertNotNull(method);
         assertEquals(boolean.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -578,8 +578,8 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalLE_IL_Z() throws Exception {
-        Method method = clazz.getMethod("logicalLE_IL_Z", int.class, long.class);
+    public void testLogicalLE_IJ_Z() throws Exception {
+        Method method = clazz.getMethod("logicalLE_IJ_Z", int.class, long.class);
         assertNotNull(method);
         assertEquals(boolean.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -636,8 +636,8 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalLT_IL_Z() throws Exception {
-        Method method = clazz.getMethod("logicalLT_IL_Z", int.class, long.class);
+    public void testLogicalLT_IJ_Z() throws Exception {
+        Method method = clazz.getMethod("logicalLT_IJ_Z", int.class, long.class);
         assertNotNull(method);
         assertEquals(boolean.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -694,8 +694,8 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalNotEQEQ_IL_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNotEQEQ_IL_Z", int.class, long.class);
+    public void testLogicalNotEQEQ_IJ_Z() throws Exception {
+        Method method = clazz.getMethod("logicalNotEQEQ_IJ_Z", int.class, long.class);
         assertNotNull(method);
         assertEquals(boolean.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -752,8 +752,8 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalNotEQ_IL_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNotEQ_IL_Z", int.class, long.class);
+    public void testLogicalNotEQ_IJ_Z() throws Exception {
+        Method method = clazz.getMethod("logicalNotEQ_IJ_Z", int.class, long.class);
         assertNotNull(method);
         assertEquals(boolean.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -810,8 +810,8 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalNot_EQEQ_IL_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_EQEQ_IL_Z", int.class, long.class);
+    public void testLogicalNot_EQEQ_IJ_Z() throws Exception {
+        Method method = clazz.getMethod("logicalNot_EQEQ_IJ_Z", int.class, long.class);
         assertNotNull(method);
         assertEquals(boolean.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -869,8 +869,8 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalNot_EQ_IL_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_EQ_IL_Z", int.class, long.class);
+    public void testLogicalNot_EQ_IJ_Z() throws Exception {
+        Method method = clazz.getMethod("logicalNot_EQ_IJ_Z", int.class, long.class);
         assertNotNull(method);
         assertEquals(boolean.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -927,8 +927,8 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalNot_GE_IL_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_GE_IL_Z", int.class, long.class);
+    public void testLogicalNot_GE_IJ_Z() throws Exception {
+        Method method = clazz.getMethod("logicalNot_GE_IJ_Z", int.class, long.class);
         assertNotNull(method);
         assertEquals(boolean.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -970,8 +970,8 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalNot_GT_IL_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_GT_IL_Z", int.class, long.class);
+    public void testLogicalNot_GT_IJ_Z() throws Exception {
+        Method method = clazz.getMethod("logicalNot_GT_IJ_Z", int.class, long.class);
         assertNotNull(method);
         assertEquals(boolean.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -984,8 +984,8 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalNot_LE_DD_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_LE_DD_Z", double.class, double.class);
+    public void testLogicalNot_JE_DD_Z() throws Exception {
+        Method method = clazz.getMethod("logicalNot_JE_DD_Z", double.class, double.class);
         assertNotNull(method);
         assertEquals(boolean.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -999,8 +999,8 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalNot_LE_FF_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_LE_FF_Z", float.class, float.class);
+    public void testLogicalNot_JE_FF_Z() throws Exception {
+        Method method = clazz.getMethod("logicalNot_JE_FF_Z", float.class, float.class);
         assertNotNull(method);
         assertEquals(boolean.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -1014,8 +1014,8 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalNot_LE_II_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_LE_II_Z", int.class, int.class);
+    public void testLogicalNot_JE_II_Z() throws Exception {
+        Method method = clazz.getMethod("logicalNot_JE_II_Z", int.class, int.class);
         assertNotNull(method);
         assertEquals(boolean.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -1028,8 +1028,8 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalNot_LE_IL_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_LE_IL_Z", int.class, long.class);
+    public void testLogicalNot_JE_IJ_Z() throws Exception {
+        Method method = clazz.getMethod("logicalNot_JE_IJ_Z", int.class, long.class);
         assertNotNull(method);
         assertEquals(boolean.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -1042,8 +1042,8 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalNot_LT_DD_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_LT_DD_Z", double.class, double.class);
+    public void testLogicalNot_JT_DD_Z() throws Exception {
+        Method method = clazz.getMethod("logicalNot_JT_DD_Z", double.class, double.class);
         assertNotNull(method);
         assertEquals(boolean.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -1057,8 +1057,8 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalNot_LT_FF_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_LT_FF_Z", float.class, float.class);
+    public void testLogicalNot_JT_FF_Z() throws Exception {
+        Method method = clazz.getMethod("logicalNot_JT_FF_Z", float.class, float.class);
         assertNotNull(method);
         assertEquals(boolean.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -1072,8 +1072,8 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalNot_LT_II_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_LT_II_Z", int.class, int.class);
+    public void testLogicalNot_JT_II_Z() throws Exception {
+        Method method = clazz.getMethod("logicalNot_JT_II_Z", int.class, int.class);
         assertNotNull(method);
         assertEquals(boolean.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());
@@ -1086,8 +1086,8 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalNot_LT_IL_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_LT_IL_Z", int.class, long.class);
+    public void testLogicalNot_JT_IJ_Z() throws Exception {
+        Method method = clazz.getMethod("logicalNot_JT_IJ_Z", int.class, long.class);
         assertNotNull(method);
         assertEquals(boolean.class, method.getReturnType());
         assertEquals(2, method.getParameterCount());

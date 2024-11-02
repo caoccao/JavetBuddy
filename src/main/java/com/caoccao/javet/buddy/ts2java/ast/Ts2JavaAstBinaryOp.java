@@ -364,4 +364,24 @@ public final class Ts2JavaAstBinaryOp {
                 SimpleFreeMarkerFormat.format("Unsupported type ${type} in subtraction.",
                         SimpleMap.of("type", type.getName())));
     }
+
+    public static StackManipulation getZeroFillShiftRight(TypeDescription type) {
+        if (type.represents(int.class)) {
+            return new StackManipulation.Simple(
+                    (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
+                        methodVisitor.visitInsn(Opcodes.IUSHR);
+                        return new StackManipulation.Size(-1, 0);
+                    });
+        } else if (type.represents(long.class)) {
+            return new StackManipulation.Simple(
+                    (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
+                        methodVisitor.visitInsn(Opcodes.L2I);
+                        methodVisitor.visitInsn(Opcodes.LUSHR);
+                        return new StackManipulation.Size(-2, 0);
+                    });
+        }
+        throw new Ts2JavaException(
+                SimpleFreeMarkerFormat.format("Unsupported type ${type} in zero fill right shift.",
+                        SimpleMap.of("type", type.getName())));
+    }
 }
