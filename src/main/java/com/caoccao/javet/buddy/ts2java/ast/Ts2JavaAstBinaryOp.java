@@ -169,29 +169,29 @@ public final class Ts2JavaAstBinaryOp {
             switch (binaryOp) {
                 case Gt:
                     opcodeCompare1 = Opcodes.FCMPL;
-                    opcodeCompare2 = Opcodes.IFLE;
+                    opcodeCompare2 = logicalNot ? Opcodes.IFGT : Opcodes.IFLE;
                     break;
                 case GtEq:
                     opcodeCompare1 = Opcodes.FCMPL;
-                    opcodeCompare2 = Opcodes.IFLT;
+                    opcodeCompare2 = logicalNot ? Opcodes.IFGE : Opcodes.IFLT;
                     break;
                 case Lt:
                     opcodeCompare1 = Opcodes.FCMPG;
-                    opcodeCompare2 = Opcodes.IFGE;
+                    opcodeCompare2 = logicalNot ? Opcodes.IFLT : Opcodes.IFGE;
                     break;
                 case LtEq:
                     opcodeCompare1 = Opcodes.FCMPG;
-                    opcodeCompare2 = Opcodes.IFGT;
+                    opcodeCompare2 = logicalNot ? Opcodes.IFLE : Opcodes.IFGT;
                     break;
                 case EqEq:
                 case EqEqEq:
                     opcodeCompare1 = Opcodes.FCMPL;
-                    opcodeCompare2 = Opcodes.IFNE;
+                    opcodeCompare2 = logicalNot ? Opcodes.IFEQ : Opcodes.IFNE;
                     break;
                 case NotEq:
                 case NotEqEq:
                     opcodeCompare1 = Opcodes.FCMPL;
-                    opcodeCompare2 = Opcodes.IFEQ;
+                    opcodeCompare2 = logicalNot ? Opcodes.IFNE : Opcodes.IFEQ;
                     break;
                 default:
                     throw new Ts2JavaException(
@@ -211,29 +211,29 @@ public final class Ts2JavaAstBinaryOp {
             switch (binaryOp) {
                 case Gt:
                     opcodeCompare1 = Opcodes.DCMPL;
-                    opcodeCompare2 = Opcodes.IFLE;
+                    opcodeCompare2 = logicalNot ? Opcodes.IFGT : Opcodes.IFLE;
                     break;
                 case GtEq:
                     opcodeCompare1 = Opcodes.DCMPL;
-                    opcodeCompare2 = Opcodes.IFLT;
+                    opcodeCompare2 = logicalNot ? Opcodes.IFGE : Opcodes.IFLT;
                     break;
                 case Lt:
                     opcodeCompare1 = Opcodes.DCMPG;
-                    opcodeCompare2 = Opcodes.IFGE;
+                    opcodeCompare2 = logicalNot ? Opcodes.IFLT : Opcodes.IFGE;
                     break;
                 case LtEq:
                     opcodeCompare1 = Opcodes.DCMPG;
-                    opcodeCompare2 = Opcodes.IFGT;
+                    opcodeCompare2 = logicalNot ? Opcodes.IFLE : Opcodes.IFGT;
                     break;
                 case EqEq:
                 case EqEqEq:
                     opcodeCompare1 = Opcodes.DCMPL;
-                    opcodeCompare2 = Opcodes.IFNE;
+                    opcodeCompare2 = logicalNot ? Opcodes.IFEQ : Opcodes.IFNE;
                     break;
                 case NotEq:
                 case NotEqEq:
                     opcodeCompare1 = Opcodes.DCMPL;
-                    opcodeCompare2 = Opcodes.IFEQ;
+                    opcodeCompare2 = logicalNot ? Opcodes.IFNE : Opcodes.IFEQ;
                     break;
                 default:
                     throw new Ts2JavaException(
