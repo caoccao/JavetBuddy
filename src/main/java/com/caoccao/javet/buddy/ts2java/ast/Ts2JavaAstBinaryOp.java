@@ -132,24 +132,24 @@ public final class Ts2JavaAstBinaryOp {
             int opcodeCompare;
             switch (binaryOp) {
                 case Gt:
-                    opcodeCompare = Opcodes.IFLE;
+                    opcodeCompare = logicalNot ? Opcodes.IFGT : Opcodes.IFLE;
                     break;
                 case GtEq:
-                    opcodeCompare = Opcodes.IFLT;
+                    opcodeCompare = logicalNot ? Opcodes.IFGE : Opcodes.IFLT;
                     break;
                 case Lt:
-                    opcodeCompare = Opcodes.IFGE;
+                    opcodeCompare = logicalNot ? Opcodes.IFLT : Opcodes.IFGE;
                     break;
                 case LtEq:
-                    opcodeCompare = Opcodes.IFGT;
+                    opcodeCompare = logicalNot ? Opcodes.IFLE : Opcodes.IFGT;
                     break;
                 case EqEq:
                 case EqEqEq:
-                    opcodeCompare = Opcodes.IFNE;
+                    opcodeCompare = logicalNot ? Opcodes.IFEQ : Opcodes.IFNE;
                     break;
                 case NotEq:
                 case NotEqEq:
-                    opcodeCompare = Opcodes.IFEQ;
+                    opcodeCompare = logicalNot ? Opcodes.IFNE : Opcodes.IFEQ;
                     break;
                 default:
                     throw new Ts2JavaException(
