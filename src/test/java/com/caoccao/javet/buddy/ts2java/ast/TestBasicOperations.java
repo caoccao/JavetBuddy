@@ -85,6 +85,26 @@ public class TestBasicOperations extends BaseTestTs2Java {
         }
     }
 
+    /*
+  public minus(II)I
+   L0
+    LINENUMBER 89 L0
+    ILOAD 1
+    ILOAD 2
+    IADD
+    INEG
+    IRETURN
+   L1
+    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/ast/TestBasicOperations; L0 L1 0
+    LOCALVARIABLE a I L0 L1 1
+    LOCALVARIABLE b I L0 L1 2
+    MAXSTACK = 2
+    MAXLOCALS = 3
+     */
+    public int minus(int a, int b) {
+        return -(a + b);
+    }
+
     @Test
     public void testAdd_DD_I() throws Exception {
         Method method = clazz.getMethod("add_DD_I", double.class, double.class);
@@ -96,6 +116,19 @@ public class TestBasicOperations extends BaseTestTs2Java {
         Object object = clazz.getConstructor().newInstance();
         assertEquals(1D + 2D - 1D, (double) method.invoke(object, 1D, 2D), 0.001D);
         assertEquals(1.23D + 2D - 1D, (double) method.invoke(object, 1.23D, 2D), 0.001D);
+    }
+
+    @Test
+    public void testAdd_FF_I() throws Exception {
+        Method method = clazz.getMethod("add_FF_I", float.class, float.class);
+        assertNotNull(method);
+        assertEquals(float.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(float.class, method.getParameters()[0].getType());
+        assertEquals(float.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertEquals(1F + 2F - 1F, (float) method.invoke(object, 1F, 2F), 0.001F);
+        assertEquals(1.23F + 2F - 1F, (float) method.invoke(object, 1.23F, 2F), 0.001F);
     }
 
     @Test
@@ -160,6 +193,19 @@ public class TestBasicOperations extends BaseTestTs2Java {
         assertEquals(int.class, method.getParameters()[1].getType());
         Object object = clazz.getConstructor().newInstance();
         assertEquals(3 / 2, method.invoke(object, 3, 2));
+    }
+
+    @Test
+    public void testMinus_II_I() throws Exception {
+        assertEquals(-5, minus(3, 2));
+        Method method = clazz.getMethod("minus_II_I", int.class, int.class);
+        assertNotNull(method);
+        assertEquals(int.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(int.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertEquals(-5, method.invoke(object, 3, 2));
     }
 
     @Test

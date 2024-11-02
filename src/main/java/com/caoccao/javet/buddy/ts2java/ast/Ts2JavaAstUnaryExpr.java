@@ -25,8 +25,32 @@ import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
+import net.bytebuddy.implementation.Implementation;
+import net.bytebuddy.implementation.bytecode.StackManipulation;
+import net.bytebuddy.jar.asm.MethodVisitor;
+import net.bytebuddy.jar.asm.Opcodes;
 
 public final class Ts2JavaAstUnaryExpr implements ITs2JavaAstStackManipulation<Swc4jAstUnaryExpr> {
+    private int getOpcodeNegative(Swc4jAstUnaryExpr ast, TypeDescription type) {
+        if (type.represents(int.class)
+                || type.represents(byte.class)
+                || type.represents(char.class)
+                || type.represents(short.class)) {
+            return Opcodes.INEG;
+        } else if (type.represents(long.class)) {
+            return Opcodes.LNEG;
+        } else if (type.represents(float.class)) {
+            return Opcodes.FNEG;
+        } else if (type.represents(double.class)) {
+            return Opcodes.DNEG;
+        } else {
+            throw new Ts2JavaAstException(
+                    ast,
+                    SimpleFreeMarkerFormat.format("Minus cannot be applied to type ${type}.",
+                            SimpleMap.of("type", type.getName())));
+        }
+    }
+
     @Override
     public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstUnaryExpr ast) {
         ISwc4jAstExpr arg = ast.getArg().unParenExpr();
@@ -34,25 +58,42 @@ public final class Ts2JavaAstUnaryExpr implements ITs2JavaAstStackManipulation<S
             case Bang:
                 switch (arg.getType()) {
                     case BinExpr:
-                        return new Ts2JavaAstBinExpr().setLogicalNot(true).manipulate(
-                                functionContext, arg.as(Swc4jAstBinExpr.class));
+                        return new Ts2JavaAstBinExpr()
+                                .setLogicalNot(true)
+                                .manipulate(functionContext, arg.as(Swc4jAstBinExpr.class));
                     default:
                         throw new Ts2JavaAstException(
                                 arg,
                                 SimpleFreeMarkerFormat.format("UnaryExpr arg type ${argType} for ! is not supported.",
                                         SimpleMap.of("argType", arg.getType().name())));
                 }
-            case Minus:
+            case Minus: {
+                TypeDescription returnType;
                 switch (arg.getType()) {
+                    case BinExpr:
+                        returnType = new Ts2JavaAstBinExpr()
+                                .manipulate(functionContext, arg.as(Swc4jAstBinExpr.class));
+                        break;
                     case Number:
-                        return new Ts2JavaAstNumber().setNegative(true).manipulate(
-                                functionContext, arg.as(Swc4jAstNumber.class));
+                        return new Ts2JavaAstNumber()
+                                .setNegative(true)
+                                .manipulate(functionContext, arg.as(Swc4jAstNumber.class));
                     default:
                         throw new Ts2JavaAstException(
                                 arg,
                                 SimpleFreeMarkerFormat.format("UnaryExpr arg type ${argType} for - is not supported.",
                                         SimpleMap.of("argType", arg.getType().name())));
                 }
+                final int opcode = getOpcodeNegative(ast, returnType);
+                StackManipulation stackManipulation = new StackManipulation.Simple((
+                        MethodVisitor methodVisitor,
+                        Implementation.Context implementationContext) -> {
+                    methodVisitor.visitInsn(opcode);
+                    return StackManipulation.Size.ZERO;
+                });
+                functionContext.getStackManipulations().add(stackManipulation);
+                return returnType;
+            }
             default:
                 throw new Ts2JavaAstException(
                         ast,

@@ -30,8 +30,8 @@ import net.bytebuddy.implementation.bytecode.constant.IntegerConstant;
 import net.bytebuddy.implementation.bytecode.constant.LongConstant;
 
 public final class Ts2JavaAstNumber implements ITs2JavaAstStackManipulation<Swc4jAstNumber> {
+    private final TypeDescription valueType;
     private boolean negative;
-    private TypeDescription valueType;
 
     public Ts2JavaAstNumber() {
         this(null);
@@ -52,8 +52,9 @@ public final class Ts2JavaAstNumber implements ITs2JavaAstStackManipulation<Swc4
     @Override
     public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstNumber ast) {
         StackManipulation stackManipulation;
-        if (valueType == null) {
-            valueType = ast.getRaw()
+        TypeDescription type = valueType;
+        if (type == null) {
+            type = ast.getRaw()
                     .map(raw -> {
                         if (StringUtils.isNotEmpty(raw)) {
                             if (raw.contains(".")) {
@@ -72,22 +73,22 @@ public final class Ts2JavaAstNumber implements ITs2JavaAstStackManipulation<Swc4
                     })
                     .orElse(TypeDescription.ForLoadedType.of(int.class));
         }
-        if (valueType.represents(int.class) || valueType.represents(short.class) || valueType.represents(byte.class)) {
+        if (type.represents(int.class) || type.represents(short.class) || type.represents(byte.class)) {
             stackManipulation = IntegerConstant.forValue(negative ? -ast.asInt() : ast.asInt());
-        } else if (valueType.represents(long.class)) {
+        } else if (type.represents(long.class)) {
             stackManipulation = LongConstant.forValue(negative ? -ast.asLong() : ast.asLong());
-        } else if (valueType.represents(float.class)) {
+        } else if (type.represents(float.class)) {
             stackManipulation = FloatConstant.forValue(negative ? -ast.asFloat() : ast.asFloat());
-        } else if (valueType.represents(double.class)) {
+        } else if (type.represents(double.class)) {
             stackManipulation = DoubleConstant.forValue(negative ? -ast.asDouble() : ast.asDouble());
         } else {
             throw new Ts2JavaAstException(
                     ast,
                     SimpleFreeMarkerFormat.format("Number type ${type} is not supported.",
-                            SimpleMap.of("type", valueType.getName())));
+                            SimpleMap.of("type", type.getName())));
         }
         functionContext.getStackManipulations().add(stackManipulation);
-        return valueType;
+        return type;
     }
 
     public Ts2JavaAstNumber setNegative(boolean negative) {
