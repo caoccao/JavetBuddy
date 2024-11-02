@@ -86,7 +86,8 @@ public final class Ts2JavaAstBinaryOp {
     public static StackManipulation getLogical(
             JavaFunctionContext functionContext,
             Swc4jAstBinaryOp binaryOp,
-            TypeDescription type) {
+            TypeDescription type,
+            boolean logicalNot) {
         functionContext.increaseLogicalDepth();
         Label labelFalse = functionContext.getLogicalLabels().get(1);
         List<StackManipulation> stackManipulations = new ArrayList<>();
@@ -97,24 +98,24 @@ public final class Ts2JavaAstBinaryOp {
             int opcodeCompare;
             switch (binaryOp) {
                 case Gt:
-                    opcodeCompare = Opcodes.IF_ICMPLE;
+                    opcodeCompare = logicalNot ? Opcodes.IF_ICMPGT : Opcodes.IF_ICMPLE;
                     break;
                 case GtEq:
-                    opcodeCompare = Opcodes.IF_ICMPLT;
+                    opcodeCompare = logicalNot ? Opcodes.IF_ICMPGE : Opcodes.IF_ICMPLT;
                     break;
                 case Lt:
-                    opcodeCompare = Opcodes.IF_ICMPGE;
+                    opcodeCompare = logicalNot ? Opcodes.IF_ICMPLT : Opcodes.IF_ICMPGE;
                     break;
                 case LtEq:
-                    opcodeCompare = Opcodes.IF_ICMPGT;
+                    opcodeCompare = logicalNot ? Opcodes.IF_ICMPLE : Opcodes.IF_ICMPGT;
                     break;
                 case EqEq:
                 case EqEqEq:
-                    opcodeCompare = Opcodes.IF_ICMPNE;
+                    opcodeCompare = logicalNot ? Opcodes.IF_ICMPEQ : Opcodes.IF_ICMPNE;
                     break;
                 case NotEq:
                 case NotEqEq:
-                    opcodeCompare = Opcodes.IF_ICMPEQ;
+                    opcodeCompare = logicalNot ? Opcodes.IF_ICMPNE : Opcodes.IF_ICMPEQ;
                     break;
                 default:
                     throw new Ts2JavaException(

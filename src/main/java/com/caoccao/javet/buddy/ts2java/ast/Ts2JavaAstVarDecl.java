@@ -49,7 +49,7 @@ public final class Ts2JavaAstVarDecl implements ITs2JavaAstStackManipulation<Swc
                         Swc4jAstTsTypeAnn tsTypeAnn = bindingIdent.getTypeAnn().get();
                         TypeDescription variableType = Ts2JavaAstTsTypeAnn.getTypeDescription(tsTypeAnn);
                         if (varDeclarator.getInit().isPresent()) {
-                            ISwc4jAstExpr expression = varDeclarator.getInit().get();
+                            ISwc4jAstExpr expression = varDeclarator.getInit().get().unParenExpr();
                             TypeDescription valueType;
                             switch (expression.getType()) {
                                 case BinExpr: {

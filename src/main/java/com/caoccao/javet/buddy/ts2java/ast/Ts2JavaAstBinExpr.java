@@ -30,6 +30,16 @@ import net.bytebuddy.implementation.bytecode.StackManipulation;
 import java.util.List;
 
 public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc4jAstBinExpr> {
+    private boolean logicalNot;
+
+    public Ts2JavaAstBinExpr() {
+        logicalNot = false;
+    }
+
+    public boolean isLogicalNot() {
+        return logicalNot;
+    }
+
     @Override
     public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstBinExpr ast) {
         final List<StackManipulation> stackManipulations = functionContext.getStackManipulations();
@@ -74,7 +84,7 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
             case NotEq:
             case NotEqEq:
                 stackManipulation = Ts2JavaAstBinaryOp.getLogical(
-                        functionContext, ast.getOp(), upCaseType);
+                        functionContext, ast.getOp(), upCaseType, logicalNot);
                 break;
 //            case BitAnd:
 //                stackManipulation = Ts2JavaAstBinaryOp.getBitAndStackManipulation(functionContext);
@@ -104,5 +114,10 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
                         SimpleFreeMarkerFormat.format("BinExpr left expr type ${exprType} is not supported.",
                                 SimpleMap.of("exprType", expression.getType().name())));
         }
+    }
+
+    public Ts2JavaAstBinExpr setLogicalNot(boolean logicalNot) {
+        this.logicalNot = logicalNot;
+        return this;
     }
 }

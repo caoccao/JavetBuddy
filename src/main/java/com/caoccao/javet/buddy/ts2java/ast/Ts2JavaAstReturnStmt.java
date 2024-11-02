@@ -21,6 +21,7 @@ import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
+import com.caoccao.javet.swc4j.ast.expr.Swc4jAstUnaryExpr;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstReturnStmt;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
@@ -34,13 +35,16 @@ public final class Ts2JavaAstReturnStmt implements ITs2JavaAstStackManipulation<
         TypeDescription returnType = TypeDescription.ForLoadedType.of(void.class);
         if (ast.getArg().isPresent()) {
             TypeDescription fromType;
-            ISwc4jAstExpr arg = ast.getArg().get();
+            ISwc4jAstExpr arg = ast.getArg().get().unParenExpr();
             switch (arg.getType()) {
                 case BinExpr:
                     fromType = new Ts2JavaAstBinExpr().manipulate(functionContext, arg.as(Swc4jAstBinExpr.class));
                     break;
                 case Ident:
                     fromType = new Ts2JavaAstIdent().manipulate(functionContext, arg.as(Swc4jAstIdent.class));
+                    break;
+                case UnaryExpr:
+                    fromType = new Ts2JavaAstUnaryExpr().manipulate(functionContext, arg.as(Swc4jAstUnaryExpr.class));
                     break;
                 default:
                     throw new Ts2JavaAstException(

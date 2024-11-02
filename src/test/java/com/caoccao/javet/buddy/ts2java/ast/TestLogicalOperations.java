@@ -201,6 +201,32 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     /*
+  public logicalNot_II_Z(II)Z
+   L0
+    LINENUMBER 204 L0
+    ILOAD 1
+    ILOAD 2
+    IF_ICMPEQ L1
+    ICONST_1
+    GOTO L2
+   L1
+   FRAME SAME
+    ICONST_0
+   L2
+   FRAME SAME1 I
+    IRETURN
+   L3
+    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/ast/TestLogicalOperations; L0 L3 0
+    LOCALVARIABLE a I L0 L3 1
+    LOCALVARIABLE b I L0 L3 2
+    MAXSTACK = 2
+    MAXLOCALS = 3
+     */
+    public boolean logicalNot_EQ_II_Z(int a, int b) {
+        return !(a == b);
+    }
+
+    /*
   public logicalAnd_II_Z(II)Z
    L0
     LINENUMBER 87 L0
@@ -737,5 +763,90 @@ public class TestLogicalOperations extends BaseTestTs2Java {
         assertTrue((boolean) method.invoke(object, 1, 2L));
         assertTrue((boolean) method.invoke(object, 2, 1L));
         assertFalse((boolean) method.invoke(object, 1, 1L));
+    }
+
+    @Test
+    public void testLogicalNot_EQEQ_II_Z() throws Exception {
+        Method method = clazz.getMethod("logicalNot_EQEQ_II_Z", int.class, int.class);
+        assertNotNull(method);
+        assertEquals(boolean.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(int.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertTrue((boolean) method.invoke(object, 1, 2));
+        assertTrue((boolean) method.invoke(object, 2, 1));
+        assertFalse((boolean) method.invoke(object, 1, 1));
+    }
+
+    @Test
+    public void testLogicalNot_EQ_II_Z() throws Exception {
+        assertTrue(logicalNot_EQ_II_Z(1, 2));
+        Method method = clazz.getMethod("logicalNot_EQ_II_Z", int.class, int.class);
+        assertNotNull(method);
+        assertEquals(boolean.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(int.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertTrue((boolean) method.invoke(object, 1, 2));
+        assertTrue((boolean) method.invoke(object, 2, 1));
+        assertFalse((boolean) method.invoke(object, 1, 1));
+    }
+
+    @Test
+    public void testLogicalNot_GE_II_Z() throws Exception {
+        Method method = clazz.getMethod("logicalNot_GE_II_Z", int.class, int.class);
+        assertNotNull(method);
+        assertEquals(boolean.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(int.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertTrue((boolean) method.invoke(object, 1, 2));
+        assertFalse((boolean) method.invoke(object, 2, 1));
+        assertFalse((boolean) method.invoke(object, 1, 1));
+    }
+
+    @Test
+    public void testLogicalNot_GT_II_Z() throws Exception {
+        Method method = clazz.getMethod("logicalNot_GT_II_Z", int.class, int.class);
+        assertNotNull(method);
+        assertEquals(boolean.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(int.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertTrue((boolean) method.invoke(object, 1, 2));
+        assertFalse((boolean) method.invoke(object, 2, 1));
+        assertTrue((boolean) method.invoke(object, 1, 1));
+    }
+
+    @Test
+    public void testLogicalNot_LE_II_Z() throws Exception {
+        Method method = clazz.getMethod("logicalNot_LE_II_Z", int.class, int.class);
+        assertNotNull(method);
+        assertEquals(boolean.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(int.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertFalse((boolean) method.invoke(object, 1, 2));
+        assertTrue((boolean) method.invoke(object, 2, 1));
+        assertFalse((boolean) method.invoke(object, 1, 1));
+    }
+
+    @Test
+    public void testLogicalNot_LT_II_Z() throws Exception {
+        Method method = clazz.getMethod("logicalNot_LT_II_Z", int.class, int.class);
+        assertNotNull(method);
+        assertEquals(boolean.class, method.getReturnType());
+        assertEquals(2, method.getParameterCount());
+        assertEquals(int.class, method.getParameters()[0].getType());
+        assertEquals(int.class, method.getParameters()[1].getType());
+        Object object = clazz.getConstructor().newInstance();
+        assertFalse((boolean) method.invoke(object, 1, 2));
+        assertTrue((boolean) method.invoke(object, 2, 1));
+        assertTrue((boolean) method.invoke(object, 1, 1));
     }
 }

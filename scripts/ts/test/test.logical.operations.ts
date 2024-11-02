@@ -149,6 +149,30 @@ class Test {
   public logicalNotEQ_IL_Z(a: int, b: long): boolean {
     return a != b;
   }
+
+  public logicalNot_EQEQ_II_Z(a: int, b: int): boolean {
+    return !(a === b);
+  }
+
+  public logicalNot_EQ_II_Z(a: int, b: int): boolean {
+    return !(a == b);
+  }
+
+  public logicalNot_GE_II_Z(a: int, b: int): boolean {
+    return !(a >= b);
+  }
+
+  public logicalNot_GT_II_Z(a: int, b: int): boolean {
+    return !(a > b);
+  }
+
+  public logicalNot_LE_II_Z(a: int, b: int): boolean {
+    return !(a <= b);
+  }
+
+  public logicalNot_LT_II_Z(a: int, b: int): boolean {
+    return !(a < b);
+  }
 }
 
 console.log(new Test().logicalEQEQ_DD_Z(1, 2));
@@ -186,3 +210,9 @@ console.log(new Test().logicalNotEQ_DD_Z(1, 2));
 console.log(new Test().logicalNotEQ_FF_Z(1, 2));
 console.log(new Test().logicalNotEQ_II_Z(1, 2));
 console.log(new Test().logicalNotEQ_IL_Z(1, 2));
+console.log(new Test().logicalNot_EQEQ_II_Z(1, 2));
+console.log(new Test().logicalNot_EQ_II_Z(1, 2));
+console.log(new Test().logicalNot_GE_II_Z(1, 2));
+console.log(new Test().logicalNot_GT_II_Z(1, 2));
+console.log(new Test().logicalNot_LT_II_Z(1, 2));
+console.log(new Test().logicalNot_LE_II_Z(1, 2));
