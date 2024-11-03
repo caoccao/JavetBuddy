@@ -17,24 +17,13 @@
 package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.buddy.ts2java.BaseTestTs2Java;
-import com.caoccao.javet.buddy.ts2java.Ts2Java;
-import com.caoccao.javet.swc4j.exceptions.Swc4jCoreException;
+import com.caoccao.javet.buddy.ts2java.TsClass;
+import com.caoccao.javet.buddy.ts2java.TsMethodArgument;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestAssignments extends BaseTestTs2Java {
-    protected static Class<?> clazz = null;
-
-    public TestAssignments() {
-        super();
-        init();
-    }
-
     /*
   public assignAndCast(IJ)D
    L0
@@ -105,52 +94,29 @@ public class TestAssignments extends BaseTestTs2Java {
         return a + b + c + d;
     }
 
-    protected void init() {
-        if (clazz == null) {
-            String tsCode = null;
-            try {
-                tsCode = getTsCode("test.assignments.ts");
-            } catch (IOException e) {
-                fail(e);
-            }
-            assertNotNull(tsCode);
-            Ts2Java ts2Java = new Ts2Java("com.test", tsCode);
-            try {
-                ts2Java.transpile();
-            } catch (Swc4jCoreException e) {
-                fail(e);
-            }
-            List<Class<?>> classes = ts2Java.getClasses();
-            assertEquals(1, classes.size());
-            clazz = classes.get(0);
-            assertEquals("Test", clazz.getSimpleName());
-            assertEquals("com.test.Test", clazz.getName());
-        }
-    }
-
     @Test
     public void testAssignAndCast() throws Exception {
         assertEquals(3.0D, assignAndCast(1, 2L), 0.001D);
-        Method method = clazz.getMethod("assignAndCast", int.class, long.class);
-        assertNotNull(method);
-        assertEquals(double.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(long.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertEquals(3.0D, (double) method.invoke(object, 1, 2L), 0.001D);
+        TsClass tsClass = new TsClass(
+                "let c: long = a;\n" +
+                        "let d: long = b;\n" +
+                        "return c + d;",
+                double.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", long.class));
+        assertEquals(3.0D, (double) tsClass.invoke(1, 2L), 0.001D);
     }
 
     @Test
     public void testAssignConst() throws Exception {
         assertEquals(105L, assignConst(1, 2L));
-        Method method = clazz.getMethod("assignConst", int.class, long.class);
-        assertNotNull(method);
-        assertEquals(long.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(long.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertEquals(105L, method.invoke(object, 1, 2L));
+        TsClass tsClass = new TsClass(
+                "const c: int = 100;\n" +
+                        "const d: long = 2;\n" +
+                        "return a + b + c + d;",
+                long.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", long.class));
+        assertEquals(105L, tsClass.invoke(1, 2L));
     }
 }

@@ -17,47 +17,14 @@
 package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.buddy.ts2java.BaseTestTs2Java;
-import com.caoccao.javet.buddy.ts2java.Ts2Java;
-import com.caoccao.javet.swc4j.exceptions.Swc4jCoreException;
+import com.caoccao.javet.buddy.ts2java.TsClass;
+import com.caoccao.javet.buddy.ts2java.TsMethodArgument;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestLogicalOperations extends BaseTestTs2Java {
-    protected static Class<?> clazz = null;
-
-    public TestLogicalOperations() {
-        super();
-        init();
-    }
-
-    protected void init() {
-        if (clazz == null) {
-            String tsCode = null;
-            try {
-                tsCode = getTsCode("test.logical.operations.ts");
-            } catch (IOException e) {
-                fail(e);
-            }
-            assertNotNull(tsCode);
-            Ts2Java ts2Java = new Ts2Java("com.test", tsCode);
-            try {
-                ts2Java.transpile();
-            } catch (Swc4jCoreException e) {
-                fail(e);
-            }
-            List<Class<?>> classes = ts2Java.getClasses();
-            assertEquals(1, classes.size());
-            clazz = classes.get(0);
-            assertEquals("Test", clazz.getSimpleName());
-            assertEquals("com.test.Test", clazz.getName());
-        }
-    }
-
     /*
   public logicalAndOrAnd_II_Z(II)Z
    L0
@@ -296,843 +263,745 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalEQEQ_DD_Z() throws Exception {
-        Method method = clazz.getMethod("logicalEQEQ_DD_Z", double.class, double.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(double.class, method.getParameters()[0].getType());
-        assertEquals(double.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1D, 2D));
-        assertFalse((boolean) method.invoke(object, 2D, 1D));
-        assertTrue((boolean) method.invoke(object, 1D, 1D));
-        assertTrue((boolean) method.invoke(object, 1.23D, 1.23D));
+        TsClass tsClass = new TsClass(
+                "return a === b;",
+                boolean.class,
+                TsMethodArgument.of("a", double.class),
+                TsMethodArgument.of("b", double.class));
+        assertFalse((boolean) tsClass.invoke(1D, 2D));
+        assertFalse((boolean) tsClass.invoke(2D, 1D));
+        assertTrue((boolean) tsClass.invoke(1D, 1D));
+        assertTrue((boolean) tsClass.invoke(1.23D, 1.23D));
     }
 
     @Test
     public void testLogicalEQEQ_FF_Z() throws Exception {
-        Method method = clazz.getMethod("logicalEQEQ_FF_Z", float.class, float.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(float.class, method.getParameters()[0].getType());
-        assertEquals(float.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1F, 2F));
-        assertFalse((boolean) method.invoke(object, 2F, 1F));
-        assertTrue((boolean) method.invoke(object, 1F, 1F));
-        assertTrue((boolean) method.invoke(object, 1.23F, 1.23F));
+        TsClass tsClass = new TsClass(
+                "return a === b;",
+                boolean.class,
+                TsMethodArgument.of("a", float.class),
+                TsMethodArgument.of("b", float.class));
+        assertFalse((boolean) tsClass.invoke(1F, 2F));
+        assertFalse((boolean) tsClass.invoke(2F, 1F));
+        assertTrue((boolean) tsClass.invoke(1F, 1F));
+        assertTrue((boolean) tsClass.invoke(1.23F, 1.23F));
     }
 
     @Test
     public void testLogicalEQEQ_II_Z() throws Exception {
-        Method method = clazz.getMethod("logicalEQEQ_II_Z", int.class, int.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(int.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1, 2));
-        assertFalse((boolean) method.invoke(object, 2, 1));
-        assertTrue((boolean) method.invoke(object, 1, 1));
+        TsClass tsClass = new TsClass(
+                "return a === b;",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertFalse((boolean) tsClass.invoke(1, 2));
+        assertFalse((boolean) tsClass.invoke(2, 1));
+        assertTrue((boolean) tsClass.invoke(1, 1));
     }
 
     @Test
     public void testLogicalEQEQ_IJ_Z() throws Exception {
-        Method method = clazz.getMethod("logicalEQEQ_IJ_Z", int.class, long.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(long.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1, 2L));
-        assertFalse((boolean) method.invoke(object, 2, 1L));
-        assertTrue((boolean) method.invoke(object, 1, 1L));
+        TsClass tsClass = new TsClass(
+                "return a === b;",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", long.class));
+        assertFalse((boolean) tsClass.invoke(1, 2L));
+        assertFalse((boolean) tsClass.invoke(2, 1L));
+        assertTrue((boolean) tsClass.invoke(1, 1L));
     }
 
     @Test
     public void testLogicalEQ_DD_Z() throws Exception {
-        Method method = clazz.getMethod("logicalEQ_DD_Z", double.class, double.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(double.class, method.getParameters()[0].getType());
-        assertEquals(double.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1D, 2D));
-        assertFalse((boolean) method.invoke(object, 2D, 1D));
-        assertTrue((boolean) method.invoke(object, 1D, 1D));
-        assertTrue((boolean) method.invoke(object, 1.23D, 1.23D));
+        TsClass tsClass = new TsClass(
+                "return a == b;",
+                boolean.class,
+                TsMethodArgument.of("a", double.class),
+                TsMethodArgument.of("b", double.class));
+        assertFalse((boolean) tsClass.invoke(1D, 2D));
+        assertFalse((boolean) tsClass.invoke(2D, 1D));
+        assertTrue((boolean) tsClass.invoke(1D, 1D));
+        assertTrue((boolean) tsClass.invoke(1.23D, 1.23D));
     }
 
     @Test
     public void testLogicalEQ_FF_Z() throws Exception {
-        Method method = clazz.getMethod("logicalEQ_FF_Z", float.class, float.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(float.class, method.getParameters()[0].getType());
-        assertEquals(float.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1F, 2F));
-        assertFalse((boolean) method.invoke(object, 2F, 1F));
-        assertTrue((boolean) method.invoke(object, 1F, 1F));
-        assertTrue((boolean) method.invoke(object, 1.23F, 1.23F));
+        TsClass tsClass = new TsClass(
+                "return a == b;",
+                boolean.class,
+                TsMethodArgument.of("a", float.class),
+                TsMethodArgument.of("b", float.class));
+        assertFalse((boolean) tsClass.invoke(1F, 2F));
+        assertFalse((boolean) tsClass.invoke(2F, 1F));
+        assertTrue((boolean) tsClass.invoke(1F, 1F));
+        assertTrue((boolean) tsClass.invoke(1.23F, 1.23F));
     }
 
     @Test
     public void testLogicalEQ_II_Z() throws Exception {
         assertFalse(logicalEQ_II_Z(1, 2));
-        Method method = clazz.getMethod("logicalEQ_II_Z", int.class, int.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(int.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1, 2));
-        assertFalse((boolean) method.invoke(object, 2, 1));
-        assertTrue((boolean) method.invoke(object, 1, 1));
+        TsClass tsClass = new TsClass(
+                "return a == b;",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertFalse((boolean) tsClass.invoke(1, 2));
+        assertFalse((boolean) tsClass.invoke(2, 1));
+        assertTrue((boolean) tsClass.invoke(1, 1));
     }
 
     @Test
     public void testLogicalEQ_IJ_Z() throws Exception {
-        Method method = clazz.getMethod("logicalEQ_IJ_Z", int.class, long.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(long.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1, 2L));
-        assertFalse((boolean) method.invoke(object, 2, 1L));
-        assertTrue((boolean) method.invoke(object, 1, 1L));
+        TsClass tsClass = new TsClass(
+                "return a == b;",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", long.class));
+        assertFalse((boolean) tsClass.invoke(1, 2L));
+        assertFalse((boolean) tsClass.invoke(2, 1L));
+        assertTrue((boolean) tsClass.invoke(1, 1L));
     }
 
     @Test
     public void testLogicalGE_BB_Z() throws Exception {
-        Method method = clazz.getMethod("logicalGE_BB_Z", byte.class, byte.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(byte.class, method.getParameters()[0].getType());
-        assertEquals(byte.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, (byte) 1, (byte) 2));
-        assertTrue((boolean) method.invoke(object, (byte) 2, (byte) 1));
-        assertTrue((boolean) method.invoke(object, (byte) 1, (byte) 1));
+        TsClass tsClass = new TsClass(
+                "return a >= b;",
+                boolean.class,
+                TsMethodArgument.of("a", byte.class),
+                TsMethodArgument.of("b", byte.class));
+        assertFalse((boolean) tsClass.invoke((byte) 1, (byte) 2));
+        assertTrue((boolean) tsClass.invoke((byte) 2, (byte) 1));
+        assertTrue((boolean) tsClass.invoke((byte) 1, (byte) 1));
     }
 
     @Test
     public void testLogicalGE_CC_Z() throws Exception {
-        Method method = clazz.getMethod("logicalGE_CC_Z", char.class, char.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(char.class, method.getParameters()[0].getType());
-        assertEquals(char.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, (char) 1, (char) 2));
-        assertTrue((boolean) method.invoke(object, (char) 2, (char) 1));
-        assertTrue((boolean) method.invoke(object, (char) 1, (char) 1));
+        TsClass tsClass = new TsClass(
+                "return a >= b;",
+                boolean.class,
+                TsMethodArgument.of("a", char.class),
+                TsMethodArgument.of("b", char.class));
+        assertFalse((boolean) tsClass.invoke((char) 1, (char) 2));
+        assertTrue((boolean) tsClass.invoke((char) 2, (char) 1));
+        assertTrue((boolean) tsClass.invoke((char) 1, (char) 1));
     }
 
     @Test
     public void testLogicalGE_DD_Z() throws Exception {
-        Method method = clazz.getMethod("logicalGE_DD_Z", double.class, double.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(double.class, method.getParameters()[0].getType());
-        assertEquals(double.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1D, 2D));
-        assertTrue((boolean) method.invoke(object, 2D, 1D));
-        assertTrue((boolean) method.invoke(object, 1D, 1D));
-        assertTrue((boolean) method.invoke(object, 1.23D, 1.23D));
+        TsClass tsClass = new TsClass(
+                "return a >= b;",
+                boolean.class,
+                TsMethodArgument.of("a", double.class),
+                TsMethodArgument.of("b", double.class));
+        assertFalse((boolean) tsClass.invoke(1D, 2D));
+        assertTrue((boolean) tsClass.invoke(2D, 1D));
+        assertTrue((boolean) tsClass.invoke(1D, 1D));
+        assertTrue((boolean) tsClass.invoke(1.23D, 1.23D));
     }
 
     @Test
     public void testLogicalGE_FF_Z() throws Exception {
-        Method method = clazz.getMethod("logicalGE_FF_Z", float.class, float.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(float.class, method.getParameters()[0].getType());
-        assertEquals(float.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1F, 2F));
-        assertTrue((boolean) method.invoke(object, 2F, 1F));
-        assertTrue((boolean) method.invoke(object, 1F, 1F));
-        assertTrue((boolean) method.invoke(object, 1.23F, 1.23F));
+        TsClass tsClass = new TsClass(
+                "return a >= b;",
+                boolean.class,
+                TsMethodArgument.of("a", float.class),
+                TsMethodArgument.of("b", float.class));
+        assertFalse((boolean) tsClass.invoke(1F, 2F));
+        assertTrue((boolean) tsClass.invoke(2F, 1F));
+        assertTrue((boolean) tsClass.invoke(1F, 1F));
+        assertTrue((boolean) tsClass.invoke(1.23F, 1.23F));
     }
 
     @Test
     public void testLogicalGE_II_Z() throws Exception {
-        Method method = clazz.getMethod("logicalGE_II_Z", int.class, int.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(int.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1, 2));
-        assertTrue((boolean) method.invoke(object, 2, 1));
-        assertTrue((boolean) method.invoke(object, 1, 1));
+        TsClass tsClass = new TsClass(
+                "return a >= b;",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertFalse((boolean) tsClass.invoke(1, 2));
+        assertTrue((boolean) tsClass.invoke(2, 1));
+        assertTrue((boolean) tsClass.invoke(1, 1));
     }
 
     @Test
     public void testLogicalGE_IJ_Z() throws Exception {
         assertFalse(logicalGE_IJ_Z(1, 2L));
-        Method method = clazz.getMethod("logicalGE_IJ_Z", int.class, long.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(long.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1, 2L));
-        assertTrue((boolean) method.invoke(object, 2, 2L));
-        assertTrue((boolean) method.invoke(object, 2, 1L));
+        TsClass tsClass = new TsClass(
+                "return a >= b;",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", long.class));
+        assertFalse((boolean) tsClass.invoke(1, 2L));
+        assertTrue((boolean) tsClass.invoke(2, 2L));
+        assertTrue((boolean) tsClass.invoke(2, 1L));
     }
 
     @Test
     public void testLogicalGE_SS_Z() throws Exception {
-        Method method = clazz.getMethod("logicalGE_SS_Z", short.class, short.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(short.class, method.getParameters()[0].getType());
-        assertEquals(short.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, (short) 1, (short) 2));
-        assertTrue((boolean) method.invoke(object, (short) 2, (short) 1));
-        assertTrue((boolean) method.invoke(object, (short) 1, (short) 1));
+        TsClass tsClass = new TsClass(
+                "return a >= b;",
+                boolean.class,
+                TsMethodArgument.of("a", short.class),
+                TsMethodArgument.of("b", short.class));
+        assertFalse((boolean) tsClass.invoke((short) 1, (short) 2));
+        assertTrue((boolean) tsClass.invoke((short) 2, (short) 1));
+        assertTrue((boolean) tsClass.invoke((short) 1, (short) 1));
     }
 
     @Test
     public void testLogicalGT_DD_Z() throws Exception {
-        Method method = clazz.getMethod("logicalGT_DD_Z", double.class, double.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(double.class, method.getParameters()[0].getType());
-        assertEquals(double.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1D, 2D));
-        assertFalse((boolean) method.invoke(object, 1.23D, 1.23D));
-        assertTrue((boolean) method.invoke(object, 2D, 1D));
+        TsClass tsClass = new TsClass(
+                "return a > b;",
+                boolean.class,
+                TsMethodArgument.of("a", double.class),
+                TsMethodArgument.of("b", double.class));
+        assertFalse((boolean) tsClass.invoke(1D, 2D));
+        assertFalse((boolean) tsClass.invoke(1.23D, 1.23D));
+        assertTrue((boolean) tsClass.invoke(2D, 1D));
     }
 
     @Test
     public void testLogicalGT_FF_Z() throws Exception {
         assertFalse(logicalGT_FF_Z(1F, 2F));
         assertFalse(logicalGT_FF_Z(1.23F, 1.23F));
-        Method method = clazz.getMethod("logicalGT_FF_Z", float.class, float.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(float.class, method.getParameters()[0].getType());
-        assertEquals(float.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1F, 2F));
-        assertFalse((boolean) method.invoke(object, 1.23F, 1.23F));
-        assertTrue((boolean) method.invoke(object, 2F, 1F));
+        TsClass tsClass = new TsClass(
+                "return a > b;",
+                boolean.class,
+                TsMethodArgument.of("a", float.class),
+                TsMethodArgument.of("b", float.class));
+        assertFalse((boolean) tsClass.invoke(1F, 2F));
+        assertFalse((boolean) tsClass.invoke(1.23F, 1.23F));
+        assertTrue((boolean) tsClass.invoke(2F, 1F));
     }
 
     @Test
     public void testLogicalGT_II_Z() throws Exception {
         assertFalse(logicalGT_II_Z(1, 2));
-        Method method = clazz.getMethod("logicalGT_II_Z", int.class, int.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(int.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1, 2));
-        assertTrue((boolean) method.invoke(object, 2, 1));
+        TsClass tsClass = new TsClass(
+                "return a > b;",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertFalse((boolean) tsClass.invoke(1, 2));
+        assertTrue((boolean) tsClass.invoke(2, 1));
     }
 
     @Test
     public void testLogicalGT_IJ_Z() throws Exception {
-        Method method = clazz.getMethod("logicalGT_IJ_Z", int.class, long.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(long.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1, 2L));
-        assertFalse((boolean) method.invoke(object, 2, 2L));
-        assertTrue((boolean) method.invoke(object, 2, 1L));
+        TsClass tsClass = new TsClass(
+                "return a > b;",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", long.class));
+        assertFalse((boolean) tsClass.invoke(1, 2L));
+        assertFalse((boolean) tsClass.invoke(2, 2L));
+        assertTrue((boolean) tsClass.invoke(2, 1L));
+    }
+
+    @Test
+    public void testLogicalGT_I_Z() throws Exception {
+        TsClass tsClass = new TsClass(
+                "return a > 0;",
+                boolean.class,
+                TsMethodArgument.of("a", int.class));
+        assertTrue((boolean) tsClass.invoke(1));
+        assertFalse((boolean) tsClass.invoke(0));
+        assertFalse((boolean) tsClass.invoke(-1));
+        tsClass = new TsClass(
+                "return 0 > a;",
+                boolean.class,
+                TsMethodArgument.of("a", int.class));
+        assertFalse((boolean) tsClass.invoke(1));
+        assertFalse((boolean) tsClass.invoke(0));
+        assertTrue((boolean) tsClass.invoke(-1));
     }
 
     @Test
     public void testLogicalLE_DD_Z() throws Exception {
-        Method method = clazz.getMethod("logicalLE_DD_Z", double.class, double.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(double.class, method.getParameters()[0].getType());
-        assertEquals(double.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1D, 2D));
-        assertFalse((boolean) method.invoke(object, 2D, 1D));
-        assertTrue((boolean) method.invoke(object, 1D, 1D));
-        assertTrue((boolean) method.invoke(object, 1.23D, 1.23D));
+        TsClass tsClass = new TsClass(
+                "return a <= b;",
+                boolean.class,
+                TsMethodArgument.of("a", double.class),
+                TsMethodArgument.of("b", double.class));
+        assertTrue((boolean) tsClass.invoke(1D, 2D));
+        assertFalse((boolean) tsClass.invoke(2D, 1D));
+        assertTrue((boolean) tsClass.invoke(1D, 1D));
+        assertTrue((boolean) tsClass.invoke(1.23D, 1.23D));
     }
 
     @Test
     public void testLogicalLE_FF_Z() throws Exception {
-        Method method = clazz.getMethod("logicalLE_FF_Z", float.class, float.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(float.class, method.getParameters()[0].getType());
-        assertEquals(float.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1F, 2F));
-        assertFalse((boolean) method.invoke(object, 2F, 1F));
-        assertTrue((boolean) method.invoke(object, 1F, 1F));
-        assertTrue((boolean) method.invoke(object, 1.23F, 1.23F));
+        TsClass tsClass = new TsClass(
+                "return a <= b;",
+                boolean.class,
+                TsMethodArgument.of("a", float.class),
+                TsMethodArgument.of("b", float.class));
+        assertTrue((boolean) tsClass.invoke(1F, 2F));
+        assertFalse((boolean) tsClass.invoke(2F, 1F));
+        assertTrue((boolean) tsClass.invoke(1F, 1F));
+        assertTrue((boolean) tsClass.invoke(1.23F, 1.23F));
     }
 
     @Test
     public void testLogicalLE_II_Z() throws Exception {
-        Method method = clazz.getMethod("logicalLE_II_Z", int.class, int.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(int.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1, 2));
-        assertFalse((boolean) method.invoke(object, 2, 1));
-        assertTrue((boolean) method.invoke(object, 1, 1));
+        TsClass tsClass = new TsClass(
+                "return a <= b;",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertTrue((boolean) tsClass.invoke(1, 2));
+        assertFalse((boolean) tsClass.invoke(2, 1));
+        assertTrue((boolean) tsClass.invoke(1, 1));
     }
 
     @Test
     public void testLogicalLE_IJ_Z() throws Exception {
-        Method method = clazz.getMethod("logicalLE_IJ_Z", int.class, long.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(long.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1, 2L));
-        assertTrue((boolean) method.invoke(object, 2, 2L));
-        assertFalse((boolean) method.invoke(object, 2, 1L));
+        TsClass tsClass = new TsClass(
+                "return a <= b;",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", long.class));
+        assertTrue((boolean) tsClass.invoke(1, 2L));
+        assertTrue((boolean) tsClass.invoke(2, 2L));
+        assertFalse((boolean) tsClass.invoke(2, 1L));
     }
 
     @Test
     public void testLogicalLT_DD_Z() throws Exception {
-        Method method = clazz.getMethod("logicalLT_DD_Z", double.class, double.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(double.class, method.getParameters()[0].getType());
-        assertEquals(double.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1D, 2D));
-        assertFalse((boolean) method.invoke(object, 2D, 1D));
-        assertFalse((boolean) method.invoke(object, 1D, 1D));
-        assertFalse((boolean) method.invoke(object, 1.23D, 1.23D));
+        TsClass tsClass = new TsClass(
+                "return a < b;",
+                boolean.class,
+                TsMethodArgument.of("a", double.class),
+                TsMethodArgument.of("b", double.class));
+        assertTrue((boolean) tsClass.invoke(1D, 2D));
+        assertFalse((boolean) tsClass.invoke(2D, 1D));
+        assertFalse((boolean) tsClass.invoke(1D, 1D));
+        assertFalse((boolean) tsClass.invoke(1.23D, 1.23D));
     }
 
     @Test
     public void testLogicalLT_FF_Z() throws Exception {
-        Method method = clazz.getMethod("logicalLT_FF_Z", float.class, float.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(float.class, method.getParameters()[0].getType());
-        assertEquals(float.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1F, 2F));
-        assertFalse((boolean) method.invoke(object, 2F, 1F));
-        assertFalse((boolean) method.invoke(object, 1F, 1F));
-        assertFalse((boolean) method.invoke(object, 1.23F, 1.23F));
+        TsClass tsClass = new TsClass(
+                "return a < b;",
+                boolean.class,
+                TsMethodArgument.of("a", float.class),
+                TsMethodArgument.of("b", float.class));
+        assertTrue((boolean) tsClass.invoke(1F, 2F));
+        assertFalse((boolean) tsClass.invoke(2F, 1F));
+        assertFalse((boolean) tsClass.invoke(1F, 1F));
+        assertFalse((boolean) tsClass.invoke(1.23F, 1.23F));
     }
 
     @Test
     public void testLogicalLT_II_Z() throws Exception {
-        Method method = clazz.getMethod("logicalLT_II_Z", int.class, int.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(int.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1, 2));
-        assertFalse((boolean) method.invoke(object, 2, 1));
-        assertFalse((boolean) method.invoke(object, 1, 1));
+        TsClass tsClass = new TsClass(
+                "return a < b;",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertTrue((boolean) tsClass.invoke(1, 2));
+        assertFalse((boolean) tsClass.invoke(2, 1));
+        assertFalse((boolean) tsClass.invoke(1, 1));
     }
 
     @Test
     public void testLogicalLT_IJ_Z() throws Exception {
-        Method method = clazz.getMethod("logicalLT_IJ_Z", int.class, long.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(long.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1, 2L));
-        assertFalse((boolean) method.invoke(object, 2, 2L));
-        assertFalse((boolean) method.invoke(object, 2, 1L));
+        TsClass tsClass = new TsClass(
+                "return a < b;",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", long.class));
+        assertTrue((boolean) tsClass.invoke(1, 2L));
+        assertFalse((boolean) tsClass.invoke(2, 2L));
+        assertFalse((boolean) tsClass.invoke(2, 1L));
     }
 
     @Test
     public void testLogicalNotEQEQ_DD_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNotEQEQ_DD_Z", double.class, double.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(double.class, method.getParameters()[0].getType());
-        assertEquals(double.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1D, 2D));
-        assertTrue((boolean) method.invoke(object, 2D, 1D));
-        assertFalse((boolean) method.invoke(object, 1D, 1D));
-        assertFalse((boolean) method.invoke(object, 1.23D, 1.23D));
+        TsClass tsClass = new TsClass(
+                "return a !== b;",
+                boolean.class,
+                TsMethodArgument.of("a", double.class),
+                TsMethodArgument.of("b", double.class));
+        assertTrue((boolean) tsClass.invoke(1D, 2D));
+        assertTrue((boolean) tsClass.invoke(2D, 1D));
+        assertFalse((boolean) tsClass.invoke(1D, 1D));
+        assertFalse((boolean) tsClass.invoke(1.23D, 1.23D));
     }
 
     @Test
     public void testLogicalNotEQEQ_FF_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNotEQEQ_FF_Z", float.class, float.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(float.class, method.getParameters()[0].getType());
-        assertEquals(float.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1F, 2F));
-        assertTrue((boolean) method.invoke(object, 2F, 1F));
-        assertFalse((boolean) method.invoke(object, 1F, 1F));
-        assertFalse((boolean) method.invoke(object, 1.23F, 1.23F));
+        TsClass tsClass = new TsClass(
+                "return a !== b;",
+                boolean.class,
+                TsMethodArgument.of("a", float.class),
+                TsMethodArgument.of("b", float.class));
+        assertTrue((boolean) tsClass.invoke(1F, 2F));
+        assertTrue((boolean) tsClass.invoke(2F, 1F));
+        assertFalse((boolean) tsClass.invoke(1F, 1F));
+        assertFalse((boolean) tsClass.invoke(1.23F, 1.23F));
     }
 
     @Test
     public void testLogicalNotEQEQ_II_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNotEQEQ_II_Z", int.class, int.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(int.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1, 2));
-        assertTrue((boolean) method.invoke(object, 2, 1));
-        assertFalse((boolean) method.invoke(object, 1, 1));
+        TsClass tsClass = new TsClass(
+                "return a !== b;",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertTrue((boolean) tsClass.invoke(1, 2));
+        assertTrue((boolean) tsClass.invoke(2, 1));
+        assertFalse((boolean) tsClass.invoke(1, 1));
     }
 
     @Test
     public void testLogicalNotEQEQ_IJ_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNotEQEQ_IJ_Z", int.class, long.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(long.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1, 2L));
-        assertTrue((boolean) method.invoke(object, 2, 1L));
-        assertFalse((boolean) method.invoke(object, 1, 1L));
+        TsClass tsClass = new TsClass(
+                "return a !== b;",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", long.class));
+        assertTrue((boolean) tsClass.invoke(1, 2L));
+        assertTrue((boolean) tsClass.invoke(2, 1L));
+        assertFalse((boolean) tsClass.invoke(1, 1L));
     }
 
     @Test
     public void testLogicalNotEQ_DD_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNotEQ_DD_Z", double.class, double.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(double.class, method.getParameters()[0].getType());
-        assertEquals(double.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1D, 2D));
-        assertTrue((boolean) method.invoke(object, 2D, 1D));
-        assertFalse((boolean) method.invoke(object, 1D, 1D));
-        assertFalse((boolean) method.invoke(object, 1.23D, 1.23D));
+        TsClass tsClass = new TsClass(
+                "return a != b;",
+                boolean.class,
+                TsMethodArgument.of("a", double.class),
+                TsMethodArgument.of("b", double.class));
+        assertTrue((boolean) tsClass.invoke(1D, 2D));
+        assertTrue((boolean) tsClass.invoke(2D, 1D));
+        assertFalse((boolean) tsClass.invoke(1D, 1D));
+        assertFalse((boolean) tsClass.invoke(1.23D, 1.23D));
     }
 
     @Test
     public void testLogicalNotEQ_FF_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNotEQ_FF_Z", float.class, float.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(float.class, method.getParameters()[0].getType());
-        assertEquals(float.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1F, 2F));
-        assertTrue((boolean) method.invoke(object, 2F, 1F));
-        assertFalse((boolean) method.invoke(object, 1F, 1F));
-        assertFalse((boolean) method.invoke(object, 1.23F, 1.23F));
+        TsClass tsClass = new TsClass(
+                "return a != b;",
+                boolean.class,
+                TsMethodArgument.of("a", float.class),
+                TsMethodArgument.of("b", float.class));
+        assertTrue((boolean) tsClass.invoke(1F, 2F));
+        assertTrue((boolean) tsClass.invoke(2F, 1F));
+        assertFalse((boolean) tsClass.invoke(1F, 1F));
+        assertFalse((boolean) tsClass.invoke(1.23F, 1.23F));
     }
 
     @Test
     public void testLogicalNotEQ_II_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNotEQ_II_Z", int.class, int.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(int.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1, 2));
-        assertTrue((boolean) method.invoke(object, 2, 1));
-        assertFalse((boolean) method.invoke(object, 1, 1));
+        TsClass tsClass = new TsClass(
+                "return a != b;",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertTrue((boolean) tsClass.invoke(1, 2));
+        assertTrue((boolean) tsClass.invoke(2, 1));
+        assertFalse((boolean) tsClass.invoke(1, 1));
     }
 
     @Test
     public void testLogicalNotEQ_IJ_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNotEQ_IJ_Z", int.class, long.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(long.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1, 2L));
-        assertTrue((boolean) method.invoke(object, 2, 1L));
-        assertFalse((boolean) method.invoke(object, 1, 1L));
+        TsClass tsClass = new TsClass(
+                "return a != b;",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", long.class));
+        assertTrue((boolean) tsClass.invoke(1, 2L));
+        assertTrue((boolean) tsClass.invoke(2, 1L));
+        assertFalse((boolean) tsClass.invoke(1, 1L));
     }
 
     @Test
     public void testLogicalNot_EQEQ_DD_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_EQEQ_DD_Z", double.class, double.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(double.class, method.getParameters()[0].getType());
-        assertEquals(double.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1D, 2D));
-        assertTrue((boolean) method.invoke(object, 2D, 1D));
-        assertFalse((boolean) method.invoke(object, 1D, 1D));
-        assertFalse((boolean) method.invoke(object, 1.23D, 1.23D));
+        TsClass tsClass = new TsClass(
+                "return !(a === b);",
+                boolean.class,
+                TsMethodArgument.of("a", double.class),
+                TsMethodArgument.of("b", double.class));
+        assertTrue((boolean) tsClass.invoke(1D, 2D));
+        assertTrue((boolean) tsClass.invoke(2D, 1D));
+        assertFalse((boolean) tsClass.invoke(1D, 1D));
+        assertFalse((boolean) tsClass.invoke(1.23D, 1.23D));
     }
 
     @Test
     public void testLogicalNot_EQEQ_FF_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_EQEQ_FF_Z", float.class, float.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(float.class, method.getParameters()[0].getType());
-        assertEquals(float.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1F, 2F));
-        assertTrue((boolean) method.invoke(object, 2F, 1F));
-        assertFalse((boolean) method.invoke(object, 1F, 1F));
-        assertFalse((boolean) method.invoke(object, 1.23F, 1.23F));
+        TsClass tsClass = new TsClass(
+                "return !(a === b);",
+                boolean.class,
+                TsMethodArgument.of("a", float.class),
+                TsMethodArgument.of("b", float.class));
+        assertTrue((boolean) tsClass.invoke(1F, 2F));
+        assertTrue((boolean) tsClass.invoke(2F, 1F));
+        assertFalse((boolean) tsClass.invoke(1F, 1F));
+        assertFalse((boolean) tsClass.invoke(1.23F, 1.23F));
     }
 
     @Test
     public void testLogicalNot_EQEQ_II_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_EQEQ_II_Z", int.class, int.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(int.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1, 2));
-        assertTrue((boolean) method.invoke(object, 2, 1));
-        assertFalse((boolean) method.invoke(object, 1, 1));
+        TsClass tsClass = new TsClass(
+                "return !(a === b);",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertTrue((boolean) tsClass.invoke(1, 2));
+        assertTrue((boolean) tsClass.invoke(2, 1));
+        assertFalse((boolean) tsClass.invoke(1, 1));
     }
 
     @Test
     public void testLogicalNot_EQEQ_IJ_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_EQEQ_IJ_Z", int.class, long.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(long.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1, 2L));
-        assertTrue((boolean) method.invoke(object, 2, 1L));
-        assertFalse((boolean) method.invoke(object, 1, 1L));
+        TsClass tsClass = new TsClass(
+                "return !(a === b);",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", long.class));
+        assertTrue((boolean) tsClass.invoke(1, 2L));
+        assertTrue((boolean) tsClass.invoke(2, 1L));
+        assertFalse((boolean) tsClass.invoke(1, 1L));
     }
 
     @Test
     public void testLogicalNot_EQ_DD_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_EQ_DD_Z", double.class, double.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(double.class, method.getParameters()[0].getType());
-        assertEquals(double.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1D, 2D));
-        assertTrue((boolean) method.invoke(object, 2D, 1D));
-        assertFalse((boolean) method.invoke(object, 1D, 1D));
-        assertFalse((boolean) method.invoke(object, 1.23D, 1.23D));
+        TsClass tsClass = new TsClass(
+                "return !(a == b);",
+                boolean.class,
+                TsMethodArgument.of("a", double.class),
+                TsMethodArgument.of("b", double.class));
+        assertTrue((boolean) tsClass.invoke(1D, 2D));
+        assertTrue((boolean) tsClass.invoke(2D, 1D));
+        assertFalse((boolean) tsClass.invoke(1D, 1D));
+        assertFalse((boolean) tsClass.invoke(1.23D, 1.23D));
     }
 
     @Test
     public void testLogicalNot_EQ_FF_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_EQ_FF_Z", float.class, float.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(float.class, method.getParameters()[0].getType());
-        assertEquals(float.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1F, 2F));
-        assertTrue((boolean) method.invoke(object, 2F, 1F));
-        assertFalse((boolean) method.invoke(object, 1F, 1F));
-        assertFalse((boolean) method.invoke(object, 1.23F, 1.23F));
+        TsClass tsClass = new TsClass(
+                "return !(a == b);",
+                boolean.class,
+                TsMethodArgument.of("a", float.class),
+                TsMethodArgument.of("b", float.class));
+        assertTrue((boolean) tsClass.invoke(1F, 2F));
+        assertTrue((boolean) tsClass.invoke(2F, 1F));
+        assertFalse((boolean) tsClass.invoke(1F, 1F));
+        assertFalse((boolean) tsClass.invoke(1.23F, 1.23F));
     }
 
     @Test
     public void testLogicalNot_EQ_II_Z() throws Exception {
         assertTrue(logicalNot_EQ_II_Z(1, 2));
-        Method method = clazz.getMethod("logicalNot_EQ_II_Z", int.class, int.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(int.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1, 2));
-        assertTrue((boolean) method.invoke(object, 2, 1));
-        assertFalse((boolean) method.invoke(object, 1, 1));
+        TsClass tsClass = new TsClass(
+                "return !(a == b);",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertTrue((boolean) tsClass.invoke(1, 2));
+        assertTrue((boolean) tsClass.invoke(2, 1));
+        assertFalse((boolean) tsClass.invoke(1, 1));
     }
 
     @Test
     public void testLogicalNot_EQ_IJ_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_EQ_IJ_Z", int.class, long.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(long.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1, 2L));
-        assertTrue((boolean) method.invoke(object, 2, 1L));
-        assertFalse((boolean) method.invoke(object, 1, 1L));
+        TsClass tsClass = new TsClass(
+                "return !(a == b);",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", long.class));
+        assertTrue((boolean) tsClass.invoke(1, 2L));
+        assertTrue((boolean) tsClass.invoke(2, 1L));
+        assertFalse((boolean) tsClass.invoke(1, 1L));
     }
 
     @Test
     public void testLogicalNot_GE_DD_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_GE_DD_Z", double.class, double.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(double.class, method.getParameters()[0].getType());
-        assertEquals(double.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1D, 2D));
-        assertFalse((boolean) method.invoke(object, 2D, 1D));
-        assertFalse((boolean) method.invoke(object, 1D, 1D));
-        assertFalse((boolean) method.invoke(object, 1.23D, 1.23D));
+        TsClass tsClass = new TsClass(
+                "return !(a >= b);",
+                boolean.class,
+                TsMethodArgument.of("a", double.class),
+                TsMethodArgument.of("b", double.class));
+        assertTrue((boolean) tsClass.invoke(1D, 2D));
+        assertFalse((boolean) tsClass.invoke(2D, 1D));
+        assertFalse((boolean) tsClass.invoke(1D, 1D));
+        assertFalse((boolean) tsClass.invoke(1.23D, 1.23D));
     }
 
     @Test
     public void testLogicalNot_GE_FF_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_GE_FF_Z", float.class, float.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(float.class, method.getParameters()[0].getType());
-        assertEquals(float.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1F, 2F));
-        assertFalse((boolean) method.invoke(object, 2F, 1F));
-        assertFalse((boolean) method.invoke(object, 1F, 1F));
-        assertFalse((boolean) method.invoke(object, 1.23F, 1.23F));
+        TsClass tsClass = new TsClass(
+                "return !(a >= b);",
+                boolean.class,
+                TsMethodArgument.of("a", float.class),
+                TsMethodArgument.of("b", float.class));
+        assertTrue((boolean) tsClass.invoke(1F, 2F));
+        assertFalse((boolean) tsClass.invoke(2F, 1F));
+        assertFalse((boolean) tsClass.invoke(1F, 1F));
+        assertFalse((boolean) tsClass.invoke(1.23F, 1.23F));
     }
 
     @Test
     public void testLogicalNot_GE_II_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_GE_II_Z", int.class, int.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(int.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1, 2));
-        assertFalse((boolean) method.invoke(object, 2, 1));
-        assertFalse((boolean) method.invoke(object, 1, 1));
+        TsClass tsClass = new TsClass(
+                "return !(a >= b);",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertTrue((boolean) tsClass.invoke(1, 2));
+        assertFalse((boolean) tsClass.invoke(2, 1));
+        assertFalse((boolean) tsClass.invoke(1, 1));
     }
 
     @Test
     public void testLogicalNot_GE_IJ_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_GE_IJ_Z", int.class, long.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(long.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1, 2L));
-        assertFalse((boolean) method.invoke(object, 2, 1L));
-        assertFalse((boolean) method.invoke(object, 1, 1L));
+        TsClass tsClass = new TsClass(
+                "return !(a >= b);",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", long.class));
+        assertTrue((boolean) tsClass.invoke(1, 2L));
+        assertFalse((boolean) tsClass.invoke(2, 1L));
+        assertFalse((boolean) tsClass.invoke(1, 1L));
     }
 
     @Test
     public void testLogicalNot_GT_DD_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_GT_DD_Z", double.class, double.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(double.class, method.getParameters()[0].getType());
-        assertEquals(double.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1D, 2D));
-        assertFalse((boolean) method.invoke(object, 2D, 1D));
-        assertTrue((boolean) method.invoke(object, 1D, 1D));
-        assertTrue((boolean) method.invoke(object, 1.23D, 1.23D));
+        TsClass tsClass = new TsClass(
+                "return !(a > b);",
+                boolean.class,
+                TsMethodArgument.of("a", double.class),
+                TsMethodArgument.of("b", double.class));
+        assertTrue((boolean) tsClass.invoke(1D, 2D));
+        assertFalse((boolean) tsClass.invoke(2D, 1D));
+        assertTrue((boolean) tsClass.invoke(1D, 1D));
+        assertTrue((boolean) tsClass.invoke(1.23D, 1.23D));
     }
 
     @Test
     public void testLogicalNot_GT_II_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_GT_II_Z", int.class, int.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(int.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1, 2));
-        assertFalse((boolean) method.invoke(object, 2, 1));
-        assertTrue((boolean) method.invoke(object, 1, 1));
+        TsClass tsClass = new TsClass(
+                "return !(a > b);",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertTrue((boolean) tsClass.invoke(1, 2));
+        assertFalse((boolean) tsClass.invoke(2, 1));
+        assertTrue((boolean) tsClass.invoke(1, 1));
     }
 
     @Test
     public void testLogicalNot_GT_IJ_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_GT_IJ_Z", int.class, long.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(long.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertTrue((boolean) method.invoke(object, 1, 2L));
-        assertFalse((boolean) method.invoke(object, 2, 1L));
-        assertTrue((boolean) method.invoke(object, 1, 1L));
+        TsClass tsClass = new TsClass(
+                "return !(a > b);",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", long.class));
+        assertTrue((boolean) tsClass.invoke(1, 2L));
+        assertFalse((boolean) tsClass.invoke(2, 1L));
+        assertTrue((boolean) tsClass.invoke(1, 1L));
     }
 
     @Test
-    public void testLogicalNot_JE_DD_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_JE_DD_Z", double.class, double.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(double.class, method.getParameters()[0].getType());
-        assertEquals(double.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1D, 2D));
-        assertTrue((boolean) method.invoke(object, 2D, 1D));
-        assertFalse((boolean) method.invoke(object, 1D, 1D));
-        assertFalse((boolean) method.invoke(object, 1.23D, 1.23D));
+    public void testLogicalNot_LE_DD_Z() throws Exception {
+        TsClass tsClass = new TsClass(
+                "return !(a <= b);",
+                boolean.class,
+                TsMethodArgument.of("a", double.class),
+                TsMethodArgument.of("b", double.class));
+        assertFalse((boolean) tsClass.invoke(1D, 2D));
+        assertTrue((boolean) tsClass.invoke(2D, 1D));
+        assertFalse((boolean) tsClass.invoke(1D, 1D));
+        assertFalse((boolean) tsClass.invoke(1.23D, 1.23D));
     }
 
     @Test
-    public void testLogicalNot_JE_FF_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_JE_FF_Z", float.class, float.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(float.class, method.getParameters()[0].getType());
-        assertEquals(float.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1F, 2F));
-        assertTrue((boolean) method.invoke(object, 2F, 1F));
-        assertFalse((boolean) method.invoke(object, 1F, 1F));
-        assertFalse((boolean) method.invoke(object, 1.23F, 1.23F));
+    public void testLogicalNot_LE_FF_Z() throws Exception {
+        TsClass tsClass = new TsClass(
+                "return !(a <= b);",
+                boolean.class,
+                TsMethodArgument.of("a", float.class),
+                TsMethodArgument.of("b", float.class));
+        assertFalse((boolean) tsClass.invoke(1F, 2F));
+        assertTrue((boolean) tsClass.invoke(2F, 1F));
+        assertFalse((boolean) tsClass.invoke(1F, 1F));
+        assertFalse((boolean) tsClass.invoke(1.23F, 1.23F));
     }
 
     @Test
-    public void testLogicalNot_JE_II_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_JE_II_Z", int.class, int.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(int.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1, 2));
-        assertTrue((boolean) method.invoke(object, 2, 1));
-        assertFalse((boolean) method.invoke(object, 1, 1));
+    public void testLogicalNot_LE_II_Z() throws Exception {
+        TsClass tsClass = new TsClass(
+                "return !(a <= b);",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertFalse((boolean) tsClass.invoke(1, 2));
+        assertTrue((boolean) tsClass.invoke(2, 1));
+        assertFalse((boolean) tsClass.invoke(1, 1));
     }
 
     @Test
-    public void testLogicalNot_JE_IJ_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_JE_IJ_Z", int.class, long.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(long.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1, 2L));
-        assertTrue((boolean) method.invoke(object, 2, 1L));
-        assertFalse((boolean) method.invoke(object, 1, 1L));
+    public void testLogicalNot_LE_IJ_Z() throws Exception {
+        TsClass tsClass = new TsClass(
+                "return !(a <= b);",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", long.class));
+        assertFalse((boolean) tsClass.invoke(1, 2L));
+        assertTrue((boolean) tsClass.invoke(2, 1L));
+        assertFalse((boolean) tsClass.invoke(1, 1L));
     }
 
     @Test
-    public void testLogicalNot_JT_DD_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_JT_DD_Z", double.class, double.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(double.class, method.getParameters()[0].getType());
-        assertEquals(double.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1D, 2D));
-        assertTrue((boolean) method.invoke(object, 2D, 1D));
-        assertTrue((boolean) method.invoke(object, 1D, 1D));
-        assertTrue((boolean) method.invoke(object, 1.23D, 1.23D));
+    public void testLogicalNot_LT_DD_Z() throws Exception {
+        TsClass tsClass = new TsClass(
+                "return !(a < b);",
+                boolean.class,
+                TsMethodArgument.of("a", double.class),
+                TsMethodArgument.of("b", double.class));
+        assertFalse((boolean) tsClass.invoke(1D, 2D));
+        assertTrue((boolean) tsClass.invoke(2D, 1D));
+        assertTrue((boolean) tsClass.invoke(1D, 1D));
+        assertTrue((boolean) tsClass.invoke(1.23D, 1.23D));
     }
 
     @Test
-    public void testLogicalNot_JT_FF_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_JT_FF_Z", float.class, float.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(float.class, method.getParameters()[0].getType());
-        assertEquals(float.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1F, 2F));
-        assertTrue((boolean) method.invoke(object, 2F, 1F));
-        assertTrue((boolean) method.invoke(object, 1F, 1F));
-        assertTrue((boolean) method.invoke(object, 1.23F, 1.23F));
+    public void testLogicalNot_LT_FF_Z() throws Exception {
+        TsClass tsClass = new TsClass(
+                "return !(a < b);",
+                boolean.class,
+                TsMethodArgument.of("a", float.class),
+                TsMethodArgument.of("b", float.class));
+        assertFalse((boolean) tsClass.invoke(1F, 2F));
+        assertTrue((boolean) tsClass.invoke(2F, 1F));
+        assertTrue((boolean) tsClass.invoke(1F, 1F));
+        assertTrue((boolean) tsClass.invoke(1.23F, 1.23F));
     }
 
     @Test
-    public void testLogicalNot_JT_II_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_JT_II_Z", int.class, int.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(int.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1, 2));
-        assertTrue((boolean) method.invoke(object, 2, 1));
-        assertTrue((boolean) method.invoke(object, 1, 1));
+    public void testLogicalNot_LT_II_Z() throws Exception {
+        TsClass tsClass = new TsClass(
+                "return !(a < b);",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertFalse((boolean) tsClass.invoke(1, 2));
+        assertTrue((boolean) tsClass.invoke(2, 1));
+        assertTrue((boolean) tsClass.invoke(1, 1));
     }
 
     @Test
-    public void testLogicalNot_JT_IJ_Z() throws Exception {
-        Method method = clazz.getMethod("logicalNot_JT_IJ_Z", int.class, long.class);
-        assertNotNull(method);
-        assertEquals(boolean.class, method.getReturnType());
-        assertEquals(2, method.getParameterCount());
-        assertEquals(int.class, method.getParameters()[0].getType());
-        assertEquals(long.class, method.getParameters()[1].getType());
-        Object object = clazz.getConstructor().newInstance();
-        assertFalse((boolean) method.invoke(object, 1, 2L));
-        assertTrue((boolean) method.invoke(object, 2, 1L));
-        assertTrue((boolean) method.invoke(object, 1, 1L));
+    public void testLogicalNot_LT_IJ_Z() throws Exception {
+        TsClass tsClass = new TsClass(
+                "return !(a < b);",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", long.class));
+        assertFalse((boolean) tsClass.invoke(1, 2L));
+        assertTrue((boolean) tsClass.invoke(2, 1L));
+        assertTrue((boolean) tsClass.invoke(1, 1L));
     }
 }

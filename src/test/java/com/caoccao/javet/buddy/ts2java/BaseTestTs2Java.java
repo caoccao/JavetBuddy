@@ -34,4 +34,5 @@ public class BaseTestTs2Java {
                 .filter(line -> !line.startsWith("console."))
                 .collect(Collectors.joining("\n"));
     }
+
 }
