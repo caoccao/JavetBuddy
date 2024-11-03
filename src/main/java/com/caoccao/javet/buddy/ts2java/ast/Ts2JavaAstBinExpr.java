@@ -22,6 +22,7 @@ import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstUnaryExpr;
+import com.caoccao.javet.swc4j.ast.expr.lit.Swc4jAstNumber;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
@@ -103,6 +104,14 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
                 stackManipulation = Ts2JavaAstBinaryOp.getLogical(
                         functionContext, ast.getOp(), upCaseType, logicalNot);
                 break;
+            case LogicalAnd:
+                stackManipulation = Ts2JavaAstBinaryOp.getLogicalAndStackManipulation(
+                        functionContext, upCaseType);
+                break;
+            case LogicalOr:
+                stackManipulation = Ts2JavaAstBinaryOp.getLogicalOrStackManipulation(
+                        functionContext, upCaseType);
+                break;
 //            case BitAnd:
 //                stackManipulation = Ts2JavaAstBinaryOp.getBitAndStackManipulation(functionContext);
 //                break;
@@ -125,6 +134,8 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
                 return new Ts2JavaAstBinExpr().manipulate(functionContext, expression.as(Swc4jAstBinExpr.class));
             case Ident:
                 return new Ts2JavaAstIdent().manipulate(functionContext, expression.as(Swc4jAstIdent.class));
+            case Number:
+                return new Ts2JavaAstNumber().manipulate(functionContext, expression.as(Swc4jAstNumber.class));
             case UnaryExpr:
                 return new Ts2JavaAstUnaryExpr().manipulate(functionContext, expression.as(Swc4jAstUnaryExpr.class));
             default:

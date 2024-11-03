@@ -59,6 +59,45 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     /*
+  public logicalAndOrAnd_II_Z(II)Z
+   L0
+    LINENUMBER 91 L0
+    ILOAD 1
+    ILOAD 2
+    IF_ICMPNE L1
+    ILOAD 1
+    ICONST_1
+    IF_ICMPGT L2
+   L1
+   FRAME SAME
+    ILOAD 1
+    ILOAD 2
+    IF_ICMPEQ L3
+    ILOAD 2
+    ICONST_1
+    IF_ICMPLE L3
+   L2
+   FRAME SAME
+    ICONST_1
+    GOTO L4
+   L3
+   FRAME SAME
+    ICONST_0
+   L4
+   FRAME SAME1 I
+    IRETURN
+   L5
+    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/ast/TestLogicalOperations; L0 L5 0
+    LOCALVARIABLE a I L0 L5 1
+    LOCALVARIABLE b I L0 L5 2
+    MAXSTACK = 2
+    MAXLOCALS = 3
+     */
+    public boolean logicalAndOrAnd_II_Z(int a, int b) {
+        return (a == b && a > 1) || (a != b && b > 1);
+    }
+
+    /*
   public logicalAnd_II_Z(II)Z
    L0
     LINENUMBER 86 L0
@@ -227,15 +266,13 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     /*
-  public logicalAnd_II_Z(II)Z
+  public logicalOr_II_Z(II)Z
    L0
-    LINENUMBER 87 L0
+    LINENUMBER 294 L0
     ILOAD 1
+    IFGT L1
     ILOAD 2
-    IF_ICMPEQ L1
-    ILOAD 1
-    ICONST_1
-    IF_ICMPLE L2
+    IFLE L2
    L1
    FRAME SAME
     ICONST_1
@@ -250,11 +287,11 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/ast/TestLogicalOperations; L0 L4 0
     LOCALVARIABLE a I L0 L4 1
     LOCALVARIABLE b I L0 L4 2
-    MAXSTACK = 2
+    MAXSTACK = 1
     MAXLOCALS = 3
      */
     public boolean logicalOr_II_Z(int a, int b) {
-        return (a == b || a > 1 || (b > 1 && a == 1)) && (a * 3 == b * 2 || a / 4 == b * 5);
+        return (a > 0) || (b > 0);
     }
 
     @Test

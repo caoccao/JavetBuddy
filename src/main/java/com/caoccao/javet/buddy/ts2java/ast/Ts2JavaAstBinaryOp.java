@@ -106,8 +106,8 @@ public final class Ts2JavaAstBinaryOp {
             TypeDescription type,
             boolean logicalNot) {
         functionContext.increaseLogicalDepth();
-        Label labelFalse = functionContext.getLogicalLabels().getLabelFalse();
-        List<StackManipulation> stackManipulations = new ArrayList<>();
+        final Label labelFalse = functionContext.getLogicalLabels().getLabelFalse();
+        final List<StackManipulation> stackManipulations = new ArrayList<>();
         if (type.represents(int.class)
                 || type.represents(short.class)
                 || type.represents(byte.class)
@@ -276,18 +276,23 @@ public final class Ts2JavaAstBinaryOp {
         return new StackManipulation.Compound(stackManipulations);
     }
 
+    public static StackManipulation getLogicalAndStackManipulation(
+            JavaFunctionContext functionContext,
+            TypeDescription type) {
+        return StackManipulation.Trivial.INSTANCE;
+    }
+
     private static StackManipulation getLogicalEnd(JavaLogicalLabels logicalLabels) {
         return new StackManipulation.Simple((
                 MethodVisitor methodVisitor,
                 Implementation.Context implementationContext) -> {
-            final int size = logicalLabels.size();
-            if (size >= 3) {
-                Label labelTrue = logicalLabels.get(2);
+            if (logicalLabels.hasLabelTrue()) {
+                Label labelTrue = logicalLabels.getLabelTrue();
                 methodVisitor.visitLabel(labelTrue);
+                methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
             }
             Label labelFalse = logicalLabels.getLabelFalse();
             Label labelEnd = logicalLabels.getLabelEnd();
-            methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
             methodVisitor.visitInsn(Opcodes.ICONST_1);
             methodVisitor.visitJumpInsn(Opcodes.GOTO, labelEnd);
             methodVisitor.visitLabel(labelFalse);
@@ -297,6 +302,12 @@ public final class Ts2JavaAstBinaryOp {
             methodVisitor.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[]{Opcodes.INTEGER});
             return StackManipulation.Size.ZERO;
         });
+    }
+
+    public static StackManipulation getLogicalOrStackManipulation(
+            JavaFunctionContext functionContext,
+            TypeDescription type) {
+        return StackManipulation.Trivial.INSTANCE;
     }
 
     public static Multiplication getMultiplication(TypeDescription type) {

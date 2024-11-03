@@ -245,6 +245,10 @@ class Test {
   public logicalNot_JT_IJ_Z(a: int, b: long): boolean {
     return !(a < b);
   }
+
+  // public logicalOr_II_Z(a: int, b: int): boolean {
+  //   return (a > 0) || (b > 0);
+  // }
 }
 
 console.log(new Test().logicalEQEQ_DD_Z(1, 2));
@@ -306,3 +310,4 @@ console.log(new Test().logicalNot_JE_DD_Z(1, 2));
 console.log(new Test().logicalNot_JE_FF_Z(1, 2));
 console.log(new Test().logicalNot_JE_II_Z(1, 2));
 console.log(new Test().logicalNot_JE_IJ_Z(1, 2));
+// console.log(new Test().logicalOr_II_Z(1, 2));
