@@ -64,6 +64,14 @@ public final class Ts2JavaAstUnaryExpr implements ITs2JavaAstStackManipulation<S
                         returnType = new Ts2JavaAstBinExpr()
                                 .manipulate(functionContext, arg.as(Swc4jAstBinExpr.class));
                         break;
+                    case Ident:
+                        returnType = new Ts2JavaAstIdent()
+                                .manipulate(functionContext, arg.as(Swc4jAstIdent.class));
+                        break;
+                    case UnaryExpr:
+                        returnType = new Ts2JavaAstUnaryExpr()
+                                .manipulate(functionContext, arg.as(Swc4jAstUnaryExpr.class));
+                        break;
                     default:
                         throw new Ts2JavaAstException(
                                 arg,
