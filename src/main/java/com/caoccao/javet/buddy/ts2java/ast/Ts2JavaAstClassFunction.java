@@ -17,6 +17,7 @@
 package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
+import com.caoccao.javet.buddy.ts2java.compiler.JavaLoggingMethodVisitor;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstFunction;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstAccessibility;
 import net.bytebuddy.description.modifier.Visibility;
@@ -25,10 +26,14 @@ import net.bytebuddy.description.type.TypeList;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
+import net.bytebuddy.jar.asm.MethodVisitor;
+import net.bytebuddy.jar.asm.Opcodes;
 
+import java.util.List;
 import java.util.Objects;
 
 public final class Ts2JavaAstClassFunction implements ITs2JavaAstTranspile<Swc4jAstFunction> {
+    private static MethodVisitor methodVisitor;
     private final boolean _static;
     private final Swc4jAstAccessibility accessibility;
     private final String name;
@@ -37,6 +42,14 @@ public final class Ts2JavaAstClassFunction implements ITs2JavaAstTranspile<Swc4j
         this._static = _static;
         this.name = Objects.requireNonNull(name);
         this.accessibility = Objects.requireNonNull(accessibility);
+    }
+
+    public static MethodVisitor getMethodVisitor() {
+        return methodVisitor;
+    }
+
+    public static void setMethodVisitor(MethodVisitor methodVisitor) {
+        Ts2JavaAstClassFunction.methodVisitor = methodVisitor;
     }
 
     public Swc4jAstAccessibility getAccessibility() {
@@ -49,6 +62,11 @@ public final class Ts2JavaAstClassFunction implements ITs2JavaAstTranspile<Swc4j
 
     public boolean isStatic() {
         return _static;
+    }
+
+    private void log(List<StackManipulation> stackManipulations) {
+        JavaLoggingMethodVisitor methodVisitor = new JavaLoggingMethodVisitor(Opcodes.ASM9);
+        stackManipulations.forEach(stackManipulation -> stackManipulation.apply(methodVisitor, null));
     }
 
     @Override
@@ -67,6 +85,10 @@ public final class Ts2JavaAstClassFunction implements ITs2JavaAstTranspile<Swc4j
         final int initialOffset = functionContext.getMaxOffset();
         functionContext.pushLexicalScope();
         ast.getBody().ifPresent(blockStmt -> new Ts2JavaAstBlockStmt().manipulate(functionContext, blockStmt));
+        if (methodVisitor != null) {
+            functionContext.getStackManipulations().forEach(
+                    stackManipulation -> stackManipulation.apply(methodVisitor, null));
+        }
         final StackManipulation[] stackManipulations =
                 functionContext.getStackManipulations().toArray(new StackManipulation[0]);
         builder = builder.defineMethod(name, returnType, visibility)

@@ -171,7 +171,7 @@ public final class Ts2JavaAstBinaryOp {
                 stackManipulations.add(getLogicalAnd(logicalLabels));
                 break;
             case LogicalOr:
-                // TODO
+                stackManipulations.add(getLogicalOr(logicalLabels));
                 break;
             default: {
                 if (type.represents(int.class)
@@ -399,9 +399,7 @@ public final class Ts2JavaAstBinaryOp {
         });
     }
 
-    public static StackManipulation getLogicalOrStackManipulation(
-            JavaFunctionContext functionContext,
-            TypeDescription type) {
+    public static StackManipulation getLogicalOr(JavaLogicalLabels logicalLabels) {
         return StackManipulation.Trivial.INSTANCE;
     }
 

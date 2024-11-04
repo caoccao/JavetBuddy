@@ -16,7 +16,10 @@
 
 package com.caoccao.javet.buddy.ts2java;
 
+import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaAstClassFunction;
+import com.caoccao.javet.buddy.ts2java.compiler.JavaLoggingMethodVisitor;
 import com.caoccao.javet.utils.JavetOSUtils;
+import net.bytebuddy.jar.asm.Opcodes;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +29,14 @@ import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 public class BaseTestTs2Java {
+    protected void disableLogging() {
+        Ts2JavaAstClassFunction.setMethodVisitor(null);
+    }
+
+    protected void enableLogging() {
+        Ts2JavaAstClassFunction.setMethodVisitor(new JavaLoggingMethodVisitor(Opcodes.ASM9));
+    }
+
     protected String getTsCode(String relativePath) throws IOException {
         Path path = new File(JavetOSUtils.WORKING_DIRECTORY).toPath()
                 .resolve("scripts/ts/test")
