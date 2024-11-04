@@ -292,7 +292,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
         return (a > 0) || (b > 0);
     }
 
-//    @Test
+    @Test
     public void testLogicalAnd_II_Z() throws Exception {
         assertTrue(logicalAnd_II_Z(2, 2));
         assertFalse(logicalAnd_II_Z(2, 3));

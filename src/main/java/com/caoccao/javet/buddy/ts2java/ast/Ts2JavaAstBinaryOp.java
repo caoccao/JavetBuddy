@@ -160,7 +160,6 @@ public final class Ts2JavaAstBinaryOp {
             JavaFunctionContext functionContext,
             Swc4jAstBinaryOp binaryOp,
             TypeDescription type) {
-        functionContext.increaseLogicalDepth();
         final JavaLogicalLabels logicalLabels = functionContext.getLogicalLabels();
         final List<StackManipulation> stackManipulations = new ArrayList<>();
         if (functionContext.getBangCount() % 2 == 1) {
@@ -193,37 +192,12 @@ public final class Ts2JavaAstBinaryOp {
                 break;
             }
         }
-        if (functionContext.getLogicalDepth() == 1) {
-            stackManipulations.add(getLogicalClose(logicalLabels));
-        }
-        functionContext.decreaseLogicalDepth();
         return new StackManipulation.Compound(stackManipulations);
     }
 
     public static StackManipulation getLogicalAnd(JavaLogicalLabels logicalLabels) {
+        // There is no need to do anything.
         return StackManipulation.Trivial.INSTANCE;
-    }
-
-    private static StackManipulation getLogicalClose(JavaLogicalLabels logicalLabels) {
-        return new StackManipulation.Simple((
-                MethodVisitor methodVisitor,
-                Implementation.Context implementationContext) -> {
-            if (logicalLabels.size() > 2) {
-                Label labelTrue = logicalLabels.get(2);
-                methodVisitor.visitLabel(labelTrue);
-                methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-            }
-            Label labelFalse = logicalLabels.get(1);
-            Label labelClose = logicalLabels.get(0);
-            methodVisitor.visitInsn(Opcodes.ICONST_1);
-            methodVisitor.visitJumpInsn(Opcodes.GOTO, labelClose);
-            methodVisitor.visitLabel(labelFalse);
-            methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-            methodVisitor.visitInsn(Opcodes.ICONST_0);
-            methodVisitor.visitLabel(labelClose);
-            methodVisitor.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[]{Opcodes.INTEGER});
-            return StackManipulation.Size.ZERO;
-        });
     }
 
     private static StackManipulation getLogicalCompareForDouble(

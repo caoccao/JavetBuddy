@@ -18,6 +18,7 @@ package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.buddy.ts2java.compiler.JavaClassCast;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
+import com.caoccao.javet.buddy.ts2java.compiler.JavaLogicalLabels;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
@@ -28,13 +29,43 @@ import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
+import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
+import net.bytebuddy.jar.asm.Label;
+import net.bytebuddy.jar.asm.MethodVisitor;
+import net.bytebuddy.jar.asm.Opcodes;
 
 import java.util.List;
 
 public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc4jAstBinExpr> {
+    private static StackManipulation getLogicalClose(JavaLogicalLabels logicalLabels) {
+        return new StackManipulation.Simple((
+                MethodVisitor methodVisitor,
+                Implementation.Context implementationContext) -> {
+            if (logicalLabels.size() > 2) {
+                Label labelTrue = logicalLabels.get(2);
+                methodVisitor.visitLabel(labelTrue);
+                methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+            }
+            Label labelFalse = logicalLabels.get(1);
+            Label labelClose = logicalLabels.get(0);
+            methodVisitor.visitInsn(Opcodes.ICONST_1);
+            methodVisitor.visitJumpInsn(Opcodes.GOTO, labelClose);
+            methodVisitor.visitLabel(labelFalse);
+            methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+            methodVisitor.visitInsn(Opcodes.ICONST_0);
+            methodVisitor.visitLabel(labelClose);
+            methodVisitor.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[]{Opcodes.INTEGER});
+            return StackManipulation.Size.ZERO;
+        });
+    }
+
     @Override
     public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstBinExpr ast) {
+        Swc4jAstBinaryOp binaryOp = ast.getOp();
+        if (binaryOp.isLogicalOperator()) {
+            functionContext.increaseLogicalDepth();
+        }
         final List<StackManipulation> stackManipulations = functionContext.getStackManipulations();
         final ISwc4jAstExpr leftExpression = ast.getLeft().unParenExpr();
         final ISwc4jAstExpr rightExpression = ast.getRight().unParenExpr();
@@ -42,7 +73,7 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
         final int stackManipulationSize = stackManipulations.size();
         final TypeDescription rightType = manipulateExpression(functionContext, rightExpression);
         TypeDescription upCaseType;
-        switch (ast.getOp()) {
+        switch (binaryOp) {
             case Exp:
                 upCaseType = TypeDescription.ForLoadedType.of(double.class);
                 break;
@@ -56,7 +87,6 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
         // Add the type cast for right expression if possible.
         JavaClassCast.getUpCastStackManipulation(rightType, upCaseType).ifPresent(stackManipulations::add);
         StackManipulation stackManipulation;
-        Swc4jAstBinaryOp binaryOp = ast.getOp();
         if (binaryOp.isArithmeticOperator()) {
             stackManipulation = Ts2JavaAstBinaryOp.getArithmetic(binaryOp, upCaseType);
         } else if (binaryOp.isLogicalOperator()) {
@@ -66,9 +96,15 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
             throw new Ts2JavaAstException(
                     ast,
                     SimpleFreeMarkerFormat.format("BinExpr op ${op} is not supported.",
-                            SimpleMap.of("op", ast.getOp().name())));
+                            SimpleMap.of("op", binaryOp.name())));
         }
         stackManipulations.add(stackManipulation);
+        if (binaryOp.isLogicalOperator()) {
+            if (functionContext.getLogicalDepth() == 1) {
+                stackManipulations.add(getLogicalClose(functionContext.getLogicalLabels()));
+            }
+            functionContext.decreaseLogicalDepth();
+        }
         return upCaseType;
     }
 
