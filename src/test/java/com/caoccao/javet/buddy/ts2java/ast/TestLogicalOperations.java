@@ -1062,6 +1062,19 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
+    public void testLogicalNot_Or_II_Z() throws Exception {
+        TsClass tsClass = new TsClass(
+                "return !(a == b || a > 1);",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertFalse((boolean) tsClass.invoke(2, 2));
+        assertFalse((boolean) tsClass.invoke(2, 3));
+        assertFalse((boolean) tsClass.invoke(1, 1));
+        assertTrue((boolean) tsClass.invoke(0, 1));
+    }
+
+    @Test
     public void testLogicalNot_Z_Z() throws Exception {
         TsClass tsClass = new TsClass(
                 "return !a;",
