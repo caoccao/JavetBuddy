@@ -19,6 +19,7 @@ package com.caoccao.javet.buddy.ts2java.ast;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaClassCast;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
+import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstUnaryExpr;
@@ -65,64 +66,17 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
         // Add the type cast for right expression if possible.
         JavaClassCast.getUpCastStackManipulation(rightType, upCaseType).ifPresent(stackManipulations::add);
         StackManipulation stackManipulation;
-        switch (ast.getOp()) {
-            case Add:
-                stackManipulation = Ts2JavaAstBinaryOp.getAddition(upCaseType);
-                break;
-            case Div:
-                stackManipulation = Ts2JavaAstBinaryOp.getDivision(upCaseType);
-                break;
-            case LShift:
-                stackManipulation = Ts2JavaAstBinaryOp.getShiftLeft(upCaseType);
-                break;
-            case Mod:
-                stackManipulation = Ts2JavaAstBinaryOp.getRemainder(upCaseType);
-                break;
-            case Mul:
-                stackManipulation = Ts2JavaAstBinaryOp.getMultiplication(upCaseType);
-                break;
-            case RShift:
-                stackManipulation = Ts2JavaAstBinaryOp.getShiftRight(upCaseType);
-                break;
-            case Sub:
-                stackManipulation = Ts2JavaAstBinaryOp.getSubtraction(upCaseType);
-                break;
-            case ZeroFillRShift:
-                stackManipulation = Ts2JavaAstBinaryOp.getZeroFillShiftRight(upCaseType);
-                break;
-            case Exp:
-                stackManipulation = Ts2JavaAstBinaryOp.getExp();
-                break;
-            case Gt:
-            case GtEq:
-            case Lt:
-            case LtEq:
-            case EqEq:
-            case EqEqEq:
-            case NotEq:
-            case NotEqEq:
-                stackManipulation = Ts2JavaAstBinaryOp.getLogical(
-                        functionContext, ast.getOp(), upCaseType, logicalNot);
-                break;
-            case LogicalAnd:
-                stackManipulation = Ts2JavaAstBinaryOp.getLogicalAndStackManipulation(
-                        functionContext, upCaseType);
-                break;
-            case LogicalOr:
-                stackManipulation = Ts2JavaAstBinaryOp.getLogicalOrStackManipulation(
-                        functionContext, upCaseType);
-                break;
-//            case BitAnd:
-//                stackManipulation = Ts2JavaAstBinaryOp.getBitAndStackManipulation(functionContext);
-//                break;
-//            case BitOr:
-//                stackManipulation = Ts2JavaAstBinaryOp.getBitOrStackManipulation(functionContext);
-//                break;
-            default:
-                throw new Ts2JavaAstException(
-                        ast,
-                        SimpleFreeMarkerFormat.format("BinExpr op ${op} is not supported.",
-                                SimpleMap.of("op", ast.getOp().name())));
+        Swc4jAstBinaryOp binaryOp = ast.getOp();
+        if (binaryOp.isArithmeticOperator()) {
+            stackManipulation = Ts2JavaAstBinaryOp.getArithmetic(binaryOp, upCaseType);
+        } else if (binaryOp.isLogicalOperator()) {
+            stackManipulation = Ts2JavaAstBinaryOp.getLogical(functionContext, binaryOp, upCaseType, logicalNot);
+//        } else if (binaryOp.isBitOperator()) {
+        } else {
+            throw new Ts2JavaAstException(
+                    ast,
+                    SimpleFreeMarkerFormat.format("BinExpr op ${op} is not supported.",
+                            SimpleMap.of("op", ast.getOp().name())));
         }
         stackManipulations.add(stackManipulation);
         return upCaseType;

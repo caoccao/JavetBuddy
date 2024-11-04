@@ -38,7 +38,7 @@ public final class Ts2JavaAstBinaryOp {
     private Ts2JavaAstBinaryOp() {
     }
 
-    public static Addition getAddition(TypeDescription type) {
+    private static Addition getAddition(TypeDescription type) {
         if (type.represents(int.class)) {
             return Addition.INTEGER;
         } else if (type.represents(long.class)) {
@@ -51,6 +51,33 @@ public final class Ts2JavaAstBinaryOp {
         throw new Ts2JavaException(
                 SimpleFreeMarkerFormat.format("Unsupported type ${type} in addition.",
                         SimpleMap.of("type", type.getName())));
+    }
+
+    public static StackManipulation getArithmetic(Swc4jAstBinaryOp binaryOp, TypeDescription upCaseType) {
+        switch (binaryOp) {
+            case Add:
+                return getAddition(upCaseType);
+            case Div:
+                return getDivision(upCaseType);
+            case LShift:
+                return getShiftLeft(upCaseType);
+            case Mod:
+                return getRemainder(upCaseType);
+            case Mul:
+                return getMultiplication(upCaseType);
+            case RShift:
+                return getShiftRight(upCaseType);
+            case Sub:
+                return getSubtraction(upCaseType);
+            case ZeroFillRShift:
+                return getZeroFillShiftRight(upCaseType);
+            case Exp:
+                return getExp();
+            default:
+                throw new Ts2JavaException(
+                        SimpleFreeMarkerFormat.format("Binary op ${op} is not supported.",
+                                SimpleMap.of("op", binaryOp.name())));
+        }
     }
 
     public static StackManipulation getBitAndStackManipulation(JavaFunctionContext functionContext) {
@@ -71,7 +98,7 @@ public final class Ts2JavaAstBinaryOp {
         });
     }
 
-    public static Division getDivision(TypeDescription type) {
+    private static Division getDivision(TypeDescription type) {
         if (type.represents(int.class)) {
             return Division.INTEGER;
         } else if (type.represents(long.class)) {
@@ -86,7 +113,7 @@ public final class Ts2JavaAstBinaryOp {
                         SimpleMap.of("type", type.getName())));
     }
 
-    public static StackManipulation getExp() {
+    private static StackManipulation getExp() {
         return new StackManipulation.Simple((
                 MethodVisitor methodVisitor,
                 Implementation.Context implementationContext) -> {
@@ -108,169 +135,180 @@ public final class Ts2JavaAstBinaryOp {
         functionContext.increaseLogicalDepth();
         final Label labelFalse = functionContext.getLogicalLabels().getLabelFalse();
         final List<StackManipulation> stackManipulations = new ArrayList<>();
-        if (type.represents(int.class)
-                || type.represents(short.class)
-                || type.represents(byte.class)
-                || type.represents(char.class)) {
-            int opcodeCompare;
-            switch (binaryOp) {
-                case Gt:
-                    opcodeCompare = logicalNot ? Opcodes.IF_ICMPGT : Opcodes.IF_ICMPLE;
-                    break;
-                case GtEq:
-                    opcodeCompare = logicalNot ? Opcodes.IF_ICMPGE : Opcodes.IF_ICMPLT;
-                    break;
-                case Lt:
-                    opcodeCompare = logicalNot ? Opcodes.IF_ICMPLT : Opcodes.IF_ICMPGE;
-                    break;
-                case LtEq:
-                    opcodeCompare = logicalNot ? Opcodes.IF_ICMPLE : Opcodes.IF_ICMPGT;
-                    break;
-                case EqEq:
-                case EqEqEq:
-                    opcodeCompare = logicalNot ? Opcodes.IF_ICMPEQ : Opcodes.IF_ICMPNE;
-                    break;
-                case NotEq:
-                case NotEqEq:
-                    opcodeCompare = logicalNot ? Opcodes.IF_ICMPNE : Opcodes.IF_ICMPEQ;
-                    break;
-                default:
+        switch (binaryOp) {
+            case LogicalAnd:
+                // TODO
+                break;
+            case LogicalOr:
+                // TODO
+                break;
+            default: {
+                if (type.represents(int.class)
+                        || type.represents(short.class)
+                        || type.represents(byte.class)
+                        || type.represents(char.class)) {
+                    int opcodeCompare;
+                    switch (binaryOp) {
+                        case Gt:
+                            opcodeCompare = logicalNot ? Opcodes.IF_ICMPGT : Opcodes.IF_ICMPLE;
+                            break;
+                        case GtEq:
+                            opcodeCompare = logicalNot ? Opcodes.IF_ICMPGE : Opcodes.IF_ICMPLT;
+                            break;
+                        case Lt:
+                            opcodeCompare = logicalNot ? Opcodes.IF_ICMPLT : Opcodes.IF_ICMPGE;
+                            break;
+                        case LtEq:
+                            opcodeCompare = logicalNot ? Opcodes.IF_ICMPLE : Opcodes.IF_ICMPGT;
+                            break;
+                        case EqEq:
+                        case EqEqEq:
+                            opcodeCompare = logicalNot ? Opcodes.IF_ICMPEQ : Opcodes.IF_ICMPNE;
+                            break;
+                        case NotEq:
+                        case NotEqEq:
+                            opcodeCompare = logicalNot ? Opcodes.IF_ICMPNE : Opcodes.IF_ICMPEQ;
+                            break;
+                        default:
+                            throw new Ts2JavaException(
+                                    SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} for type ${type} in logical operation.",
+                                            SimpleMap.of("binaryOp", binaryOp.name(), "type", type.getName())));
+                    }
+                    stackManipulations.add(new StackManipulation.Simple((
+                            MethodVisitor methodVisitor,
+                            Implementation.Context implementationContext) -> {
+                        methodVisitor.visitJumpInsn(opcodeCompare, labelFalse);
+                        return new StackManipulation.Size(-1, 0);
+                    }));
+                } else if (type.represents(long.class)) {
+                    int opcodeCompare;
+                    switch (binaryOp) {
+                        case Gt:
+                            opcodeCompare = logicalNot ? Opcodes.IFGT : Opcodes.IFLE;
+                            break;
+                        case GtEq:
+                            opcodeCompare = logicalNot ? Opcodes.IFGE : Opcodes.IFLT;
+                            break;
+                        case Lt:
+                            opcodeCompare = logicalNot ? Opcodes.IFLT : Opcodes.IFGE;
+                            break;
+                        case LtEq:
+                            opcodeCompare = logicalNot ? Opcodes.IFLE : Opcodes.IFGT;
+                            break;
+                        case EqEq:
+                        case EqEqEq:
+                            opcodeCompare = logicalNot ? Opcodes.IFEQ : Opcodes.IFNE;
+                            break;
+                        case NotEq:
+                        case NotEqEq:
+                            opcodeCompare = logicalNot ? Opcodes.IFNE : Opcodes.IFEQ;
+                            break;
+                        default:
+                            throw new Ts2JavaException(
+                                    SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} for type ${type} in logical operation.",
+                                            SimpleMap.of("binaryOp", binaryOp.name(), "type", type.getName())));
+                    }
+                    stackManipulations.add(new StackManipulation.Simple((
+                            MethodVisitor methodVisitor,
+                            Implementation.Context implementationContext) -> {
+                        methodVisitor.visitInsn(Opcodes.LCMP);
+                        methodVisitor.visitJumpInsn(opcodeCompare, labelFalse);
+                        return new StackManipulation.Size(-2, 0);
+                    }));
+                } else if (type.represents(float.class)) {
+                    int opcodeCompare1;
+                    int opcodeCompare2;
+                    switch (binaryOp) {
+                        case Gt:
+                            opcodeCompare1 = Opcodes.FCMPL;
+                            opcodeCompare2 = logicalNot ? Opcodes.IFGT : Opcodes.IFLE;
+                            break;
+                        case GtEq:
+                            opcodeCompare1 = Opcodes.FCMPL;
+                            opcodeCompare2 = logicalNot ? Opcodes.IFGE : Opcodes.IFLT;
+                            break;
+                        case Lt:
+                            opcodeCompare1 = Opcodes.FCMPG;
+                            opcodeCompare2 = logicalNot ? Opcodes.IFLT : Opcodes.IFGE;
+                            break;
+                        case LtEq:
+                            opcodeCompare1 = Opcodes.FCMPG;
+                            opcodeCompare2 = logicalNot ? Opcodes.IFLE : Opcodes.IFGT;
+                            break;
+                        case EqEq:
+                        case EqEqEq:
+                            opcodeCompare1 = Opcodes.FCMPL;
+                            opcodeCompare2 = logicalNot ? Opcodes.IFEQ : Opcodes.IFNE;
+                            break;
+                        case NotEq:
+                        case NotEqEq:
+                            opcodeCompare1 = Opcodes.FCMPL;
+                            opcodeCompare2 = logicalNot ? Opcodes.IFNE : Opcodes.IFEQ;
+                            break;
+                        default:
+                            throw new Ts2JavaException(
+                                    SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} for type ${type} in logical operation.",
+                                            SimpleMap.of("binaryOp", binaryOp.name(), "type", type.getName())));
+                    }
+                    stackManipulations.add(new StackManipulation.Simple((
+                            MethodVisitor methodVisitor,
+                            Implementation.Context implementationContext) -> {
+                        methodVisitor.visitInsn(opcodeCompare1);
+                        methodVisitor.visitJumpInsn(opcodeCompare2, labelFalse);
+                        return new StackManipulation.Size(-1, 0);
+                    }));
+                } else if (type.represents(double.class)) {
+                    int opcodeCompare1;
+                    int opcodeCompare2;
+                    switch (binaryOp) {
+                        case Gt:
+                            opcodeCompare1 = Opcodes.DCMPL;
+                            opcodeCompare2 = logicalNot ? Opcodes.IFGT : Opcodes.IFLE;
+                            break;
+                        case GtEq:
+                            opcodeCompare1 = Opcodes.DCMPL;
+                            opcodeCompare2 = logicalNot ? Opcodes.IFGE : Opcodes.IFLT;
+                            break;
+                        case Lt:
+                            opcodeCompare1 = Opcodes.DCMPG;
+                            opcodeCompare2 = logicalNot ? Opcodes.IFLT : Opcodes.IFGE;
+                            break;
+                        case LtEq:
+                            opcodeCompare1 = Opcodes.DCMPG;
+                            opcodeCompare2 = logicalNot ? Opcodes.IFLE : Opcodes.IFGT;
+                            break;
+                        case EqEq:
+                        case EqEqEq:
+                            opcodeCompare1 = Opcodes.DCMPL;
+                            opcodeCompare2 = logicalNot ? Opcodes.IFEQ : Opcodes.IFNE;
+                            break;
+                        case NotEq:
+                        case NotEqEq:
+                            opcodeCompare1 = Opcodes.DCMPL;
+                            opcodeCompare2 = logicalNot ? Opcodes.IFNE : Opcodes.IFEQ;
+                            break;
+                        default:
+                            throw new Ts2JavaException(
+                                    SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} for type ${type} in logical operation.",
+                                            SimpleMap.of("binaryOp", binaryOp.name(), "type", type.getName())));
+                    }
+                    stackManipulations.add(new StackManipulation.Simple((
+                            MethodVisitor methodVisitor,
+                            Implementation.Context implementationContext) -> {
+                        methodVisitor.visitInsn(opcodeCompare1);
+                        methodVisitor.visitJumpInsn(opcodeCompare2, labelFalse);
+                        return new StackManipulation.Size(-2, 0);
+                    }));
+                } else {
                     throw new Ts2JavaException(
-                            SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} for type ${type} in logical operation.",
-                                    SimpleMap.of("binaryOp", binaryOp.name(), "type", type.getName())));
+                            SimpleFreeMarkerFormat.format("Unsupported type ${type} in logical operation.",
+                                    SimpleMap.of("type", type.getName())));
+                }
+                break;
             }
-            stackManipulations.add(new StackManipulation.Simple((
-                    MethodVisitor methodVisitor,
-                    Implementation.Context implementationContext) -> {
-                methodVisitor.visitJumpInsn(opcodeCompare, labelFalse);
-                return new StackManipulation.Size(-1, 0);
-            }));
-        } else if (type.represents(long.class)) {
-            int opcodeCompare;
-            switch (binaryOp) {
-                case Gt:
-                    opcodeCompare = logicalNot ? Opcodes.IFGT : Opcodes.IFLE;
-                    break;
-                case GtEq:
-                    opcodeCompare = logicalNot ? Opcodes.IFGE : Opcodes.IFLT;
-                    break;
-                case Lt:
-                    opcodeCompare = logicalNot ? Opcodes.IFLT : Opcodes.IFGE;
-                    break;
-                case LtEq:
-                    opcodeCompare = logicalNot ? Opcodes.IFLE : Opcodes.IFGT;
-                    break;
-                case EqEq:
-                case EqEqEq:
-                    opcodeCompare = logicalNot ? Opcodes.IFEQ : Opcodes.IFNE;
-                    break;
-                case NotEq:
-                case NotEqEq:
-                    opcodeCompare = logicalNot ? Opcodes.IFNE : Opcodes.IFEQ;
-                    break;
-                default:
-                    throw new Ts2JavaException(
-                            SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} for type ${type} in logical operation.",
-                                    SimpleMap.of("binaryOp", binaryOp.name(), "type", type.getName())));
-            }
-            stackManipulations.add(new StackManipulation.Simple((
-                    MethodVisitor methodVisitor,
-                    Implementation.Context implementationContext) -> {
-                methodVisitor.visitInsn(Opcodes.LCMP);
-                methodVisitor.visitJumpInsn(opcodeCompare, labelFalse);
-                return new StackManipulation.Size(-2, 0);
-            }));
-        } else if (type.represents(float.class)) {
-            int opcodeCompare1;
-            int opcodeCompare2;
-            switch (binaryOp) {
-                case Gt:
-                    opcodeCompare1 = Opcodes.FCMPL;
-                    opcodeCompare2 = logicalNot ? Opcodes.IFGT : Opcodes.IFLE;
-                    break;
-                case GtEq:
-                    opcodeCompare1 = Opcodes.FCMPL;
-                    opcodeCompare2 = logicalNot ? Opcodes.IFGE : Opcodes.IFLT;
-                    break;
-                case Lt:
-                    opcodeCompare1 = Opcodes.FCMPG;
-                    opcodeCompare2 = logicalNot ? Opcodes.IFLT : Opcodes.IFGE;
-                    break;
-                case LtEq:
-                    opcodeCompare1 = Opcodes.FCMPG;
-                    opcodeCompare2 = logicalNot ? Opcodes.IFLE : Opcodes.IFGT;
-                    break;
-                case EqEq:
-                case EqEqEq:
-                    opcodeCompare1 = Opcodes.FCMPL;
-                    opcodeCompare2 = logicalNot ? Opcodes.IFEQ : Opcodes.IFNE;
-                    break;
-                case NotEq:
-                case NotEqEq:
-                    opcodeCompare1 = Opcodes.FCMPL;
-                    opcodeCompare2 = logicalNot ? Opcodes.IFNE : Opcodes.IFEQ;
-                    break;
-                default:
-                    throw new Ts2JavaException(
-                            SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} for type ${type} in logical operation.",
-                                    SimpleMap.of("binaryOp", binaryOp.name(), "type", type.getName())));
-            }
-            stackManipulations.add(new StackManipulation.Simple((
-                    MethodVisitor methodVisitor,
-                    Implementation.Context implementationContext) -> {
-                methodVisitor.visitInsn(opcodeCompare1);
-                methodVisitor.visitJumpInsn(opcodeCompare2, labelFalse);
-                return new StackManipulation.Size(-1, 0);
-            }));
-        } else if (type.represents(double.class)) {
-            int opcodeCompare1;
-            int opcodeCompare2;
-            switch (binaryOp) {
-                case Gt:
-                    opcodeCompare1 = Opcodes.DCMPL;
-                    opcodeCompare2 = logicalNot ? Opcodes.IFGT : Opcodes.IFLE;
-                    break;
-                case GtEq:
-                    opcodeCompare1 = Opcodes.DCMPL;
-                    opcodeCompare2 = logicalNot ? Opcodes.IFGE : Opcodes.IFLT;
-                    break;
-                case Lt:
-                    opcodeCompare1 = Opcodes.DCMPG;
-                    opcodeCompare2 = logicalNot ? Opcodes.IFLT : Opcodes.IFGE;
-                    break;
-                case LtEq:
-                    opcodeCompare1 = Opcodes.DCMPG;
-                    opcodeCompare2 = logicalNot ? Opcodes.IFLE : Opcodes.IFGT;
-                    break;
-                case EqEq:
-                case EqEqEq:
-                    opcodeCompare1 = Opcodes.DCMPL;
-                    opcodeCompare2 = logicalNot ? Opcodes.IFEQ : Opcodes.IFNE;
-                    break;
-                case NotEq:
-                case NotEqEq:
-                    opcodeCompare1 = Opcodes.DCMPL;
-                    opcodeCompare2 = logicalNot ? Opcodes.IFNE : Opcodes.IFEQ;
-                    break;
-                default:
-                    throw new Ts2JavaException(
-                            SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} for type ${type} in logical operation.",
-                                    SimpleMap.of("binaryOp", binaryOp.name(), "type", type.getName())));
-            }
-            stackManipulations.add(new StackManipulation.Simple((
-                    MethodVisitor methodVisitor,
-                    Implementation.Context implementationContext) -> {
-                methodVisitor.visitInsn(opcodeCompare1);
-                methodVisitor.visitJumpInsn(opcodeCompare2, labelFalse);
-                return new StackManipulation.Size(-2, 0);
-            }));
-        } else {
-            throw new Ts2JavaException(
-                    SimpleFreeMarkerFormat.format("Unsupported type ${type} in logical operation.",
-                            SimpleMap.of("type", type.getName())));
         }
         if (functionContext.getLogicalDepth() == 1) {
-            stackManipulations.add(getLogicalEnd(functionContext.getLogicalLabels()));
+            stackManipulations.add(getLogicalClose(functionContext.getLogicalLabels()));
         }
         functionContext.decreaseLogicalDepth();
         return new StackManipulation.Compound(stackManipulations);
@@ -282,7 +320,7 @@ public final class Ts2JavaAstBinaryOp {
         return StackManipulation.Trivial.INSTANCE;
     }
 
-    private static StackManipulation getLogicalEnd(JavaLogicalLabels logicalLabels) {
+    private static StackManipulation getLogicalClose(JavaLogicalLabels logicalLabels) {
         return new StackManipulation.Simple((
                 MethodVisitor methodVisitor,
                 Implementation.Context implementationContext) -> {
@@ -310,7 +348,7 @@ public final class Ts2JavaAstBinaryOp {
         return StackManipulation.Trivial.INSTANCE;
     }
 
-    public static Multiplication getMultiplication(TypeDescription type) {
+    private static Multiplication getMultiplication(TypeDescription type) {
         if (type.represents(int.class)) {
             return Multiplication.INTEGER;
         } else if (type.represents(long.class)) {
@@ -325,7 +363,7 @@ public final class Ts2JavaAstBinaryOp {
                         SimpleMap.of("type", type.getName())));
     }
 
-    public static Remainder getRemainder(TypeDescription type) {
+    private static Remainder getRemainder(TypeDescription type) {
         if (type.represents(int.class)) {
             return Remainder.INTEGER;
         } else if (type.represents(long.class)) {
@@ -340,7 +378,7 @@ public final class Ts2JavaAstBinaryOp {
                         SimpleMap.of("type", type.getName())));
     }
 
-    public static ShiftLeft getShiftLeft(TypeDescription type) {
+    private static ShiftLeft getShiftLeft(TypeDescription type) {
         if (type.represents(int.class)) {
             return ShiftLeft.INTEGER;
         } else if (type.represents(long.class)) {
@@ -351,7 +389,7 @@ public final class Ts2JavaAstBinaryOp {
                         SimpleMap.of("type", type.getName())));
     }
 
-    public static ShiftRight getShiftRight(TypeDescription type) {
+    private static ShiftRight getShiftRight(TypeDescription type) {
         if (type.represents(int.class)) {
             return ShiftRight.INTEGER;
         } else if (type.represents(long.class)) {
@@ -362,7 +400,7 @@ public final class Ts2JavaAstBinaryOp {
                         SimpleMap.of("type", type.getName())));
     }
 
-    public static Subtraction getSubtraction(TypeDescription type) {
+    private static Subtraction getSubtraction(TypeDescription type) {
         if (type.represents(int.class)) {
             return Subtraction.INTEGER;
         } else if (type.represents(long.class)) {
@@ -377,7 +415,7 @@ public final class Ts2JavaAstBinaryOp {
                         SimpleMap.of("type", type.getName())));
     }
 
-    public static StackManipulation getZeroFillShiftRight(TypeDescription type) {
+    private static StackManipulation getZeroFillShiftRight(TypeDescription type) {
         if (type.represents(int.class)) {
             return new StackManipulation.Simple(
                     (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
