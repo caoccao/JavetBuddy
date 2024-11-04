@@ -41,13 +41,13 @@ public final class JavaFunctionContext {
     private int nextOffset;
 
     public JavaFunctionContext(boolean _static, TypeDescription returnType) {
-        this._static = _static;
         bangCount = 0;
-        nextOffset = _static ? 0 : 1;
-        maxOffset = nextOffset;
-        this.lexicalScopes = SimpleList.of(new JavaLexicalScope(0));
         logicalDepth = 0;
         logicalLabels = new JavaLogicalLabels();
+        maxOffset = nextOffset;
+        nextOffset = _static ? 0 : 1;
+        this._static = _static;
+        this.lexicalScopes = SimpleList.of(new JavaLexicalScope(0));
         this.returnType = Objects.requireNonNull(returnType);
         this.stackManipulations = new ArrayList<>();
     }
