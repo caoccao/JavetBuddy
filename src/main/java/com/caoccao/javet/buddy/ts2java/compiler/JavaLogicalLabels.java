@@ -39,29 +39,17 @@ public final class JavaLogicalLabels {
         return labels.get(index);
     }
 
-    public Label getLabelEnd() {
-        return labels.get(0);
-    }
-
-    public Label getLabelFalse() {
-        return labels.get(1);
-    }
-
-    public Label getLabelTrue() {
-        return labels.get(2);
-    }
-
     public Label getLastLabel() {
         return labels.get(labels.size() - 1);
-    }
-
-    public boolean hasLabelTrue() {
-        return labels.size() > 2;
     }
 
     public void reset() {
         labels.clear();
         labels.add(new Label()); // Label for Return
         labels.add(new Label()); // Label for False
+    }
+
+    public int size() {
+        return labels.size();
     }
 }

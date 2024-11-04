@@ -53,22 +53,26 @@ public final class Ts2JavaAstUnaryExpr implements ITs2JavaAstStackManipulation<S
 
     @Override
     public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstUnaryExpr ast) {
+        TypeDescription returnType;
         ISwc4jAstExpr arg = ast.getArg().unParenExpr();
         switch (ast.getOp()) {
-            case Bang:
+            case Bang: {
+                functionContext.increaseBangCount();
                 switch (arg.getType()) {
                     case BinExpr:
-                        return new Ts2JavaAstBinExpr()
-                                .setLogicalNot(true)
+                        returnType = new Ts2JavaAstBinExpr()
                                 .manipulate(functionContext, arg.as(Swc4jAstBinExpr.class));
+                        break;
                     default:
                         throw new Ts2JavaAstException(
                                 arg,
                                 SimpleFreeMarkerFormat.format("UnaryExpr arg type ${argType} for ! is not supported.",
                                         SimpleMap.of("argType", arg.getType().name())));
                 }
+                functionContext.decreateBangCount();
+                break;
+            }
             case Minus: {
-                TypeDescription returnType;
                 switch (arg.getType()) {
                     case BinExpr:
                         returnType = new Ts2JavaAstBinExpr()
@@ -92,7 +96,7 @@ public final class Ts2JavaAstUnaryExpr implements ITs2JavaAstStackManipulation<S
                     return StackManipulation.Size.ZERO;
                 });
                 functionContext.getStackManipulations().add(stackManipulation);
-                return returnType;
+                break;
             }
             default:
                 throw new Ts2JavaAstException(
@@ -100,5 +104,6 @@ public final class Ts2JavaAstUnaryExpr implements ITs2JavaAstStackManipulation<S
                         SimpleFreeMarkerFormat.format("UnaryExpr op ${op} is not supported.",
                                 SimpleMap.of("op", ast.getOp().name())));
         }
+        return returnType;
     }
 }

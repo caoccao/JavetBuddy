@@ -33,16 +33,6 @@ import net.bytebuddy.implementation.bytecode.StackManipulation;
 import java.util.List;
 
 public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc4jAstBinExpr> {
-    private boolean logicalNot;
-
-    public Ts2JavaAstBinExpr() {
-        logicalNot = false;
-    }
-
-    public boolean isLogicalNot() {
-        return logicalNot;
-    }
-
     @Override
     public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstBinExpr ast) {
         final List<StackManipulation> stackManipulations = functionContext.getStackManipulations();
@@ -70,7 +60,7 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
         if (binaryOp.isArithmeticOperator()) {
             stackManipulation = Ts2JavaAstBinaryOp.getArithmetic(binaryOp, upCaseType);
         } else if (binaryOp.isLogicalOperator()) {
-            stackManipulation = Ts2JavaAstBinaryOp.getLogical(functionContext, binaryOp, upCaseType, logicalNot);
+            stackManipulation = Ts2JavaAstBinaryOp.getLogical(functionContext, binaryOp, upCaseType);
 //        } else if (binaryOp.isBitOperator()) {
         } else {
             throw new Ts2JavaAstException(
@@ -98,10 +88,5 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
                         SimpleFreeMarkerFormat.format("BinExpr left expr type ${exprType} is not supported.",
                                 SimpleMap.of("exprType", expression.getType().name())));
         }
-    }
-
-    public Ts2JavaAstBinExpr setLogicalNot(boolean logicalNot) {
-        this.logicalNot = logicalNot;
-        return this;
     }
 }

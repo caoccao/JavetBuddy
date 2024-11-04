@@ -207,6 +207,37 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     /*
+  public logicalNot_And_II_Z(II)Z
+   L0
+    LINENUMBER 210 L0
+    ILOAD 1
+    ILOAD 2
+    IF_ICMPNE L1
+    ILOAD 1
+    ICONST_1
+    IF_ICMPGT L2
+   L1
+   FRAME SAME
+    ICONST_1
+    GOTO L3
+   L2
+   FRAME SAME
+    ICONST_0
+   L3
+   FRAME SAME1 I
+    IRETURN
+   L4
+    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/ast/TestLogicalOperations; L0 L4 0
+    LOCALVARIABLE a I L0 L4 1
+    LOCALVARIABLE b I L0 L4 2
+    MAXSTACK = 2
+    MAXLOCALS = 3
+     */
+    public boolean logicalNot_And_II_Z(int a, int b) {
+        return !(a == b && a > 1);
+    }
+
+    /*
   public logicalNot_II_Z(II)Z
    L0
     LINENUMBER 204 L0

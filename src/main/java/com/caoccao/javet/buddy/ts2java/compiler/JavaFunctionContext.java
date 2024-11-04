@@ -35,12 +35,14 @@ public final class JavaFunctionContext {
     private final JavaLogicalLabels logicalLabels;
     private final TypeDescription returnType;
     private final List<StackManipulation> stackManipulations;
+    private int bangCount;
     private int logicalDepth;
     private int maxOffset;
     private int nextOffset;
 
     public JavaFunctionContext(boolean _static, TypeDescription returnType) {
         this._static = _static;
+        bangCount = 0;
         nextOffset = _static ? 0 : 1;
         maxOffset = nextOffset;
         this.lexicalScopes = SimpleList.of(new JavaLexicalScope(0));
@@ -65,6 +67,14 @@ public final class JavaFunctionContext {
         if (logicalDepth <= 0) {
             logicalDepth = 0;
         }
+    }
+
+    public void decreateBangCount() {
+        bangCount--;
+    }
+
+    public int getBangCount() {
+        return bangCount;
     }
 
     public JavaLocalVariable getLocalVariable(String name) {
@@ -109,6 +119,10 @@ public final class JavaFunctionContext {
 
     public List<StackManipulation> getStackManipulations() {
         return stackManipulations;
+    }
+
+    public void increaseBangCount() {
+        bangCount++;
     }
 
     public void increaseLogicalDepth() {
