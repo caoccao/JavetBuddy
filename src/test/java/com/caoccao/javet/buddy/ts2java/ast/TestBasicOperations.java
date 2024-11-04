@@ -191,6 +191,15 @@ public class TestBasicOperations extends BaseTestTs2Java {
     }
 
     @Test
+    public void testMinus_L_L() throws Exception {
+        TsClass tsClass = new TsClass(
+                "return -a;",
+                long.class,
+                TsMethodArgument.of("a", long.class));
+        assertEquals(-2L, tsClass.invoke(2L));
+    }
+
+    @Test
     public void testMinus_Minus_II_I() throws Exception {
         TsClass tsClass = new TsClass(
                 "return -(-(a + b));",

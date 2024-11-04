@@ -30,15 +30,12 @@ import net.bytebuddy.implementation.bytecode.constant.IntegerConstant;
 import net.bytebuddy.implementation.bytecode.constant.LongConstant;
 
 public final class Ts2JavaAstNumber implements ITs2JavaAstStackManipulation<Swc4jAstNumber> {
-    private final TypeDescription valueType;
     private boolean negative;
+    private TypeDescription valueType;
 
     public Ts2JavaAstNumber() {
-        this(null);
-    }
-
-    public Ts2JavaAstNumber(TypeDescription valueType) {
-        this.valueType = valueType;
+        negative = false;
+        valueType = null;
     }
 
     public TypeDescription getValueType() {
@@ -93,6 +90,11 @@ public final class Ts2JavaAstNumber implements ITs2JavaAstStackManipulation<Swc4
 
     public Ts2JavaAstNumber setNegative(boolean negative) {
         this.negative = negative;
+        return this;
+    }
+
+    public Ts2JavaAstNumber setValueType(TypeDescription valueType) {
+        this.valueType = valueType;
         return this;
     }
 }

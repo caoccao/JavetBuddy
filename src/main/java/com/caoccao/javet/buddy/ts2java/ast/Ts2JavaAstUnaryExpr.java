@@ -19,6 +19,7 @@ package com.caoccao.javet.buddy.ts2java.ast;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
+import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstUnaryExpr;
 import com.caoccao.javet.swc4j.ast.expr.lit.Swc4jAstNumber;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
@@ -73,15 +74,22 @@ public final class Ts2JavaAstUnaryExpr implements ITs2JavaAstStackManipulation<S
                 break;
             }
             case Minus: {
+                boolean opcodeNegativeRequired = true;
                 switch (arg.getType()) {
                     case BinExpr:
                         returnType = new Ts2JavaAstBinExpr()
                                 .manipulate(functionContext, arg.as(Swc4jAstBinExpr.class));
                         break;
+                    case Ident:
+                        returnType = new Ts2JavaAstIdent()
+                                .manipulate(functionContext, arg.as(Swc4jAstIdent.class));
+                        break;
                     case Number:
-                        return new Ts2JavaAstNumber()
+                        opcodeNegativeRequired = false;
+                        returnType = new Ts2JavaAstNumber()
                                 .setNegative(true)
                                 .manipulate(functionContext, arg.as(Swc4jAstNumber.class));
+                        break;
                     case UnaryExpr:
                         returnType = new Ts2JavaAstUnaryExpr()
                                 .manipulate(functionContext, arg.as(Swc4jAstUnaryExpr.class));
@@ -92,14 +100,16 @@ public final class Ts2JavaAstUnaryExpr implements ITs2JavaAstStackManipulation<S
                                 SimpleFreeMarkerFormat.format("UnaryExpr arg type ${argType} for - is not supported.",
                                         SimpleMap.of("argType", arg.getType().name())));
                 }
-                final int opcode = getOpcodeNegative(ast, returnType);
-                StackManipulation stackManipulation = new StackManipulation.Simple((
-                        MethodVisitor methodVisitor,
-                        Implementation.Context implementationContext) -> {
-                    methodVisitor.visitInsn(opcode);
-                    return StackManipulation.Size.ZERO;
-                });
-                functionContext.getStackManipulations().add(stackManipulation);
+                if (opcodeNegativeRequired) {
+                    final int opcode = getOpcodeNegative(ast, returnType);
+                    StackManipulation stackManipulation = new StackManipulation.Simple((
+                            MethodVisitor methodVisitor,
+                            Implementation.Context implementationContext) -> {
+                        methodVisitor.visitInsn(opcode);
+                        return StackManipulation.Size.ZERO;
+                    });
+                    functionContext.getStackManipulations().add(stackManipulation);
+                }
                 break;
             }
             default:

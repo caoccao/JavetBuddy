@@ -52,21 +52,19 @@ public final class Ts2JavaAstVarDecl implements ITs2JavaAstStackManipulation<Swc
                             ISwc4jAstExpr expression = varDeclarator.getInit().get().unParenExpr();
                             TypeDescription valueType;
                             switch (expression.getType()) {
-                                case BinExpr: {
-                                    valueType = new Ts2JavaAstBinExpr().manipulate(
-                                            functionContext, expression.as(Swc4jAstBinExpr.class));
+                                case BinExpr:
+                                    valueType = new Ts2JavaAstBinExpr()
+                                            .manipulate(functionContext, expression.as(Swc4jAstBinExpr.class));
                                     break;
-                                }
-                                case Number: {
-                                    valueType = new Ts2JavaAstNumber(variableType).manipulate(
-                                            functionContext, expression.as(Swc4jAstNumber.class));
+                                case Number:
+                                    valueType = new Ts2JavaAstNumber()
+                                            .setValueType(variableType)
+                                            .manipulate(functionContext, expression.as(Swc4jAstNumber.class));
                                     break;
-                                }
-                                case Ident: {
-                                    valueType = new Ts2JavaAstIdent().manipulate(
-                                            functionContext, expression.as(Swc4jAstIdent.class));
+                                case Ident:
+                                    valueType = new Ts2JavaAstIdent()
+                                            .manipulate(functionContext, expression.as(Swc4jAstIdent.class));
                                     break;
-                                }
                                 default:
                                     throw new Ts2JavaAstException(
                                             expression,
