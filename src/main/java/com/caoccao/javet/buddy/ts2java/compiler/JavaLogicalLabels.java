@@ -39,8 +39,12 @@ public final class JavaLogicalLabels {
         return labels.get(index);
     }
 
+    public Label getByReverseIndex(int index) {
+        return labels.get(labels.size() - 1 - index);
+    }
+
     public Label getLastLabel() {
-        return labels.get(labels.size() - 1);
+        return getByReverseIndex(0);
     }
 
     public void reset() {

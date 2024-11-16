@@ -30,7 +30,6 @@ import net.bytebuddy.jar.asm.Label;
 import net.bytebuddy.jar.asm.MethodVisitor;
 import net.bytebuddy.jar.asm.Opcodes;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public final class Ts2JavaAstBinaryOp {
@@ -52,33 +51,6 @@ public final class Ts2JavaAstBinaryOp {
         throw new Ts2JavaException(
                 SimpleFreeMarkerFormat.format("Unsupported type ${type} in addition.",
                         SimpleMap.of("type", type.getName())));
-    }
-
-    public static StackManipulation getArithmetic(Swc4jAstBinaryOp binaryOp, TypeDescription upCaseType) {
-        switch (binaryOp) {
-            case Add:
-                return getAddition(upCaseType);
-            case Div:
-                return getDivision(upCaseType);
-            case LShift:
-                return getShiftLeft(upCaseType);
-            case Mod:
-                return getRemainder(upCaseType);
-            case Mul:
-                return getMultiplication(upCaseType);
-            case RShift:
-                return getShiftRight(upCaseType);
-            case Sub:
-                return getSubtraction(upCaseType);
-            case ZeroFillRShift:
-                return getZeroFillShiftRight(upCaseType);
-            case Exp:
-                return getExp();
-            default:
-                throw new Ts2JavaException(
-                        SimpleFreeMarkerFormat.format("Binary op ${op} is not supported.",
-                                SimpleMap.of("op", binaryOp.name())));
-        }
     }
 
     public static StackManipulation getBitAndStackManipulation(JavaFunctionContext functionContext) {
@@ -155,51 +127,6 @@ public final class Ts2JavaAstBinaryOp {
                         SimpleFreeMarkerFormat.format("Unsupported binary op ${op} in logical operation.",
                                 SimpleMap.of("op", binaryOp.name())));
         }
-    }
-
-    public static StackManipulation getLogical(
-            JavaFunctionContext functionContext,
-            ISwc4jAst ast,
-            Swc4jAstBinaryOp binaryOp,
-            TypeDescription type) {
-        final JavaLogicalLabels logicalLabels = functionContext.getLogicalLabels();
-        final List<StackManipulation> stackManipulations = new ArrayList<>();
-        if (Ts2JavaAstUnaryExpr.getBangCount(ast) % 2 == 1) {
-            binaryOp = getFlippedBinaryOpLogical(binaryOp);
-        }
-        switch (binaryOp) {
-            case LogicalAnd:
-                stackManipulations.add(getLogicalAnd(logicalLabels));
-                break;
-            case LogicalOr:
-                stackManipulations.add(getLogicalOr(logicalLabels));
-                break;
-            default: {
-                if (type.represents(int.class)
-                        || type.represents(short.class)
-                        || type.represents(byte.class)
-                        || type.represents(char.class)) {
-                    stackManipulations.add(getLogicalCompareForInt(logicalLabels, binaryOp));
-                } else if (type.represents(long.class)) {
-                    stackManipulations.add(getLogicalCompareForLong(logicalLabels, binaryOp));
-                } else if (type.represents(float.class)) {
-                    stackManipulations.add(getLogicalCompareForFloat(logicalLabels, binaryOp));
-                } else if (type.represents(double.class)) {
-                    stackManipulations.add(getLogicalCompareForDouble(logicalLabels, binaryOp));
-                } else {
-                    throw new Ts2JavaException(
-                            SimpleFreeMarkerFormat.format("Unsupported type ${type} in logical operation.",
-                                    SimpleMap.of("type", type.getName())));
-                }
-                break;
-            }
-        }
-        return new StackManipulation.Compound(stackManipulations);
-    }
-
-    public static StackManipulation getLogicalAnd(JavaLogicalLabels logicalLabels) {
-        // There is no need to do anything.
-        return StackManipulation.Trivial.INSTANCE;
     }
 
     private static StackManipulation getLogicalCompareForDouble(
@@ -375,10 +302,6 @@ public final class Ts2JavaAstBinaryOp {
         });
     }
 
-    public static StackManipulation getLogicalOr(JavaLogicalLabels logicalLabels) {
-        return StackManipulation.Trivial.INSTANCE;
-    }
-
     private static Multiplication getMultiplication(TypeDescription type) {
         if (type.represents(int.class)) {
             return Multiplication.INTEGER;
@@ -464,5 +387,99 @@ public final class Ts2JavaAstBinaryOp {
         throw new Ts2JavaException(
                 SimpleFreeMarkerFormat.format("Unsupported type ${type} in zero fill right shift.",
                         SimpleMap.of("type", type.getName())));
+    }
+
+    public static void manipulateArithmetic(
+            List<StackManipulation> stackManipulations,
+            Swc4jAstBinaryOp binaryOp,
+            TypeDescription upCaseType) {
+        switch (binaryOp) {
+            case Add:
+                stackManipulations.add(getAddition(upCaseType));
+                break;
+            case Div:
+                stackManipulations.add(getDivision(upCaseType));
+                break;
+            case LShift:
+                stackManipulations.add(getShiftLeft(upCaseType));
+                break;
+            case Mod:
+                stackManipulations.add(getRemainder(upCaseType));
+                break;
+            case Mul:
+                stackManipulations.add(getMultiplication(upCaseType));
+                break;
+            case RShift:
+                stackManipulations.add(getShiftRight(upCaseType));
+                break;
+            case Sub:
+                stackManipulations.add(getSubtraction(upCaseType));
+                break;
+            case ZeroFillRShift:
+                stackManipulations.add(getZeroFillShiftRight(upCaseType));
+                break;
+            case Exp:
+                stackManipulations.add(getExp());
+                break;
+            default:
+                throw new Ts2JavaException(
+                        SimpleFreeMarkerFormat.format("Binary op ${op} is not supported.",
+                                SimpleMap.of("op", binaryOp.name())));
+        }
+    }
+
+    public static void manipulateLogical(
+            JavaFunctionContext functionContext,
+            ISwc4jAst ast,
+            Swc4jAstBinaryOp binaryOp,
+            TypeDescription type) {
+        final List<StackManipulation> stackManipulations = functionContext.getStackManipulations();
+        final JavaLogicalLabels logicalLabels = functionContext.getLogicalLabels();
+        if (Ts2JavaAstUnaryExpr.getBangCount(ast) % 2 == 1) {
+            binaryOp = getFlippedBinaryOpLogical(binaryOp);
+        }
+        if (type.represents(int.class)
+                || type.represents(short.class)
+                || type.represents(byte.class)
+                || type.represents(char.class)) {
+            stackManipulations.add(getLogicalCompareForInt(logicalLabels, binaryOp));
+        } else if (type.represents(long.class)) {
+            stackManipulations.add(getLogicalCompareForLong(logicalLabels, binaryOp));
+        } else if (type.represents(float.class)) {
+            stackManipulations.add(getLogicalCompareForFloat(logicalLabels, binaryOp));
+        } else if (type.represents(double.class)) {
+            stackManipulations.add(getLogicalCompareForDouble(logicalLabels, binaryOp));
+        } else {
+            throw new Ts2JavaException(
+                    SimpleFreeMarkerFormat.format("Unsupported type ${type} in logical operation.",
+                            SimpleMap.of("type", type.getName())));
+        }
+    }
+
+    public static void manipulateLogicalAnd(
+            JavaFunctionContext functionContext,
+            int leftEndIndex,
+            TypeDescription type) {
+        if (type.represents(boolean.class)) {
+            final List<StackManipulation> stackManipulations = functionContext.getStackManipulations();
+            final JavaLogicalLabels logicalLabels = functionContext.getLogicalLabels();
+            stackManipulations.add(leftEndIndex, new StackManipulation.Simple(
+                    (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
+                        methodVisitor.visitJumpInsn(Opcodes.IFEQ, logicalLabels.getLastLabel());
+                        return new StackManipulation.Size(-1, 0);
+                    }));
+            ++leftEndIndex;
+            stackManipulations.add(new StackManipulation.Simple(
+                    (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
+                        methodVisitor.visitJumpInsn(Opcodes.IFEQ, logicalLabels.getLastLabel());
+                        return new StackManipulation.Size(-1, 0);
+                    }));
+        }
+    }
+
+    public static void manipulateLogicalOr(
+            JavaFunctionContext functionContext,
+            int leftEndIndex,
+            TypeDescription type) {
     }
 }

@@ -36,6 +36,7 @@ import net.bytebuddy.jar.asm.MethodVisitor;
 import net.bytebuddy.jar.asm.Opcodes;
 
 import java.util.List;
+import java.util.Optional;
 
 public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc4jAstBinExpr> {
     private static StackManipulation getLogicalClose(JavaLogicalLabels logicalLabels) {
@@ -71,7 +72,7 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
         final ISwc4jAstExpr leftExpression = ast.getLeft().unParenExpr();
         final ISwc4jAstExpr rightExpression = ast.getRight().unParenExpr();
         final TypeDescription leftType = manipulateExpression(functionContext, leftExpression);
-        final int stackManipulationSize = stackManipulations.size();
+        int leftEndIndex = stackManipulations.size();
         final TypeDescription rightType = manipulateExpression(functionContext, rightExpression);
         TypeDescription upCaseType;
         switch (binaryOp) {
@@ -83,15 +84,28 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
                 break;
         }
         // Insert the type cast for left expression if possible.
-        JavaClassCast.getUpCastStackManipulation(leftType, upCaseType)
-                .ifPresent(stackManipulation -> stackManipulations.add(stackManipulationSize, stackManipulation));
+        Optional<StackManipulation> optionalUpCastStackManipulation =
+                JavaClassCast.getUpCastStackManipulation(leftType, upCaseType);
+        if (optionalUpCastStackManipulation.isPresent()) {
+            stackManipulations.add(leftEndIndex, optionalUpCastStackManipulation.get());
+            ++leftEndIndex;
+        }
         // Add the type cast for right expression if possible.
         JavaClassCast.getUpCastStackManipulation(rightType, upCaseType).ifPresent(stackManipulations::add);
-        StackManipulation stackManipulation;
         if (binaryOp.isArithmeticOperator()) {
-            stackManipulation = Ts2JavaAstBinaryOp.getArithmetic(binaryOp, upCaseType);
+            Ts2JavaAstBinaryOp.manipulateArithmetic(stackManipulations, binaryOp, upCaseType);
         } else if (binaryOp.isLogicalOperator()) {
-            stackManipulation = Ts2JavaAstBinaryOp.getLogical(functionContext, ast, binaryOp, upCaseType);
+            switch (binaryOp) {
+                case LogicalAnd:
+                    Ts2JavaAstBinaryOp.manipulateLogicalAnd(functionContext, leftEndIndex, upCaseType);
+                    break;
+                case LogicalOr:
+                    Ts2JavaAstBinaryOp.manipulateLogicalOr(functionContext, leftEndIndex, upCaseType);
+                    break;
+                default:
+                    Ts2JavaAstBinaryOp.manipulateLogical(functionContext, ast, binaryOp, upCaseType);
+                    break;
+            }
 //        } else if (binaryOp.isBitOperator()) {
         } else {
             throw new Ts2JavaAstException(
@@ -99,10 +113,11 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
                     SimpleFreeMarkerFormat.format("BinExpr op ${op} is not supported.",
                             SimpleMap.of("op", binaryOp.name())));
         }
-        stackManipulations.add(stackManipulation);
         if (binaryOp.isLogicalOperator()) {
             if (functionContext.getLogicalDepth() == 1) {
                 stackManipulations.add(getLogicalClose(functionContext.getLogicalLabels()));
+                // After the logical expression is closed, the return type is set to boolean.
+                upCaseType = TypeDescription.ForLoadedType.of(boolean.class);
             }
             functionContext.decreaseLogicalDepth();
         }
