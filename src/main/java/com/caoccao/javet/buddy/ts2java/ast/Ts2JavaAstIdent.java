@@ -26,6 +26,7 @@ import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 public final class Ts2JavaAstIdent implements ITs2JavaAstStackManipulation<Swc4jAstIdent> {
     @Override
     public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstIdent ast) {
+        Ts2JavaAst.manipulateLineNumber(functionContext, ast);
         String name = ast.getSym();
         JavaLocalVariable localVariable = functionContext.getLocalVariable(name);
         MethodVariableAccess methodVariableAccess = MethodVariableAccess.of(localVariable.getType());

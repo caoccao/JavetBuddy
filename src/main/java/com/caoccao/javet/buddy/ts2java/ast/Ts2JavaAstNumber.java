@@ -48,6 +48,7 @@ public final class Ts2JavaAstNumber implements ITs2JavaAstStackManipulation<Swc4
 
     @Override
     public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstNumber ast) {
+        Ts2JavaAst.manipulateLineNumber(functionContext, ast);
         StackManipulation stackManipulation;
         TypeDescription type = valueType;
         if (type == null) {

@@ -38,6 +38,7 @@ import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 public final class Ts2JavaAstVarDecl implements ITs2JavaAstStackManipulation<Swc4jAstVarDecl> {
     @Override
     public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstVarDecl ast) {
+        Ts2JavaAst.manipulateLineNumber(functionContext, ast);
         TypeDescription returnType = TypeDescription.ForLoadedType.of(void.class);
         for (Swc4jAstVarDeclarator varDeclarator : ast.getDecls()) {
             ISwc4jAstPat pat = varDeclarator.getName();

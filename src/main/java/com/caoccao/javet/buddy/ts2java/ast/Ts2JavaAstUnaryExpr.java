@@ -75,6 +75,7 @@ public final class Ts2JavaAstUnaryExpr implements ITs2JavaAstStackManipulation<S
 
     @Override
     public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstUnaryExpr ast) {
+        Ts2JavaAst.manipulateLineNumber(functionContext, ast);
         TypeDescription returnType;
         ISwc4jAstExpr arg = ast.getArg().unParenExpr();
         switch (ast.getOp()) {

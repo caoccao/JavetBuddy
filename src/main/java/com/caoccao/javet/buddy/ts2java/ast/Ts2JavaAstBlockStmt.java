@@ -29,6 +29,7 @@ import net.bytebuddy.description.type.TypeDescription;
 public final class Ts2JavaAstBlockStmt implements ITs2JavaAstStackManipulation<Swc4jAstBlockStmt> {
     @Override
     public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstBlockStmt ast) {
+        Ts2JavaAst.manipulateLineNumber(functionContext, ast);
         TypeDescription returnType = TypeDescription.ForLoadedType.of(void.class);
         for (ISwc4jAstStmt stmt : ast.getStmts()) {
             switch (stmt.getType()) {

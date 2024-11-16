@@ -199,19 +199,19 @@ public class JavaLoggingMethodVisitor extends MethodVisitor {
 
     @Override
     public void visitFrame(int type, int numLocal, Object[] local, int numStack, Object[] stack) {
-        System.out.println("FRAME " + FRAME_TYPE_MAP.get(type) + " " + numLocal + " " + local + " " + numStack + " " + stack);
+        System.out.println(" FRAME " + FRAME_TYPE_MAP.get(type) + " " + numLocal + " " + local + " " + numStack + " " + stack);
         super.visitFrame(type, numLocal, local, numStack, stack);
     }
 
     @Override
     public void visitInsn(int opcode) {
-        System.out.println(OPCODE_MAP.get(opcode));
+        System.out.println(" " + OPCODE_MAP.get(opcode));
         super.visitInsn(opcode);
     }
 
     @Override
     public void visitJumpInsn(int opcode, Label label) {
-        System.out.println(OPCODE_MAP.get(opcode) + " " + label);
+        System.out.println(" " + OPCODE_MAP.get(opcode) + " " + label);
         super.visitJumpInsn(opcode, label);
     }
 
@@ -222,8 +222,14 @@ public class JavaLoggingMethodVisitor extends MethodVisitor {
     }
 
     @Override
+    public void visitLineNumber(int line, Label start) {
+        System.out.println(" LINENUMBER " + line + " " + start);
+        super.visitLineNumber(line, start);
+    }
+
+    @Override
     public void visitVarInsn(int opcode, int varIndex) {
-        System.out.println(OPCODE_MAP.get(opcode) + " " + varIndex);
+        System.out.println(" " + OPCODE_MAP.get(opcode) + " " + varIndex);
         super.visitVarInsn(opcode, varIndex);
     }
 }

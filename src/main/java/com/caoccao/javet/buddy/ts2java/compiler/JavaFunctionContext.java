@@ -35,11 +35,13 @@ public final class JavaFunctionContext {
     private final JavaLogicalLabels logicalLabels;
     private final TypeDescription returnType;
     private final List<StackManipulation> stackManipulations;
+    private int lineNumber;
     private int logicalDepth;
     private int maxOffset;
     private int nextOffset;
 
     public JavaFunctionContext(boolean _static, TypeDescription returnType) {
+        lineNumber = -1;
         logicalDepth = 0;
         logicalLabels = new JavaLogicalLabels();
         maxOffset = nextOffset;
@@ -65,6 +67,10 @@ public final class JavaFunctionContext {
         if (logicalDepth <= 0) {
             logicalDepth = 0;
         }
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
     }
 
     public JavaLocalVariable getLocalVariable(String name) {
@@ -131,5 +137,9 @@ public final class JavaFunctionContext {
 
     public void pushLexicalScope() {
         lexicalScopes.add(new JavaLexicalScope(lexicalScopes.size()));
+    }
+
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
     }
 }

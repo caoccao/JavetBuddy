@@ -62,6 +62,7 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
 
     @Override
     public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstBinExpr ast) {
+        Ts2JavaAst.manipulateLineNumber(functionContext, ast);
         Swc4jAstBinaryOp binaryOp = ast.getOp();
         if (binaryOp.isLogicalOperator()) {
             functionContext.increaseLogicalDepth();

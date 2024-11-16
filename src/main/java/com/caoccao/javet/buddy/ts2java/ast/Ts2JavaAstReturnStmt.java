@@ -32,6 +32,7 @@ import net.bytebuddy.implementation.bytecode.member.MethodReturn;
 public final class Ts2JavaAstReturnStmt implements ITs2JavaAstStackManipulation<Swc4jAstReturnStmt> {
     @Override
     public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstReturnStmt ast) {
+        Ts2JavaAst.manipulateLineNumber(functionContext, ast);
         TypeDescription returnType = TypeDescription.ForLoadedType.of(void.class);
         if (ast.getArg().isPresent()) {
             TypeDescription fromType;
