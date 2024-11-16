@@ -100,7 +100,7 @@ public final class Ts2JavaAstBinaryOp {
         });
     }
 
-    private static Swc4jAstBinaryOp getFlippedBinaryOpLogical(Swc4jAstBinaryOp binaryOp) {
+    public static Swc4jAstBinaryOp getFlippedBinaryOpLogical(Swc4jAstBinaryOp binaryOp) {
         switch (binaryOp) {
             case EqEq:
                 return Swc4jAstBinaryOp.NotEq;
@@ -435,9 +435,6 @@ public final class Ts2JavaAstBinaryOp {
             TypeDescription type) {
         final List<StackManipulation> stackManipulations = functionContext.getStackManipulations();
         final JavaLogicalLabels logicalLabels = functionContext.getLogicalLabels();
-        if (Ts2JavaAstUnaryExpr.getBangCount(ast) % 2 == 1) {
-            binaryOp = getFlippedBinaryOpLogical(binaryOp);
-        }
         if (type.represents(int.class)
                 || type.represents(short.class)
                 || type.represents(byte.class)
