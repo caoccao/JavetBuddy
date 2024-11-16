@@ -115,6 +115,13 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
         return null;
     }
 
+    /**
+     * Get callback contexts.
+     *
+     * @param v8Runtime the V8 runtime
+     * @return the callback contexts
+     * @since 0.5.0
+     */
     public JavetCallbackContext[] getCallbackContexts(final V8Runtime v8Runtime) {
         return new JavetCallbackContext[]{new JavetCallbackContext(
                 EXTEND,

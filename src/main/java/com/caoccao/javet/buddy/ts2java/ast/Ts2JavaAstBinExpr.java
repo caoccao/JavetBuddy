@@ -90,7 +90,7 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
         if (binaryOp.isArithmeticOperator()) {
             stackManipulation = Ts2JavaAstBinaryOp.getArithmetic(binaryOp, upCaseType);
         } else if (binaryOp.isLogicalOperator()) {
-            stackManipulation = Ts2JavaAstBinaryOp.getLogical(functionContext, binaryOp, upCaseType);
+            stackManipulation = Ts2JavaAstBinaryOp.getLogical(functionContext, ast, binaryOp, upCaseType);
 //        } else if (binaryOp.isBitOperator()) {
         } else {
             throw new Ts2JavaAstException(

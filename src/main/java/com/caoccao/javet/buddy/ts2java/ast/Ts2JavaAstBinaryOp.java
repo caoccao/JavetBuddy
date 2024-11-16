@@ -20,6 +20,10 @@ import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLogicalLabels;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
+import com.caoccao.javet.swc4j.ast.enums.Swc4jAstUnaryOp;
+import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
+import com.caoccao.javet.swc4j.ast.expr.Swc4jAstUnaryExpr;
+import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAst;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
@@ -77,6 +81,25 @@ public final class Ts2JavaAstBinaryOp {
                 throw new Ts2JavaException(
                         SimpleFreeMarkerFormat.format("Binary op ${op} is not supported.",
                                 SimpleMap.of("op", binaryOp.name())));
+        }
+    }
+
+    private static int getBangCount(ISwc4jAst ast) {
+        switch (ast.getType()) {
+            case BinExpr:
+                if (ast.as(Swc4jAstBinExpr.class).getOp().isLogicalOperator()) {
+                    return getBangCount(ast.getParent());
+                }
+                return 0;
+            case ParenExpr:
+                return getBangCount(ast.getParent());
+            case UnaryExpr:
+                if (ast.as(Swc4jAstUnaryExpr.class).getOp() == Swc4jAstUnaryOp.Bang) {
+                    return getBangCount(ast.getParent()) + 1;
+                }
+                return 0;
+            default:
+                return 0;
         }
     }
 
@@ -158,11 +181,12 @@ public final class Ts2JavaAstBinaryOp {
 
     public static StackManipulation getLogical(
             JavaFunctionContext functionContext,
+            ISwc4jAst ast,
             Swc4jAstBinaryOp binaryOp,
             TypeDescription type) {
         final JavaLogicalLabels logicalLabels = functionContext.getLogicalLabels();
         final List<StackManipulation> stackManipulations = new ArrayList<>();
-        if (functionContext.getBangCount() % 2 == 1) {
+        if (getBangCount(ast) % 2 == 1) {
             binaryOp = getFlippedBinaryOpLogical(binaryOp);
         }
         switch (binaryOp) {

@@ -58,7 +58,6 @@ public final class Ts2JavaAstUnaryExpr implements ITs2JavaAstStackManipulation<S
         ISwc4jAstExpr arg = ast.getArg().unParenExpr();
         switch (ast.getOp()) {
             case Bang: {
-                functionContext.increaseBangCount();
                 switch (arg.getType()) {
                     case BinExpr:
                         returnType = new Ts2JavaAstBinExpr()
@@ -78,7 +77,6 @@ public final class Ts2JavaAstUnaryExpr implements ITs2JavaAstStackManipulation<S
                                 SimpleFreeMarkerFormat.format("UnaryExpr arg type ${argType} for ! is not supported.",
                                         SimpleMap.of("argType", arg.getType().name())));
                 }
-                functionContext.decreateBangCount();
                 break;
             }
             case Minus: {
