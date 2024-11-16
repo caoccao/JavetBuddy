@@ -50,7 +50,7 @@ object Config {
         // https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy
         const val BYTE_BUDDY = "net.bytebuddy:byte-buddy:${Versions.BYTE_BUDDY}"
 
-        const val JAVET = "com.caoccao.javet:javet-core:${Versions.JAVET}"
+        const val JAVET = "com.caoccao.javet:javet:${Versions.JAVET}"
         const val JAVET_NODE_LINUX_ARM64 = "com.caoccao.javet:javet-node-linux-arm64:${Versions.JAVET}"
         const val JAVET_NODE_LINUX_X86_64 = "com.caoccao.javet:javet-node-linux-x86_64:${Versions.JAVET}"
         const val JAVET_NODE_MACOS_ARM64 = "com.caoccao.javet:javet-node-macos-arm64:${Versions.JAVET}"
@@ -68,7 +68,7 @@ object Config {
     object Versions {
         const val BYTE_BUDDY = "1.15.5"
         const val JAVA_VERSION = "1.8"
-        const val JAVET = "4.0.0"
+        const val JAVET = "4.1.0"
         const val JAVET_BUDDY = "0.5.0"
         const val JAVET_SWC4J = "1.2.0"
         const val JUNIT = "5.11.3"

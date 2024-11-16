@@ -1,5 +1,9 @@
 # Release Notes
 
+## 0.5.0
+
+* Added `getCallbackContexts()` to `JavetReflectionObjectFactory`
+
 ## 0.4.0
 
 * Upgraded ByteBuddy to v1.15.5

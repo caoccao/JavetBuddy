@@ -17,9 +17,14 @@
 package com.caoccao.javet.buddy.interop.proxy;
 
 import com.caoccao.javet.interfaces.IJavetLogger;
+import com.caoccao.javet.interop.V8Runtime;
+import com.caoccao.javet.interop.callback.IJavetDirectCallable;
+import com.caoccao.javet.interop.callback.JavetCallbackContext;
+import com.caoccao.javet.interop.callback.JavetCallbackType;
 import com.caoccao.javet.interop.proxy.IJavetReflectionObjectFactory;
 import com.caoccao.javet.utils.JavetDefaultLogger;
 import com.caoccao.javet.utils.JavetResourceUtils;
+import com.caoccao.javet.utils.V8ValueUtils;
 import com.caoccao.javet.values.V8Value;
 import com.caoccao.javet.values.reference.V8ValueObject;
 
@@ -33,6 +38,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @since 0.1.0
  */
 public final class JavetReflectionObjectFactory implements IJavetReflectionObjectFactory {
+    private static final String EXTEND = "extend";
     private static final JavetReflectionObjectFactory instance = new JavetReflectionObjectFactory();
     private final AtomicLong currentExtendHandle;
     private final Map<Long, DynamicObjectExtendHandler<?>> extendHandlerMap;
@@ -107,6 +113,28 @@ public final class JavetReflectionObjectFactory implements IJavetReflectionObjec
             }
         }
         return null;
+    }
+
+    public JavetCallbackContext[] getCallbackContexts(final V8Runtime v8Runtime) {
+        return new JavetCallbackContext[]{new JavetCallbackContext(
+                EXTEND,
+                this, JavetCallbackType.DirectCallNoThisAndResult,
+                (IJavetDirectCallable.NoThisAndResult<Exception>) (v8Values) -> {
+                    if (v8Values.length >= 2) {
+                        Object object = v8Runtime.toObject(v8Values[0]);
+                        if (object instanceof Class) {
+                            Class<?> clazz = (Class<?>) object;
+                            V8ValueObject v8ValueObject = V8ValueUtils.asV8ValueObject(v8Values, 1);
+                            if (v8ValueObject != null) {
+                                Class<?> childClass = JavetReflectionObjectFactory.getInstance()
+                                        .extend(clazz, v8ValueObject);
+                                return v8Runtime.toV8Value(childClass);
+                            }
+                        }
+                    }
+                    return v8Runtime.createV8ValueUndefined();
+                })
+        };
     }
 
     /**
