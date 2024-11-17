@@ -16,22 +16,22 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
+import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeHint;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLocalVariable;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
-import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 
 public final class Ts2JavaAstIdent implements ITs2JavaAstStackManipulation<Swc4jAstIdent> {
     @Override
-    public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstIdent ast) {
+    public JavaByteCodeHint manipulate(JavaFunctionContext functionContext, Swc4jAstIdent ast) {
         Ts2JavaAst.manipulateLineNumber(functionContext, ast);
         String name = ast.getSym();
         JavaLocalVariable localVariable = functionContext.getLocalVariable(name);
         MethodVariableAccess methodVariableAccess = MethodVariableAccess.of(localVariable.getType());
         StackManipulation stackManipulation = methodVariableAccess.loadFrom(localVariable.getOffset());
         functionContext.getStackManipulations().add(stackManipulation);
-        return localVariable.getType();
+        return new JavaByteCodeHint(localVariable.getType());
     }
 }

@@ -16,11 +16,14 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
+import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeHint;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLogicalLabels;
+import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAst;
+import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
@@ -392,31 +395,31 @@ public final class Ts2JavaAstBinaryOp {
     public static void manipulateArithmetic(
             List<StackManipulation> stackManipulations,
             Swc4jAstBinaryOp binaryOp,
-            TypeDescription upCaseType) {
+            JavaByteCodeHint hint) {
         switch (binaryOp) {
             case Add:
-                stackManipulations.add(getAddition(upCaseType));
+                stackManipulations.add(getAddition(hint.getType()));
                 break;
             case Div:
-                stackManipulations.add(getDivision(upCaseType));
+                stackManipulations.add(getDivision(hint.getType()));
                 break;
             case LShift:
-                stackManipulations.add(getShiftLeft(upCaseType));
+                stackManipulations.add(getShiftLeft(hint.getType()));
                 break;
             case Mod:
-                stackManipulations.add(getRemainder(upCaseType));
+                stackManipulations.add(getRemainder(hint.getType()));
                 break;
             case Mul:
-                stackManipulations.add(getMultiplication(upCaseType));
+                stackManipulations.add(getMultiplication(hint.getType()));
                 break;
             case RShift:
-                stackManipulations.add(getShiftRight(upCaseType));
+                stackManipulations.add(getShiftRight(hint.getType()));
                 break;
             case Sub:
-                stackManipulations.add(getSubtraction(upCaseType));
+                stackManipulations.add(getSubtraction(hint.getType()));
                 break;
             case ZeroFillRShift:
-                stackManipulations.add(getZeroFillShiftRight(upCaseType));
+                stackManipulations.add(getZeroFillShiftRight(hint.getType()));
                 break;
             case Exp:
                 stackManipulations.add(getExp());
@@ -432,9 +435,10 @@ public final class Ts2JavaAstBinaryOp {
             JavaFunctionContext functionContext,
             ISwc4jAst ast,
             Swc4jAstBinaryOp binaryOp,
-            TypeDescription type) {
+            JavaByteCodeHint hint) {
         final List<StackManipulation> stackManipulations = functionContext.getStackManipulations();
         final JavaLogicalLabels logicalLabels = functionContext.getLogicalLabels();
+        final TypeDescription type = hint.getType();
         if (type.represents(int.class)
                 || type.represents(short.class)
                 || type.represents(byte.class)
@@ -447,7 +451,8 @@ public final class Ts2JavaAstBinaryOp {
         } else if (type.represents(double.class)) {
             stackManipulations.add(getLogicalCompareForDouble(logicalLabels, binaryOp));
         } else {
-            throw new Ts2JavaException(
+            throw new Ts2JavaAstException(
+                    ast,
                     SimpleFreeMarkerFormat.format("Unsupported type ${type} in logical operation.",
                             SimpleMap.of("type", type.getName())));
         }
@@ -456,16 +461,33 @@ public final class Ts2JavaAstBinaryOp {
     public static void manipulateLogicalAnd(
             JavaFunctionContext functionContext,
             int leftEndIndex,
-            TypeDescription type) {
-        if (type.represents(boolean.class)) {
-            final List<StackManipulation> stackManipulations = functionContext.getStackManipulations();
-            final JavaLogicalLabels logicalLabels = functionContext.getLogicalLabels();
+            ISwc4jAstExpr leftExpression,
+            JavaByteCodeHint leftHint,
+            ISwc4jAstExpr rightExpression,
+            JavaByteCodeHint rightHint) {
+        if (!leftHint.getType().represents(boolean.class)) {
+            throw new Ts2JavaAstException(
+                    leftExpression,
+                    SimpleFreeMarkerFormat.format("Unsupported type ${type} in logical AND.",
+                            SimpleMap.of("type", leftHint.getType().getName())));
+        }
+        if (!rightHint.getType().represents(boolean.class)) {
+            throw new Ts2JavaAstException(
+                    rightExpression,
+                    SimpleFreeMarkerFormat.format("Unsupported type ${type} in logical AND.",
+                            SimpleMap.of("type", rightHint.getType().getName())));
+        }
+        final List<StackManipulation> stackManipulations = functionContext.getStackManipulations();
+        final JavaLogicalLabels logicalLabels = functionContext.getLogicalLabels();
+        if (!leftHint.isJump()) {
             stackManipulations.add(leftEndIndex, new StackManipulation.Simple(
                     (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
                         methodVisitor.visitJumpInsn(Opcodes.IFEQ, logicalLabels.getLastLabel());
                         return new StackManipulation.Size(-1, 0);
                     }));
             ++leftEndIndex;
+        }
+        if (!rightHint.isJump()) {
             stackManipulations.add(new StackManipulation.Simple(
                     (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
                         methodVisitor.visitJumpInsn(Opcodes.IFEQ, logicalLabels.getLastLabel());
@@ -477,6 +499,9 @@ public final class Ts2JavaAstBinaryOp {
     public static void manipulateLogicalOr(
             JavaFunctionContext functionContext,
             int leftEndIndex,
-            TypeDescription type) {
+            ISwc4jAstExpr leftExpression,
+            JavaByteCodeHint leftHint,
+            ISwc4jAstExpr rightExpression,
+            JavaByteCodeHint rightHint) {
     }
 }

@@ -16,6 +16,7 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
+import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeHint;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaClassCast;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLogicalLabels;
@@ -83,7 +84,7 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
     }
 
     @Override
-    public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstBinExpr ast) {
+    public JavaByteCodeHint manipulate(JavaFunctionContext functionContext, Swc4jAstBinExpr ast) {
         Ts2JavaAst.manipulateLineNumber(functionContext, ast);
         Swc4jAstBinaryOp binaryOp = ast.getOp();
         if (binaryOp.isLogicalOperator()) {
@@ -92,44 +93,48 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
         final List<StackManipulation> stackManipulations = functionContext.getStackManipulations();
         final ISwc4jAstExpr leftExpression = ast.getLeft().unParenExpr();
         final ISwc4jAstExpr rightExpression = ast.getRight().unParenExpr();
-        final TypeDescription leftType = manipulateExpression(functionContext, leftExpression);
+        final JavaByteCodeHint leftHint = manipulateExpression(functionContext, leftExpression);
         int leftEndIndex = stackManipulations.size();
-        final TypeDescription rightType = manipulateExpression(functionContext, rightExpression);
-        TypeDescription upCaseType;
+        final JavaByteCodeHint rightHint = manipulateExpression(functionContext, rightExpression);
+        final JavaByteCodeHint hint = new JavaByteCodeHint();
         switch (binaryOp) {
             case Exp:
-                upCaseType = TypeDescription.ForLoadedType.of(double.class);
+                hint.setType(TypeDescription.ForLoadedType.of(double.class));
                 break;
             default:
-                upCaseType = JavaClassCast.getUpCastTypeForMathOp(leftType, rightType);
+                hint.setType(JavaClassCast.getUpCastTypeForMathOp(leftHint.getType(), rightHint.getType()));
                 break;
         }
         // Insert the type cast for left expression if possible.
         Optional<StackManipulation> optionalUpCastStackManipulation =
-                JavaClassCast.getUpCastStackManipulation(leftType, upCaseType);
+                JavaClassCast.getUpCastStackManipulation(leftHint.getType(), hint.getType());
         if (optionalUpCastStackManipulation.isPresent()) {
             stackManipulations.add(leftEndIndex, optionalUpCastStackManipulation.get());
             ++leftEndIndex;
         }
         // Add the type cast for right expression if possible.
-        JavaClassCast.getUpCastStackManipulation(rightType, upCaseType).ifPresent(stackManipulations::add);
+        JavaClassCast.getUpCastStackManipulation(rightHint.getType(), hint.getType()).ifPresent(stackManipulations::add);
         if (binaryOp.isArithmeticOperator()) {
-            Ts2JavaAstBinaryOp.manipulateArithmetic(stackManipulations, binaryOp, upCaseType);
+            Ts2JavaAstBinaryOp.manipulateArithmetic(stackManipulations, binaryOp, hint);
         } else if (binaryOp.isLogicalOperator()) {
             if (getBangCount(ast.getParent()) % 2 == 1) {
                 binaryOp = Ts2JavaAstBinaryOp.getFlippedBinaryOpLogical(binaryOp);
             }
             switch (binaryOp) {
                 case LogicalAnd:
-                    Ts2JavaAstBinaryOp.manipulateLogicalAnd(functionContext, leftEndIndex, upCaseType);
+                    Ts2JavaAstBinaryOp.manipulateLogicalAnd(
+                            functionContext, leftEndIndex, leftExpression, leftHint, rightExpression, rightHint);
                     break;
                 case LogicalOr:
-                    Ts2JavaAstBinaryOp.manipulateLogicalOr(functionContext, leftEndIndex, upCaseType);
+                    Ts2JavaAstBinaryOp.manipulateLogicalOr(
+                            functionContext, leftEndIndex, leftExpression, leftHint, rightExpression, rightHint);
                     break;
                 default:
-                    Ts2JavaAstBinaryOp.manipulateLogical(functionContext, ast, binaryOp, upCaseType);
+                    Ts2JavaAstBinaryOp.manipulateLogical(functionContext, ast, binaryOp, hint);
                     break;
             }
+            hint.setJump(true);
+            hint.setType(TypeDescription.ForLoadedType.of(boolean.class));
 //        } else if (binaryOp.isBitOperator()) {
         } else {
             throw new Ts2JavaAstException(
@@ -140,15 +145,13 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
         if (binaryOp.isLogicalOperator()) {
             if (functionContext.getLogicalDepth() == 1) {
                 stackManipulations.add(getLogicalClose(functionContext.getLogicalLabels()));
-                // After the logical expression is closed, the return type is set to boolean.
-                upCaseType = TypeDescription.ForLoadedType.of(boolean.class);
             }
             functionContext.decreaseLogicalDepth();
         }
-        return upCaseType;
+        return hint;
     }
 
-    private TypeDescription manipulateExpression(JavaFunctionContext functionContext, ISwc4jAstExpr expression) {
+    private JavaByteCodeHint manipulateExpression(JavaFunctionContext functionContext, ISwc4jAstExpr expression) {
         switch (expression.getType()) {
             case BinExpr:
                 return new Ts2JavaAstBinExpr().manipulate(functionContext, expression.as(Swc4jAstBinExpr.class));

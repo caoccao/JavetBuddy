@@ -16,6 +16,7 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
+import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeHint;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstUnaryOp;
@@ -58,7 +59,7 @@ public final class Ts2JavaAstNumber implements ITs2JavaAstStackManipulation<Swc4
     }
 
     @Override
-    public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstNumber ast) {
+    public JavaByteCodeHint manipulate(JavaFunctionContext functionContext, Swc4jAstNumber ast) {
         Ts2JavaAst.manipulateLineNumber(functionContext, ast);
         StackManipulation stackManipulation;
         TypeDescription type = valueType;
@@ -98,7 +99,7 @@ public final class Ts2JavaAstNumber implements ITs2JavaAstStackManipulation<Swc4
                             SimpleMap.of("type", type.getName())));
         }
         functionContext.getStackManipulations().add(stackManipulation);
-        return type;
+        return new JavaByteCodeHint(type);
     }
 
     public Ts2JavaAstNumber setValueType(TypeDescription valueType) {

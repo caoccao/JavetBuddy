@@ -16,6 +16,7 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
+import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeHint;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstStmt;
@@ -24,20 +25,19 @@ import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstReturnStmt;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstVarDecl;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
-import net.bytebuddy.description.type.TypeDescription;
 
 public final class Ts2JavaAstBlockStmt implements ITs2JavaAstStackManipulation<Swc4jAstBlockStmt> {
     @Override
-    public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstBlockStmt ast) {
+    public JavaByteCodeHint manipulate(JavaFunctionContext functionContext, Swc4jAstBlockStmt ast) {
         Ts2JavaAst.manipulateLineNumber(functionContext, ast);
-        TypeDescription returnType = TypeDescription.ForLoadedType.of(void.class);
+        JavaByteCodeHint hint = new JavaByteCodeHint();
         for (ISwc4jAstStmt stmt : ast.getStmts()) {
             switch (stmt.getType()) {
                 case VarDecl:
-                    returnType = new Ts2JavaAstVarDecl().manipulate(functionContext, stmt.as(Swc4jAstVarDecl.class));
+                    hint = new Ts2JavaAstVarDecl().manipulate(functionContext, stmt.as(Swc4jAstVarDecl.class));
                     break;
                 case ReturnStmt:
-                    returnType = new Ts2JavaAstReturnStmt().manipulate(functionContext, stmt.as(Swc4jAstReturnStmt.class));
+                    hint = new Ts2JavaAstReturnStmt().manipulate(functionContext, stmt.as(Swc4jAstReturnStmt.class));
                     break;
                 default:
                     throw new Ts2JavaAstException(
@@ -46,6 +46,6 @@ public final class Ts2JavaAstBlockStmt implements ITs2JavaAstStackManipulation<S
                                     SimpleMap.of("type", stmt.getType().name())));
             }
         }
-        return returnType;
+        return hint.reset();
     }
 }

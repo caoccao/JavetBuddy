@@ -16,6 +16,7 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
+import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeHint;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
@@ -53,23 +54,23 @@ public final class Ts2JavaAstUnaryExpr implements ITs2JavaAstStackManipulation<S
     }
 
     @Override
-    public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstUnaryExpr ast) {
+    public JavaByteCodeHint manipulate(JavaFunctionContext functionContext, Swc4jAstUnaryExpr ast) {
         Ts2JavaAst.manipulateLineNumber(functionContext, ast);
-        TypeDescription returnType;
+        JavaByteCodeHint hint;
         ISwc4jAstExpr arg = ast.getArg().unParenExpr();
         switch (ast.getOp()) {
             case Bang: {
                 switch (arg.getType()) {
                     case BinExpr:
-                        returnType = new Ts2JavaAstBinExpr()
+                        hint = new Ts2JavaAstBinExpr()
                                 .manipulate(functionContext, arg.as(Swc4jAstBinExpr.class));
                         break;
                     case Ident:
-                        returnType = new Ts2JavaAstIdent()
+                        hint = new Ts2JavaAstIdent()
                                 .manipulate(functionContext, arg.as(Swc4jAstIdent.class));
                         break;
                     case UnaryExpr:
-                        returnType = new Ts2JavaAstUnaryExpr()
+                        hint = new Ts2JavaAstUnaryExpr()
                                 .manipulate(functionContext, arg.as(Swc4jAstUnaryExpr.class));
                         break;
                     default:
@@ -84,20 +85,20 @@ public final class Ts2JavaAstUnaryExpr implements ITs2JavaAstStackManipulation<S
                 boolean opcodeNegativeRequired = true;
                 switch (arg.getType()) {
                     case BinExpr:
-                        returnType = new Ts2JavaAstBinExpr()
+                        hint = new Ts2JavaAstBinExpr()
                                 .manipulate(functionContext, arg.as(Swc4jAstBinExpr.class));
                         break;
                     case Ident:
-                        returnType = new Ts2JavaAstIdent()
+                        hint = new Ts2JavaAstIdent()
                                 .manipulate(functionContext, arg.as(Swc4jAstIdent.class));
                         break;
                     case Number:
                         opcodeNegativeRequired = false;
-                        returnType = new Ts2JavaAstNumber()
+                        hint = new Ts2JavaAstNumber()
                                 .manipulate(functionContext, arg.as(Swc4jAstNumber.class));
                         break;
                     case UnaryExpr:
-                        returnType = new Ts2JavaAstUnaryExpr()
+                        hint = new Ts2JavaAstUnaryExpr()
                                 .manipulate(functionContext, arg.as(Swc4jAstUnaryExpr.class));
                         break;
                     default:
@@ -107,7 +108,7 @@ public final class Ts2JavaAstUnaryExpr implements ITs2JavaAstStackManipulation<S
                                         SimpleMap.of("argType", arg.getType().name())));
                 }
                 if (opcodeNegativeRequired) {
-                    final int opcode = getOpcodeNegative(ast, returnType);
+                    final int opcode = getOpcodeNegative(ast, hint.getType());
                     StackManipulation stackManipulation = new StackManipulation.Simple((
                             MethodVisitor methodVisitor,
                             Implementation.Context implementationContext) -> {
@@ -124,6 +125,6 @@ public final class Ts2JavaAstUnaryExpr implements ITs2JavaAstStackManipulation<S
                         SimpleFreeMarkerFormat.format("UnaryExpr op ${op} is not supported.",
                                 SimpleMap.of("op", ast.getOp().name())));
         }
-        return returnType;
+        return hint;
     }
 }

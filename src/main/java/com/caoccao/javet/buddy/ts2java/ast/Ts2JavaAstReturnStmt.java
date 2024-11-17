@@ -16,6 +16,7 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
+import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeHint;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaClassCast;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
@@ -26,26 +27,25 @@ import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstReturnStmt;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
-import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.bytecode.member.MethodReturn;
 
 public final class Ts2JavaAstReturnStmt implements ITs2JavaAstStackManipulation<Swc4jAstReturnStmt> {
     @Override
-    public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstReturnStmt ast) {
+    public JavaByteCodeHint manipulate(JavaFunctionContext functionContext, Swc4jAstReturnStmt ast) {
         Ts2JavaAst.manipulateLineNumber(functionContext, ast);
-        TypeDescription returnType = TypeDescription.ForLoadedType.of(void.class);
+        JavaByteCodeHint hint = new JavaByteCodeHint();
         if (ast.getArg().isPresent()) {
-            TypeDescription fromType;
+            JavaByteCodeHint fromHint;
             ISwc4jAstExpr arg = ast.getArg().get().unParenExpr();
             switch (arg.getType()) {
                 case BinExpr:
-                    fromType = new Ts2JavaAstBinExpr().manipulate(functionContext, arg.as(Swc4jAstBinExpr.class));
+                    fromHint = new Ts2JavaAstBinExpr().manipulate(functionContext, arg.as(Swc4jAstBinExpr.class));
                     break;
                 case Ident:
-                    fromType = new Ts2JavaAstIdent().manipulate(functionContext, arg.as(Swc4jAstIdent.class));
+                    fromHint = new Ts2JavaAstIdent().manipulate(functionContext, arg.as(Swc4jAstIdent.class));
                     break;
                 case UnaryExpr:
-                    fromType = new Ts2JavaAstUnaryExpr().manipulate(functionContext, arg.as(Swc4jAstUnaryExpr.class));
+                    fromHint = new Ts2JavaAstUnaryExpr().manipulate(functionContext, arg.as(Swc4jAstUnaryExpr.class));
                     break;
                 default:
                     throw new Ts2JavaAstException(
@@ -53,11 +53,11 @@ public final class Ts2JavaAstReturnStmt implements ITs2JavaAstStackManipulation<
                             SimpleFreeMarkerFormat.format("ReturnStmt arg type ${argType} is not supported.",
                                     SimpleMap.of("argType", arg.getType().name())));
             }
-            returnType = functionContext.getReturnType();
-            JavaClassCast.getUpCastStackManipulation(fromType, returnType)
+            hint.setType(functionContext.getReturnType());
+            JavaClassCast.getUpCastStackManipulation(fromHint.getType(), hint.getType())
                     .ifPresent(functionContext.getStackManipulations()::add);
-            functionContext.getStackManipulations().add(MethodReturn.of(returnType));
+            functionContext.getStackManipulations().add(MethodReturn.of(hint.getType()));
         }
-        return returnType;
+        return hint;
     }
 }

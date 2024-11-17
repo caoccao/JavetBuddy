@@ -16,6 +16,7 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
+import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeHint;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaClassCast;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLocalVariable;
@@ -37,9 +38,9 @@ import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 
 public final class Ts2JavaAstVarDecl implements ITs2JavaAstStackManipulation<Swc4jAstVarDecl> {
     @Override
-    public TypeDescription manipulate(JavaFunctionContext functionContext, Swc4jAstVarDecl ast) {
+    public JavaByteCodeHint manipulate(JavaFunctionContext functionContext, Swc4jAstVarDecl ast) {
         Ts2JavaAst.manipulateLineNumber(functionContext, ast);
-        TypeDescription returnType = TypeDescription.ForLoadedType.of(void.class);
+        JavaByteCodeHint hint = new JavaByteCodeHint();
         for (Swc4jAstVarDeclarator varDeclarator : ast.getDecls()) {
             ISwc4jAstPat pat = varDeclarator.getName();
             switch (pat.getType()) {
@@ -51,19 +52,19 @@ public final class Ts2JavaAstVarDecl implements ITs2JavaAstStackManipulation<Swc
                         TypeDescription variableType = Ts2JavaAstTsTypeAnn.getTypeDescription(tsTypeAnn);
                         if (varDeclarator.getInit().isPresent()) {
                             ISwc4jAstExpr expression = varDeclarator.getInit().get().unParenExpr();
-                            TypeDescription valueType;
+                            JavaByteCodeHint valueHint;
                             switch (expression.getType()) {
                                 case BinExpr:
-                                    valueType = new Ts2JavaAstBinExpr()
+                                    valueHint = new Ts2JavaAstBinExpr()
                                             .manipulate(functionContext, expression.as(Swc4jAstBinExpr.class));
                                     break;
                                 case Number:
-                                    valueType = new Ts2JavaAstNumber()
+                                    valueHint = new Ts2JavaAstNumber()
                                             .setValueType(variableType)
                                             .manipulate(functionContext, expression.as(Swc4jAstNumber.class));
                                     break;
                                 case Ident:
-                                    valueType = new Ts2JavaAstIdent()
+                                    valueHint = new Ts2JavaAstIdent()
                                             .manipulate(functionContext, expression.as(Swc4jAstIdent.class));
                                     break;
                                 default:
@@ -72,7 +73,7 @@ public final class Ts2JavaAstVarDecl implements ITs2JavaAstStackManipulation<Swc
                                             SimpleFreeMarkerFormat.format("VarDecl init type ${type} is not supported.",
                                                     SimpleMap.of("type", expression.getType().name())));
                             }
-                            JavaClassCast.getUpCastStackManipulation(valueType, variableType)
+                            JavaClassCast.getUpCastStackManipulation(valueHint.getType(), variableType)
                                     .ifPresent(functionContext.getStackManipulations()::add);
                         }
                         JavaLocalVariable localVariable = new JavaLocalVariable(variableName, variableType);
@@ -80,7 +81,7 @@ public final class Ts2JavaAstVarDecl implements ITs2JavaAstStackManipulation<Swc
                         StackManipulation stackManipulation = methodVariableAccess.storeAt(functionContext.getNextOffset());
                         functionContext.getStackManipulations().add(stackManipulation);
                         functionContext.addLocalVariable(localVariable);
-                        returnType = localVariable.getType();
+                        hint.setType(localVariable.getType());
                     } else {
                         throw new Ts2JavaAstException(
                                 bindingIdent,
@@ -96,6 +97,6 @@ public final class Ts2JavaAstVarDecl implements ITs2JavaAstStackManipulation<Swc
                                     SimpleMap.of("type", pat.getType().name())));
             }
         }
-        return returnType;
+        return hint;
     }
 }

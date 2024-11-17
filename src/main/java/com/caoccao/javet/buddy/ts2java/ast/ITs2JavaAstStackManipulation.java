@@ -16,10 +16,10 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
+import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeHint;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAst;
-import net.bytebuddy.description.type.TypeDescription;
 
 public interface ITs2JavaAstStackManipulation<AST extends ISwc4jAst> {
-    TypeDescription manipulate(JavaFunctionContext functionContext, AST ast);
+    JavaByteCodeHint manipulate(JavaFunctionContext functionContext, AST ast);
 }
