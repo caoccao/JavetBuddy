@@ -21,10 +21,12 @@ import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLogicalLabels;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
+import com.caoccao.javet.swc4j.ast.enums.Swc4jAstUnaryOp;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstUnaryExpr;
 import com.caoccao.javet.swc4j.ast.expr.lit.Swc4jAstNumber;
+import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAst;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
@@ -39,6 +41,25 @@ import java.util.List;
 import java.util.Optional;
 
 public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc4jAstBinExpr> {
+    private static int getBangCount(ISwc4jAst ast) {
+        switch (ast.getType()) {
+            case BinExpr:
+                if (ast.as(Swc4jAstBinExpr.class).getOp().isLogicalOperator()) {
+                    return getBangCount(ast.getParent());
+                }
+                return 0;
+            case ParenExpr:
+                return getBangCount(ast.getParent());
+            case UnaryExpr:
+                if (ast.as(Swc4jAstUnaryExpr.class).getOp() == Swc4jAstUnaryOp.Bang) {
+                    return getBangCount(ast.getParent()) + 1;
+                }
+                return 0;
+            default:
+                return 0;
+        }
+    }
+
     private static StackManipulation getLogicalClose(JavaLogicalLabels logicalLabels) {
         return new StackManipulation.Simple((
                 MethodVisitor methodVisitor,
@@ -95,7 +116,7 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
         if (binaryOp.isArithmeticOperator()) {
             Ts2JavaAstBinaryOp.manipulateArithmetic(stackManipulations, binaryOp, upCaseType);
         } else if (binaryOp.isLogicalOperator()) {
-            if (Ts2JavaAstUnaryExpr.getBangCount(ast) % 2 == 1) {
+            if (getBangCount(ast.getParent()) % 2 == 1) {
                 binaryOp = Ts2JavaAstBinaryOp.getFlippedBinaryOpLogical(binaryOp);
             }
             switch (binaryOp) {

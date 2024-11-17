@@ -18,12 +18,10 @@ package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
-import com.caoccao.javet.swc4j.ast.enums.Swc4jAstUnaryOp;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstUnaryExpr;
 import com.caoccao.javet.swc4j.ast.expr.lit.Swc4jAstNumber;
-import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAst;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
@@ -34,25 +32,6 @@ import net.bytebuddy.jar.asm.MethodVisitor;
 import net.bytebuddy.jar.asm.Opcodes;
 
 public final class Ts2JavaAstUnaryExpr implements ITs2JavaAstStackManipulation<Swc4jAstUnaryExpr> {
-    public static int getBangCount(ISwc4jAst ast) {
-        switch (ast.getType()) {
-            case BinExpr:
-                if (ast.as(Swc4jAstBinExpr.class).getOp().isLogicalOperator()) {
-                    return getBangCount(ast.getParent());
-                }
-                return 0;
-            case ParenExpr:
-                return getBangCount(ast.getParent());
-            case UnaryExpr:
-                if (ast.as(Swc4jAstUnaryExpr.class).getOp() == Swc4jAstUnaryOp.Bang) {
-                    return getBangCount(ast.getParent()) + 1;
-                }
-                return 0;
-            default:
-                return 0;
-        }
-    }
-
     private int getOpcodeNegative(Swc4jAstUnaryExpr ast, TypeDescription type) {
         if (type.represents(int.class)
                 || type.represents(byte.class)
@@ -115,7 +94,6 @@ public final class Ts2JavaAstUnaryExpr implements ITs2JavaAstStackManipulation<S
                     case Number:
                         opcodeNegativeRequired = false;
                         returnType = new Ts2JavaAstNumber()
-                                .setNegative(true)
                                 .manipulate(functionContext, arg.as(Swc4jAstNumber.class));
                         break;
                     case UnaryExpr:

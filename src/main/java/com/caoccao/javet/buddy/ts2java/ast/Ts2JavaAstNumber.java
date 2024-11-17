@@ -18,7 +18,10 @@ package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
+import com.caoccao.javet.swc4j.ast.enums.Swc4jAstUnaryOp;
+import com.caoccao.javet.swc4j.ast.expr.Swc4jAstUnaryExpr;
 import com.caoccao.javet.swc4j.ast.expr.lit.Swc4jAstNumber;
+import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAst;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import com.caoccao.javet.utils.StringUtils;
@@ -30,20 +33,28 @@ import net.bytebuddy.implementation.bytecode.constant.IntegerConstant;
 import net.bytebuddy.implementation.bytecode.constant.LongConstant;
 
 public final class Ts2JavaAstNumber implements ITs2JavaAstStackManipulation<Swc4jAstNumber> {
-    private boolean negative;
     private TypeDescription valueType;
 
     public Ts2JavaAstNumber() {
-        negative = false;
         valueType = null;
+    }
+
+    private static int getMinusCount(ISwc4jAst ast) {
+        switch (ast.getType()) {
+            case ParenExpr:
+                return getMinusCount(ast.getParent());
+            case UnaryExpr:
+                if (ast.as(Swc4jAstUnaryExpr.class).getOp() == Swc4jAstUnaryOp.Minus) {
+                    return getMinusCount(ast.getParent()) + 1;
+                }
+                return 0;
+            default:
+                return 0;
+        }
     }
 
     public TypeDescription getValueType() {
         return valueType;
-    }
-
-    public boolean isNegative() {
-        return negative;
     }
 
     @Override
@@ -71,14 +82,15 @@ public final class Ts2JavaAstNumber implements ITs2JavaAstStackManipulation<Swc4
                     })
                     .orElse(TypeDescription.ForLoadedType.of(int.class));
         }
+        final boolean isNegative = getMinusCount(ast.getParent()) % 2 == 1;
         if (type.represents(int.class) || type.represents(short.class) || type.represents(byte.class)) {
-            stackManipulation = IntegerConstant.forValue(negative ? -ast.asInt() : ast.asInt());
+            stackManipulation = IntegerConstant.forValue(isNegative ? -ast.asInt() : ast.asInt());
         } else if (type.represents(long.class)) {
-            stackManipulation = LongConstant.forValue(negative ? -ast.asLong() : ast.asLong());
+            stackManipulation = LongConstant.forValue(isNegative ? -ast.asLong() : ast.asLong());
         } else if (type.represents(float.class)) {
-            stackManipulation = FloatConstant.forValue(negative ? -ast.asFloat() : ast.asFloat());
+            stackManipulation = FloatConstant.forValue(isNegative ? -ast.asFloat() : ast.asFloat());
         } else if (type.represents(double.class)) {
-            stackManipulation = DoubleConstant.forValue(negative ? -ast.asDouble() : ast.asDouble());
+            stackManipulation = DoubleConstant.forValue(isNegative ? -ast.asDouble() : ast.asDouble());
         } else {
             throw new Ts2JavaAstException(
                     ast,
@@ -87,11 +99,6 @@ public final class Ts2JavaAstNumber implements ITs2JavaAstStackManipulation<Swc4
         }
         functionContext.getStackManipulations().add(stackManipulation);
         return type;
-    }
-
-    public Ts2JavaAstNumber setNegative(boolean negative) {
-        this.negative = negative;
-        return this;
     }
 
     public Ts2JavaAstNumber setValueType(TypeDescription valueType) {
