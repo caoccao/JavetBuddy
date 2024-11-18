@@ -1156,4 +1156,23 @@ public class TestLogicalOperations extends BaseTestTs2Java {
         assertTrue((boolean) tsClass.invoke(true));
         assertFalse((boolean) tsClass.invoke(false));
     }
+
+    @Test
+    public void testLogicalOr_ZZ_Z() throws Exception {
+        enableLogging();
+        assertTrue(logicalOr_ZZ_Z(true, true));
+        assertTrue(logicalOr_ZZ_Z(true, false));
+        assertTrue(logicalOr_ZZ_Z(false, true));
+        assertFalse(logicalOr_ZZ_Z(false, false));
+        TsClass tsClass = new TsClass(
+                "return a || b;",
+                boolean.class,
+                TsMethodArgument.of("a", boolean.class),
+                TsMethodArgument.of("b", boolean.class));
+        assertTrue((boolean) tsClass.invoke(true, true));
+        assertTrue((boolean) tsClass.invoke(true, false));
+        assertTrue((boolean) tsClass.invoke(false, true));
+        assertFalse((boolean) tsClass.invoke(false, false));
+        disableLogging();
+    }
 }

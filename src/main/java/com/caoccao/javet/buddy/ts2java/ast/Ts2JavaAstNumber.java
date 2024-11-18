@@ -40,6 +40,7 @@ public final class Ts2JavaAstNumber implements ITs2JavaAstStackManipulation<Swc4
         valueType = null;
     }
 
+    @Deprecated // TODO To be replaced by a built-in function in swc4j
     private static int getMinusCount(ISwc4jAst ast) {
         switch (ast.getType()) {
             case ParenExpr:

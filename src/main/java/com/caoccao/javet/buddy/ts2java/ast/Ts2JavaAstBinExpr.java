@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Optional;
 
 public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc4jAstBinExpr> {
+    @Deprecated // TODO To be replaced by a built-in function in swc4j
     private static int getBangCount(ISwc4jAst ast) {
         switch (ast.getType()) {
             case BinExpr:

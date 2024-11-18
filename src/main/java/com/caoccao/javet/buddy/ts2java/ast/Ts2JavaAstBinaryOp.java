@@ -468,21 +468,22 @@ public final class Ts2JavaAstBinaryOp {
         if (!leftHint.getType().represents(boolean.class)) {
             throw new Ts2JavaAstException(
                     leftExpression,
-                    SimpleFreeMarkerFormat.format("Unsupported type ${type} in logical AND.",
+                    SimpleFreeMarkerFormat.format("Unsupported left type ${type} in logical AND (&&).",
                             SimpleMap.of("type", leftHint.getType().getName())));
         }
         if (!rightHint.getType().represents(boolean.class)) {
             throw new Ts2JavaAstException(
                     rightExpression,
-                    SimpleFreeMarkerFormat.format("Unsupported type ${type} in logical AND.",
+                    SimpleFreeMarkerFormat.format("Unsupported right type ${type} in logical AND (&&).",
                             SimpleMap.of("type", rightHint.getType().getName())));
         }
         final List<StackManipulation> stackManipulations = functionContext.getStackManipulations();
         final JavaLogicalLabels logicalLabels = functionContext.getLogicalLabels();
+        Label labelFalse = logicalLabels.getLastLabel();
         if (!leftHint.isJump()) {
             stackManipulations.add(leftEndIndex, new StackManipulation.Simple(
                     (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
-                        methodVisitor.visitJumpInsn(Opcodes.IFEQ, logicalLabels.getLastLabel());
+                        methodVisitor.visitJumpInsn(Opcodes.IFEQ, labelFalse);
                         return new StackManipulation.Size(-1, 0);
                     }));
             ++leftEndIndex;
@@ -490,7 +491,7 @@ public final class Ts2JavaAstBinaryOp {
         if (!rightHint.isJump()) {
             stackManipulations.add(new StackManipulation.Simple(
                     (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
-                        methodVisitor.visitJumpInsn(Opcodes.IFEQ, logicalLabels.getLastLabel());
+                        methodVisitor.visitJumpInsn(Opcodes.IFEQ, labelFalse);
                         return new StackManipulation.Size(-1, 0);
                     }));
         }
@@ -503,5 +504,36 @@ public final class Ts2JavaAstBinaryOp {
             JavaByteCodeHint leftHint,
             ISwc4jAstExpr rightExpression,
             JavaByteCodeHint rightHint) {
+        if (!leftHint.getType().represents(boolean.class)) {
+            throw new Ts2JavaAstException(
+                    leftExpression,
+                    SimpleFreeMarkerFormat.format("Unsupported left type ${type} in logical OR (||).",
+                            SimpleMap.of("type", leftHint.getType().getName())));
+        }
+        if (!rightHint.getType().represents(boolean.class)) {
+            throw new Ts2JavaAstException(
+                    rightExpression,
+                    SimpleFreeMarkerFormat.format("Unsupported right type ${type} in logical OR (||).",
+                            SimpleMap.of("type", rightHint.getType().getName())));
+        }
+        final List<StackManipulation> stackManipulations = functionContext.getStackManipulations();
+        final JavaLogicalLabels logicalLabels = functionContext.getLogicalLabels();
+        Label labelFalse = logicalLabels.getLastLabel();
+        Label labelTrue = logicalLabels.append();
+        if (!leftHint.isJump()) {
+            stackManipulations.add(leftEndIndex, new StackManipulation.Simple(
+                    (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
+                        methodVisitor.visitJumpInsn(Opcodes.IFGT, labelTrue);
+                        return new StackManipulation.Size(-1, 0);
+                    }));
+            ++leftEndIndex;
+        }
+        if (!rightHint.isJump()) {
+            stackManipulations.add(new StackManipulation.Simple(
+                    (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
+                        methodVisitor.visitJumpInsn(Opcodes.IFLE, labelFalse);
+                        return new StackManipulation.Size(-1, 0);
+                    }));
+        }
     }
 }
