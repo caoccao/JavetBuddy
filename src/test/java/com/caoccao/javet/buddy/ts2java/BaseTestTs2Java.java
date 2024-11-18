@@ -17,7 +17,7 @@
 package com.caoccao.javet.buddy.ts2java;
 
 import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaAstClassFunction;
-import com.caoccao.javet.buddy.ts2java.compiler.JavaLoggingMethodVisitor;
+import com.caoccao.javet.buddy.ts2java.compiler.visitors.JavaLoggingMethodVisitor;
 import com.caoccao.javet.utils.JavetOSUtils;
 import net.bytebuddy.jar.asm.Opcodes;
 

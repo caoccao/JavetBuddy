@@ -17,7 +17,7 @@
 package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
-import com.caoccao.javet.buddy.ts2java.compiler.JavaLoggingMethodVisitor;
+import com.caoccao.javet.buddy.ts2java.compiler.visitors.JavaLoggingMethodVisitor;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstFunction;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstAccessibility;
 import net.bytebuddy.description.modifier.Visibility;
