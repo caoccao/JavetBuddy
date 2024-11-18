@@ -19,12 +19,13 @@ package com.caoccao.javet.buddy.ts2java.ast;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeHint;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLogicalLabels;
-import com.caoccao.javet.buddy.ts2java.compiler.visitors.JavaJumpInstMethodVisitor;
+import com.caoccao.javet.buddy.ts2java.compiler.visitors.JavaByteCodeMethodVisitor;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAst;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
+import com.caoccao.javet.utils.ListUtils;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
@@ -522,41 +523,54 @@ public final class Ts2JavaAstBinaryOp {
         Label labelFalse = logicalLabels.getLastLabel();
         Label labelTrue = logicalLabels.append();
         if (leftHint.isJump()) {
-            JavaJumpInstMethodVisitor jumpInstMethodVisitor = new JavaJumpInstMethodVisitor(Opcodes.ASM9);
+            JavaByteCodeMethodVisitor byteCodeMethodVisitor = new JavaByteCodeMethodVisitor(Opcodes.ASM9);
             StackManipulation stackManipulationCompare = stackManipulations.get(leftEndIndex - 1);
-            stackManipulationCompare.apply(jumpInstMethodVisitor, null);
-            List<JavaJumpInstMethodVisitor.OpcodeAndLabel> opcodeAndLabels = jumpInstMethodVisitor.getOpcodeAndLabels();
+            stackManipulationCompare.apply(byteCodeMethodVisitor, null);
+            List<JavaByteCodeMethodVisitor.OpcodeAndLabel> opcodeAndLabels = byteCodeMethodVisitor.getJumpInstList();
             if (opcodeAndLabels.size() != 1) {
                 throw new Ts2JavaAstException(
                         rightExpression,
                         SimpleFreeMarkerFormat.format("Unsupported left type ${type} in logical OR (||).",
                                 SimpleMap.of("type", rightHint.getType().getName())));
             }
-            JavaJumpInstMethodVisitor.OpcodeAndLabel opcodeAndLabel = opcodeAndLabels.get(0);
-            int opcodeCompare, opcodeIf;
+            JavaByteCodeMethodVisitor.OpcodeAndLabel opcodeAndLabel = opcodeAndLabels.get(0);
+            int originalOpcodeCompare = Opcodes.NOP;
+            if (ListUtils.isNotEmpty(byteCodeMethodVisitor.getInstList())) {
+                int opcode = byteCodeMethodVisitor.getInstList().get(byteCodeMethodVisitor.getInstList().size() - 1);
+                switch (opcode) {
+                    case Opcodes.DCMPG:
+                    case Opcodes.DCMPL:
+                    case Opcodes.FCMPG:
+                    case Opcodes.FCMPL:
+                    case Opcodes.LCMP:
+                        originalOpcodeCompare = opcode;
+                        break;
+                }
+            }
+            final int opcodeCompare, opcodeIf;
             switch (opcodeAndLabel.getOpcode()) {
                 case Opcodes.IF_ICMPEQ:
-                    opcodeCompare = -1;
+                    opcodeCompare = Opcodes.NOP;
                     opcodeIf = Opcodes.IF_ICMPNE;
                     break;
                 case Opcodes.IF_ICMPNE:
-                    opcodeCompare = -1;
+                    opcodeCompare = Opcodes.NOP;
                     opcodeIf = Opcodes.IF_ICMPEQ;
                     break;
                 case Opcodes.IF_ICMPLT:
-                    opcodeCompare = -1;
+                    opcodeCompare = Opcodes.NOP;
                     opcodeIf = Opcodes.IF_ICMPGE;
                     break;
                 case Opcodes.IF_ICMPGE:
-                    opcodeCompare = -1;
+                    opcodeCompare = Opcodes.NOP;
                     opcodeIf = Opcodes.IF_ICMPLT;
                     break;
                 case Opcodes.IF_ICMPGT:
-                    opcodeCompare = -1;
+                    opcodeCompare = Opcodes.NOP;
                     opcodeIf = Opcodes.IF_ICMPLE;
                     break;
                 case Opcodes.IF_ICMPLE:
-                    opcodeCompare = -1;
+                    opcodeCompare = Opcodes.NOP;
                     opcodeIf = Opcodes.IF_ICMPGT;
                     break;
                 case Opcodes.IFEQ:
@@ -564,23 +578,23 @@ public final class Ts2JavaAstBinaryOp {
                     opcodeIf = Opcodes.IFNE;
                     break;
                 case Opcodes.IFNE:
-                    opcodeCompare = Opcodes.LCMP;
+                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
                     opcodeIf = Opcodes.IFEQ;
                     break;
                 case Opcodes.IFLT:
-                    opcodeCompare = Opcodes.LCMP;
+                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
                     opcodeIf = Opcodes.IFGE;
                     break;
                 case Opcodes.IFGE:
-                    opcodeCompare = Opcodes.LCMP;
+                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
                     opcodeIf = Opcodes.IFLT;
                     break;
                 case Opcodes.IFGT:
-                    opcodeCompare = Opcodes.LCMP;
+                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
                     opcodeIf = Opcodes.IFLE;
                     break;
                 case Opcodes.IFLE:
-                    opcodeCompare = Opcodes.LCMP;
+                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
                     opcodeIf = Opcodes.IFGT;
                     break;
                 default:
@@ -591,7 +605,7 @@ public final class Ts2JavaAstBinaryOp {
             }
             stackManipulations.set(leftEndIndex - 1, new StackManipulation.Simple(
                     (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
-                        if (opcodeCompare > -1) {
+                        if (opcodeCompare > Opcodes.NOP) {
                             methodVisitor.visitInsn(opcodeCompare);
                         }
                         methodVisitor.visitJumpInsn(opcodeIf, labelTrue);
@@ -606,65 +620,78 @@ public final class Ts2JavaAstBinaryOp {
             ++leftEndIndex;
         }
         if (rightHint.isJump()) {
-            JavaJumpInstMethodVisitor jumpInstMethodVisitor = new JavaJumpInstMethodVisitor(Opcodes.ASM9);
+            JavaByteCodeMethodVisitor byteCodeMethodVisitor = new JavaByteCodeMethodVisitor(Opcodes.ASM9);
             StackManipulation stackManipulationCompare = stackManipulations.get(stackManipulations.size() - 1);
-            stackManipulationCompare.apply(jumpInstMethodVisitor, null);
-            List<JavaJumpInstMethodVisitor.OpcodeAndLabel> opcodeAndLabels = jumpInstMethodVisitor.getOpcodeAndLabels();
+            stackManipulationCompare.apply(byteCodeMethodVisitor, null);
+            List<JavaByteCodeMethodVisitor.OpcodeAndLabel> opcodeAndLabels = byteCodeMethodVisitor.getJumpInstList();
             if (opcodeAndLabels.size() != 1) {
                 throw new Ts2JavaAstException(
                         rightExpression,
                         SimpleFreeMarkerFormat.format("Unsupported right type ${type} in logical OR (||).",
                                 SimpleMap.of("type", rightHint.getType().getName())));
             }
-            JavaJumpInstMethodVisitor.OpcodeAndLabel opcodeAndLabel = opcodeAndLabels.get(0);
-            int opcodeCompare, opcodeIf;
+            int originalOpcodeCompare = Opcodes.NOP;
+            if (ListUtils.isNotEmpty(byteCodeMethodVisitor.getInstList())) {
+                int opcode = byteCodeMethodVisitor.getInstList().get(byteCodeMethodVisitor.getInstList().size() - 1);
+                switch (opcode) {
+                    case Opcodes.DCMPG:
+                    case Opcodes.DCMPL:
+                    case Opcodes.FCMPG:
+                    case Opcodes.FCMPL:
+                    case Opcodes.LCMP:
+                        originalOpcodeCompare = opcode;
+                        break;
+                }
+            }
+            JavaByteCodeMethodVisitor.OpcodeAndLabel opcodeAndLabel = opcodeAndLabels.get(0);
+            final int opcodeCompare, opcodeIf;
             switch (opcodeAndLabel.getOpcode()) {
                 case Opcodes.IF_ICMPEQ:
-                    opcodeCompare = -1;
+                    opcodeCompare = Opcodes.NOP;
                     opcodeIf = Opcodes.IF_ICMPEQ;
                     break;
                 case Opcodes.IF_ICMPNE:
-                    opcodeCompare = -1;
+                    opcodeCompare = Opcodes.NOP;
                     opcodeIf = Opcodes.IF_ICMPNE;
                     break;
                 case Opcodes.IF_ICMPLT:
-                    opcodeCompare = -1;
+                    opcodeCompare = Opcodes.NOP;
                     opcodeIf = Opcodes.IF_ICMPLT;
                     break;
                 case Opcodes.IF_ICMPGE:
-                    opcodeCompare = -1;
+                    opcodeCompare = Opcodes.NOP;
                     opcodeIf = Opcodes.IF_ICMPGE;
                     break;
                 case Opcodes.IF_ICMPGT:
-                    opcodeCompare = -1;
+                    opcodeCompare = Opcodes.NOP;
                     opcodeIf = Opcodes.IF_ICMPGT;
                     break;
                 case Opcodes.IF_ICMPLE:
-                    opcodeCompare = -1;
+                    opcodeCompare = Opcodes.NOP;
                     opcodeIf = Opcodes.IF_ICMPLE;
                     break;
                 case Opcodes.IFEQ:
-                    opcodeCompare = Opcodes.LCMP;
+                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
                     opcodeIf = Opcodes.IFEQ;
                     break;
                 case Opcodes.IFNE:
-                    opcodeCompare = Opcodes.LCMP;
+                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
                     opcodeIf = Opcodes.IFNE;
                     break;
                 case Opcodes.IFLT:
-                    opcodeCompare = Opcodes.LCMP;
+                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
                     opcodeIf = Opcodes.IFLT;
                     break;
                 case Opcodes.IFGE:
-                    opcodeCompare = Opcodes.LCMP;
+                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
                     opcodeIf = Opcodes.IFGE;
                     break;
                 case Opcodes.IFGT:
-                    opcodeCompare = Opcodes.LCMP;
+                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
                     opcodeIf = Opcodes.IFGT;
                     break;
                 case Opcodes.IFLE:
-                    opcodeCompare = Opcodes.LCMP;
+                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
                     opcodeIf = Opcodes.IFLE;
                     break;
                 default:
@@ -675,7 +702,7 @@ public final class Ts2JavaAstBinaryOp {
             }
             stackManipulations.set(stackManipulations.size() - 1, new StackManipulation.Simple(
                     (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
-                        if (opcodeCompare > -1) {
+                        if (opcodeCompare > Opcodes.NOP) {
                             methodVisitor.visitInsn(opcodeCompare);
                         }
                         methodVisitor.visitJumpInsn(opcodeIf, labelFalse);

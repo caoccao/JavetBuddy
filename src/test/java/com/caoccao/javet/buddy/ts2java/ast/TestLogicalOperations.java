@@ -294,6 +294,43 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     /*
+  public logicalOr_DD_Z(DD)Z
+   L0
+    LINENUMBER 297 L0
+    DLOAD 1
+    DLOAD 3
+    DCMPL
+    IFGT L1
+    DLOAD 3
+    DLOAD 1
+    DCMPL
+    IFLE L2
+   L1
+   FRAME SAME
+    ICONST_1
+    GOTO L3
+   L2
+   FRAME SAME
+    ICONST_0
+   L3
+   FRAME SAME1 I
+    IRETURN
+   L4
+    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/ast/TestLogicalOperations; L0 L4 0
+    LOCALVARIABLE a D L0 L4 1
+    LOCALVARIABLE b D L0 L4 3
+    MAXSTACK = 4
+    MAXLOCALS = 5
+     */
+    public boolean logicalOr_DD_Z(double a, double b) {
+        return (a > b) || (b > a);
+    }
+
+    public boolean logicalOr_FF_Z(float a, float b) {
+        return (a > b) || (b > a);
+    }
+
+    /*
   public logicalOr_II_Z(II)Z
    L0
     LINENUMBER 321 L0
@@ -1191,6 +1228,96 @@ public class TestLogicalOperations extends BaseTestTs2Java {
                 TsMethodArgument.of("a", boolean.class));
         assertTrue((boolean) tsClass.invoke(true));
         assertFalse((boolean) tsClass.invoke(false));
+    }
+
+    @Test
+    public void testLogicalOr_DD_Z() throws Exception {
+        assertTrue(logicalOr_DD_Z(2D, 3D));
+        assertTrue(logicalOr_DD_Z(3D, 2D));
+        assertFalse(logicalOr_DD_Z(2D, 2D));
+        TsClass tsClassGTGT = new TsClass(
+                "return (a > b) || (b > a);",
+                boolean.class,
+                TsMethodArgument.of("a", double.class),
+                TsMethodArgument.of("b", double.class));
+        TsClass tsClassGEEQ = new TsClass(
+                "return (a >= b) || (b == 1);",
+                boolean.class,
+                TsMethodArgument.of("a", double.class),
+                TsMethodArgument.of("b", double.class));
+        TsClass tsClassEQLE = new TsClass(
+                "return (a == b) || (b <= 2);",
+                boolean.class,
+                TsMethodArgument.of("a", double.class),
+                TsMethodArgument.of("b", double.class));
+        TsClass tsClassLTLT = new TsClass(
+                "return (a < b) || (b < a);",
+                boolean.class,
+                TsMethodArgument.of("a", double.class),
+                TsMethodArgument.of("b", double.class));
+        TsClass tsClassLENE = new TsClass(
+                "return (a <= b) || (b != 2);",
+                boolean.class,
+                TsMethodArgument.of("a", double.class),
+                TsMethodArgument.of("b", double.class));
+        assertTrue((boolean) tsClassGTGT.invoke(2D, 3D));
+        assertTrue((boolean) tsClassGTGT.invoke(3D, 2D));
+        assertFalse((boolean) tsClassGTGT.invoke(2D, 2D));
+        Random random = new Random();
+        for (int i = 0; i < 100; ++i) {
+            double a = random.nextDouble();
+            double b = random.nextDouble();
+            assertEquals((a > b) || (b > a), tsClassGTGT.invoke(a, b), "GT GT " + a + " " + b);
+            assertEquals((a >= b) || (b == 1D), tsClassGEEQ.invoke(a, b), "GE EQ " + a + " " + b);
+            assertEquals((a == b) || (b <= 2D), tsClassEQLE.invoke(a, b), "EQ LE " + a + " " + b);
+            assertEquals((a < b) || (b < a), tsClassLTLT.invoke(a, b), "LT LT " + a + " " + b);
+            assertEquals((a <= b) || (b != 2D), tsClassLENE.invoke(a, b), "LE NE " + a + " " + b);
+        }
+    }
+
+    @Test
+    public void testLogicalOr_FF_Z() throws Exception {
+        assertTrue(logicalOr_FF_Z(2F, 3F));
+        assertTrue(logicalOr_FF_Z(3F, 2F));
+        assertFalse(logicalOr_FF_Z(2F, 2F));
+        TsClass tsClassGTGT = new TsClass(
+                "return (a > b) || (b > a);",
+                boolean.class,
+                TsMethodArgument.of("a", float.class),
+                TsMethodArgument.of("b", float.class));
+        TsClass tsClassGEEQ = new TsClass(
+                "return (a >= b) || (b == 1);",
+                boolean.class,
+                TsMethodArgument.of("a", float.class),
+                TsMethodArgument.of("b", float.class));
+        TsClass tsClassEQLE = new TsClass(
+                "return (a == b) || (b <= 2);",
+                boolean.class,
+                TsMethodArgument.of("a", float.class),
+                TsMethodArgument.of("b", float.class));
+        TsClass tsClassLTLT = new TsClass(
+                "return (a < b) || (b < a);",
+                boolean.class,
+                TsMethodArgument.of("a", float.class),
+                TsMethodArgument.of("b", float.class));
+        TsClass tsClassLENE = new TsClass(
+                "return (a <= b) || (b != 2);",
+                boolean.class,
+                TsMethodArgument.of("a", float.class),
+                TsMethodArgument.of("b", float.class));
+        assertTrue((boolean) tsClassGTGT.invoke(2F, 3F));
+        assertTrue((boolean) tsClassGTGT.invoke(3F, 2F));
+        assertFalse((boolean) tsClassGTGT.invoke(2F, 2F));
+        Random random = new Random();
+        for (int i = 0; i < 100; ++i) {
+            float a = random.nextFloat();
+            float b = random.nextFloat();
+            assertEquals((a > b) || (b > a), tsClassGTGT.invoke(a, b), "GT GT " + a + " " + b);
+            assertEquals((a >= b) || (b == 1F), tsClassGEEQ.invoke(a, b), "GE EQ " + a + " " + b);
+            assertEquals((a == b) || (b <= 2F), tsClassEQLE.invoke(a, b), "EQ LE " + a + " " + b);
+            assertEquals((a < b) || (b < a), tsClassLTLT.invoke(a, b), "LT LT " + a + " " + b);
+            assertEquals((a <= b) || (b != 2F), tsClassLENE.invoke(a, b), "LE NE " + a + " " + b);
+        }
     }
 
     @Test

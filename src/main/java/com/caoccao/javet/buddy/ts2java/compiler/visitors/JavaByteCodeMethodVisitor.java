@@ -22,21 +22,33 @@ import net.bytebuddy.jar.asm.MethodVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JavaJumpInstMethodVisitor extends MethodVisitor {
-    protected final List<OpcodeAndLabel> opcodeAndLabels;
+public class JavaByteCodeMethodVisitor extends MethodVisitor {
+    protected final List<Integer> instList;
+    protected final List<OpcodeAndLabel> jumpInstList;
 
-    public JavaJumpInstMethodVisitor(int api) {
+    public JavaByteCodeMethodVisitor(int api) {
         super(api);
-        opcodeAndLabels = new ArrayList<>();
+        instList = new ArrayList<>();
+        jumpInstList = new ArrayList<>();
     }
 
-    public List<OpcodeAndLabel> getOpcodeAndLabels() {
-        return opcodeAndLabels;
+    public List<Integer> getInstList() {
+        return instList;
+    }
+
+    public List<OpcodeAndLabel> getJumpInstList() {
+        return jumpInstList;
+    }
+
+    @Override
+    public void visitInsn(int opcode) {
+        instList.add(opcode);
+        super.visitInsn(opcode);
     }
 
     @Override
     public void visitJumpInsn(int opcode, Label label) {
-        opcodeAndLabels.add(new OpcodeAndLabel(opcode, label));
+        jumpInstList.add(new OpcodeAndLabel(opcode, label));
         super.visitJumpInsn(opcode, label);
     }
 
