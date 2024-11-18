@@ -19,6 +19,7 @@ package com.caoccao.javet.buddy.ts2java.ast;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeHint;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLogicalLabels;
+import com.caoccao.javet.buddy.ts2java.compiler.JavaOpcodeUtils;
 import com.caoccao.javet.buddy.ts2java.compiler.visitors.JavaByteCodeMethodVisitor;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
@@ -105,6 +106,7 @@ public final class Ts2JavaAstBinaryOp {
         });
     }
 
+    @Deprecated // TODO To be replaced by a built-in function in swc4j
     public static Swc4jAstBinaryOp getFlippedBinaryOpLogical(Swc4jAstBinaryOp binaryOp) {
         switch (binaryOp) {
             case EqEq:
@@ -550,52 +552,22 @@ public final class Ts2JavaAstBinaryOp {
             final int opcodeCompare, opcodeIf;
             switch (opcodeAndLabel.getOpcode()) {
                 case Opcodes.IF_ICMPEQ:
-                    opcodeCompare = Opcodes.NOP;
-                    opcodeIf = Opcodes.IF_ICMPNE;
-                    break;
+                case Opcodes.IF_ICMPGE:
+                case Opcodes.IF_ICMPGT:
+                case Opcodes.IF_ICMPLE:
+                case Opcodes.IF_ICMPLT:
                 case Opcodes.IF_ICMPNE:
                     opcodeCompare = Opcodes.NOP;
-                    opcodeIf = Opcodes.IF_ICMPEQ;
-                    break;
-                case Opcodes.IF_ICMPLT:
-                    opcodeCompare = Opcodes.NOP;
-                    opcodeIf = Opcodes.IF_ICMPGE;
-                    break;
-                case Opcodes.IF_ICMPGE:
-                    opcodeCompare = Opcodes.NOP;
-                    opcodeIf = Opcodes.IF_ICMPLT;
-                    break;
-                case Opcodes.IF_ICMPGT:
-                    opcodeCompare = Opcodes.NOP;
-                    opcodeIf = Opcodes.IF_ICMPLE;
-                    break;
-                case Opcodes.IF_ICMPLE:
-                    opcodeCompare = Opcodes.NOP;
-                    opcodeIf = Opcodes.IF_ICMPGT;
+                    opcodeIf = JavaOpcodeUtils.getOpposite(opcodeAndLabel.getOpcode());
                     break;
                 case Opcodes.IFEQ:
-                    opcodeCompare = Opcodes.LCMP;
-                    opcodeIf = Opcodes.IFNE;
-                    break;
+                case Opcodes.IFGE:
+                case Opcodes.IFGT:
+                case Opcodes.IFLE:
+                case Opcodes.IFLT:
                 case Opcodes.IFNE:
                     opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
-                    opcodeIf = Opcodes.IFEQ;
-                    break;
-                case Opcodes.IFLT:
-                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
-                    opcodeIf = Opcodes.IFGE;
-                    break;
-                case Opcodes.IFGE:
-                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
-                    opcodeIf = Opcodes.IFLT;
-                    break;
-                case Opcodes.IFGT:
-                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
-                    opcodeIf = Opcodes.IFLE;
-                    break;
-                case Opcodes.IFLE:
-                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
-                    opcodeIf = Opcodes.IFGT;
+                    opcodeIf = JavaOpcodeUtils.getOpposite(opcodeAndLabel.getOpcode());
                     break;
                 default:
                     throw new Ts2JavaAstException(
@@ -647,52 +619,22 @@ public final class Ts2JavaAstBinaryOp {
             final int opcodeCompare, opcodeIf;
             switch (opcodeAndLabel.getOpcode()) {
                 case Opcodes.IF_ICMPEQ:
-                    opcodeCompare = Opcodes.NOP;
-                    opcodeIf = Opcodes.IF_ICMPEQ;
-                    break;
+                case Opcodes.IF_ICMPGE:
+                case Opcodes.IF_ICMPGT:
+                case Opcodes.IF_ICMPLE:
+                case Opcodes.IF_ICMPLT:
                 case Opcodes.IF_ICMPNE:
                     opcodeCompare = Opcodes.NOP;
-                    opcodeIf = Opcodes.IF_ICMPNE;
-                    break;
-                case Opcodes.IF_ICMPLT:
-                    opcodeCompare = Opcodes.NOP;
-                    opcodeIf = Opcodes.IF_ICMPLT;
-                    break;
-                case Opcodes.IF_ICMPGE:
-                    opcodeCompare = Opcodes.NOP;
-                    opcodeIf = Opcodes.IF_ICMPGE;
-                    break;
-                case Opcodes.IF_ICMPGT:
-                    opcodeCompare = Opcodes.NOP;
-                    opcodeIf = Opcodes.IF_ICMPGT;
-                    break;
-                case Opcodes.IF_ICMPLE:
-                    opcodeCompare = Opcodes.NOP;
-                    opcodeIf = Opcodes.IF_ICMPLE;
+                    opcodeIf = opcodeAndLabel.getOpcode();
                     break;
                 case Opcodes.IFEQ:
-                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
-                    opcodeIf = Opcodes.IFEQ;
-                    break;
+                case Opcodes.IFGE:
+                case Opcodes.IFGT:
+                case Opcodes.IFLE:
+                case Opcodes.IFLT:
                 case Opcodes.IFNE:
                     opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
-                    opcodeIf = Opcodes.IFNE;
-                    break;
-                case Opcodes.IFLT:
-                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
-                    opcodeIf = Opcodes.IFLT;
-                    break;
-                case Opcodes.IFGE:
-                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
-                    opcodeIf = Opcodes.IFGE;
-                    break;
-                case Opcodes.IFGT:
-                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
-                    opcodeIf = Opcodes.IFGT;
-                    break;
-                case Opcodes.IFLE:
-                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
-                    opcodeIf = Opcodes.IFLE;
+                    opcodeIf = opcodeAndLabel.getOpcode();
                     break;
                 default:
                     throw new Ts2JavaAstException(
