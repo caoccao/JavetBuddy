@@ -31,10 +31,9 @@ import net.bytebuddy.jar.asm.Opcodes;
 
 import java.util.Objects;
 
-public class JavaInstructionLogicalCompare implements IJavaInstructionLogical {
+public class JavaInstructionLogicalCompare extends BaseJavaInstructionLogical {
     protected Swc4jAstBinExpr binExpr;
     protected Swc4jAstBinaryOp binaryOp;
-    protected Label label;
     protected TypeDescription type;
 
     public JavaInstructionLogicalCompare(
@@ -42,9 +41,9 @@ public class JavaInstructionLogicalCompare implements IJavaInstructionLogical {
             Swc4jAstBinaryOp binaryOp,
             TypeDescription type,
             Label label) {
+        super(label);
         setBinExpr(binExpr);
         setBinaryOp(binaryOp);
-        setLabel(label);
         setType(type);
     }
 
@@ -52,31 +51,31 @@ public class JavaInstructionLogicalCompare implements IJavaInstructionLogical {
     public Size apply(MethodVisitor methodVisitor, Implementation.Context implementationContext) {
         final int opcodeCompare;
         final int opcodeCompareAndJump;
-        final int stackImpact;
+        final int sizeImpact;
         if (type.represents(int.class)
                 || type.represents(short.class)
                 || type.represents(byte.class)
                 || type.represents(char.class)) {
             switch (binaryOp) {
                 case Gt:
-                    opcodeCompareAndJump = Opcodes.IF_ICMPLE;
+                    opcodeCompareAndJump = flipped ? Opcodes.IF_ICMPGT : Opcodes.IF_ICMPLE;
                     break;
                 case GtEq:
-                    opcodeCompareAndJump = Opcodes.IF_ICMPLT;
+                    opcodeCompareAndJump = flipped ? Opcodes.IF_ICMPGE : Opcodes.IF_ICMPLT;
                     break;
                 case Lt:
-                    opcodeCompareAndJump = Opcodes.IF_ICMPGE;
+                    opcodeCompareAndJump = flipped ? Opcodes.IF_ICMPLT : Opcodes.IF_ICMPGE;
                     break;
                 case LtEq:
-                    opcodeCompareAndJump = Opcodes.IF_ICMPGT;
+                    opcodeCompareAndJump = flipped ? Opcodes.IF_ICMPLE : Opcodes.IF_ICMPGT;
                     break;
                 case EqEq:
                 case EqEqEq:
-                    opcodeCompareAndJump = Opcodes.IF_ICMPNE;
+                    opcodeCompareAndJump = flipped ? Opcodes.IF_ICMPEQ : Opcodes.IF_ICMPNE;
                     break;
                 case NotEq:
                 case NotEqEq:
-                    opcodeCompareAndJump = Opcodes.IF_ICMPEQ;
+                    opcodeCompareAndJump = flipped ? Opcodes.IF_ICMPNE : Opcodes.IF_ICMPEQ;
                     break;
                 default:
                     throw new Ts2JavaAstException(
@@ -85,28 +84,28 @@ public class JavaInstructionLogicalCompare implements IJavaInstructionLogical {
                                     SimpleMap.of("binaryOp", binaryOp.name())));
             }
             opcodeCompare = Opcodes.NOP;
-            stackImpact = -1;
+            sizeImpact = -1;
         } else if (type.represents(long.class)) {
             switch (binaryOp) {
                 case Gt:
-                    opcodeCompareAndJump = Opcodes.IFLE;
+                    opcodeCompareAndJump = flipped ? Opcodes.IFGT : Opcodes.IFLE;
                     break;
                 case GtEq:
-                    opcodeCompareAndJump = Opcodes.IFLT;
+                    opcodeCompareAndJump = flipped ? Opcodes.IFGE : Opcodes.IFLT;
                     break;
                 case Lt:
-                    opcodeCompareAndJump = Opcodes.IFGE;
+                    opcodeCompareAndJump = flipped ? Opcodes.IFLT : Opcodes.IFGE;
                     break;
                 case LtEq:
-                    opcodeCompareAndJump = Opcodes.IFGT;
+                    opcodeCompareAndJump = flipped ? Opcodes.IFLE : Opcodes.IFGT;
                     break;
                 case EqEq:
                 case EqEqEq:
-                    opcodeCompareAndJump = Opcodes.IFNE;
+                    opcodeCompareAndJump = flipped ? Opcodes.IFEQ : Opcodes.IFNE;
                     break;
                 case NotEq:
                 case NotEqEq:
-                    opcodeCompareAndJump = Opcodes.IFEQ;
+                    opcodeCompareAndJump = flipped ? Opcodes.IFNE : Opcodes.IFEQ;
                     break;
                 default:
                     throw new Ts2JavaException(
@@ -114,34 +113,34 @@ public class JavaInstructionLogicalCompare implements IJavaInstructionLogical {
                                     SimpleMap.of("binaryOp", binaryOp.name())));
             }
             opcodeCompare = Opcodes.LCMP;
-            stackImpact = -2;
+            sizeImpact = -2;
         } else if (type.represents(float.class)) {
             switch (binaryOp) {
                 case Gt:
                     opcodeCompare = Opcodes.FCMPL;
-                    opcodeCompareAndJump = Opcodes.IFLE;
+                    opcodeCompareAndJump = flipped ? Opcodes.IFGT : Opcodes.IFLE;
                     break;
                 case GtEq:
                     opcodeCompare = Opcodes.FCMPL;
-                    opcodeCompareAndJump = Opcodes.IFLT;
+                    opcodeCompareAndJump = flipped ? Opcodes.IFGE : Opcodes.IFLT;
                     break;
                 case Lt:
                     opcodeCompare = Opcodes.FCMPG;
-                    opcodeCompareAndJump = Opcodes.IFGE;
+                    opcodeCompareAndJump = flipped ? Opcodes.IFLT : Opcodes.IFGE;
                     break;
                 case LtEq:
                     opcodeCompare = Opcodes.FCMPG;
-                    opcodeCompareAndJump = Opcodes.IFGT;
+                    opcodeCompareAndJump = flipped ? Opcodes.IFLE : Opcodes.IFGT;
                     break;
                 case EqEq:
                 case EqEqEq:
                     opcodeCompare = Opcodes.FCMPL;
-                    opcodeCompareAndJump = Opcodes.IFNE;
+                    opcodeCompareAndJump = flipped ? Opcodes.IFEQ : Opcodes.IFNE;
                     break;
                 case NotEq:
                 case NotEqEq:
                     opcodeCompare = Opcodes.FCMPL;
-                    opcodeCompareAndJump = Opcodes.IFEQ;
+                    opcodeCompareAndJump = flipped ? Opcodes.IFNE : Opcodes.IFEQ;
                     break;
                 default:
                     throw new Ts2JavaAstException(
@@ -149,34 +148,34 @@ public class JavaInstructionLogicalCompare implements IJavaInstructionLogical {
                             SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} in logical compare float operation.",
                                     SimpleMap.of("binaryOp", binaryOp.name())));
             }
-            stackImpact = -1;
+            sizeImpact = -1;
         } else if (type.represents(double.class)) {
             switch (binaryOp) {
                 case Gt:
                     opcodeCompare = Opcodes.DCMPL;
-                    opcodeCompareAndJump = Opcodes.IFLE;
+                    opcodeCompareAndJump = flipped ? Opcodes.IFGT : Opcodes.IFLE;
                     break;
                 case GtEq:
                     opcodeCompare = Opcodes.DCMPL;
-                    opcodeCompareAndJump = Opcodes.IFLT;
+                    opcodeCompareAndJump = flipped ? Opcodes.IFGE : Opcodes.IFLT;
                     break;
                 case Lt:
                     opcodeCompare = Opcodes.DCMPG;
-                    opcodeCompareAndJump = Opcodes.IFGE;
+                    opcodeCompareAndJump = flipped ? Opcodes.IFLT : Opcodes.IFGE;
                     break;
                 case LtEq:
                     opcodeCompare = Opcodes.DCMPG;
-                    opcodeCompareAndJump = Opcodes.IFGT;
+                    opcodeCompareAndJump = flipped ? Opcodes.IFLE : Opcodes.IFGT;
                     break;
                 case EqEq:
                 case EqEqEq:
                     opcodeCompare = Opcodes.DCMPL;
-                    opcodeCompareAndJump = Opcodes.IFNE;
+                    opcodeCompareAndJump = flipped ? Opcodes.IFEQ : Opcodes.IFNE;
                     break;
                 case NotEq:
                 case NotEqEq:
                     opcodeCompare = Opcodes.DCMPL;
-                    opcodeCompareAndJump = Opcodes.IFEQ;
+                    opcodeCompareAndJump = flipped ? Opcodes.IFNE : Opcodes.IFEQ;
                     break;
                 default:
                     throw new Ts2JavaAstException(
@@ -184,7 +183,7 @@ public class JavaInstructionLogicalCompare implements IJavaInstructionLogical {
                             SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} in logical compare double operation.",
                                     SimpleMap.of("binaryOp", binaryOp.name())));
             }
-            stackImpact = -2;
+            sizeImpact = -2;
         } else {
             throw new Ts2JavaAstException(
                     binExpr,
@@ -195,7 +194,13 @@ public class JavaInstructionLogicalCompare implements IJavaInstructionLogical {
             methodVisitor.visitInsn(opcodeCompare);
         }
         methodVisitor.visitJumpInsn(opcodeCompareAndJump, label);
-        return new StackManipulation.Size(stackImpact, 0);
+        return new StackManipulation.Size(sizeImpact, 0);
+    }
+
+    @Override
+    public JavaInstructionLogicalCompare flip() {
+        super.flip();
+        return this;
     }
 
     public Swc4jAstBinExpr getBinExpr() {
@@ -204,10 +209,6 @@ public class JavaInstructionLogicalCompare implements IJavaInstructionLogical {
 
     public Swc4jAstBinaryOp getBinaryOp() {
         return binaryOp;
-    }
-
-    public Label getLabel() {
-        return label;
     }
 
     public TypeDescription getType() {
@@ -230,7 +231,7 @@ public class JavaInstructionLogicalCompare implements IJavaInstructionLogical {
     }
 
     public JavaInstructionLogicalCompare setLabel(Label label) {
-        this.label = Objects.requireNonNull(label);
+        super.setLabel(label);
         return this;
     }
 

@@ -17,6 +17,14 @@
 package com.caoccao.javet.buddy.ts2java.compiler.instructions;
 
 import net.bytebuddy.implementation.bytecode.StackManipulation;
+import net.bytebuddy.jar.asm.Label;
 
 public interface IJavaInstructionLogical extends StackManipulation {
+    <T extends IJavaInstructionLogical> T flip();
+
+    Label getLabel();
+
+    boolean isFlipped();
+
+    <T extends IJavaInstructionLogical> T setLabel(Label label);
 }

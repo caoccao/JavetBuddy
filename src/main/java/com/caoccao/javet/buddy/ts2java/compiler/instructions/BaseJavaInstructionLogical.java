@@ -16,36 +16,39 @@
 
 package com.caoccao.javet.buddy.ts2java.compiler.instructions;
 
-import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.jar.asm.Label;
-import net.bytebuddy.jar.asm.MethodVisitor;
-import net.bytebuddy.jar.asm.Opcodes;
 
 import java.util.Objects;
 
-public class JavaInstructionLogicalAnd implements IJavaInstructionLogical {
+public abstract class BaseJavaInstructionLogical implements IJavaInstructionLogical {
+    protected boolean flipped;
     protected Label label;
 
-    public JavaInstructionLogicalAnd(Label label) {
+    public BaseJavaInstructionLogical(Label label) {
         setLabel(label);
+        flipped = false;
     }
 
     @Override
-    public Size apply(MethodVisitor methodVisitor, Implementation.Context implementationContext) {
-        methodVisitor.visitJumpInsn(Opcodes.IFEQ, label);
-        return new Size(-1, 0);
+    @SuppressWarnings("unchecked")
+    public BaseJavaInstructionLogical flip() {
+        flipped = !flipped;
+        return this;
     }
 
+    @Override
     public Label getLabel() {
         return label;
     }
 
     @Override
-    public boolean isValid() {
-        return true;
+    public boolean isFlipped() {
+        return flipped;
     }
 
-    public JavaInstructionLogicalAnd setLabel(Label label) {
+    @Override
+    @SuppressWarnings("unchecked")
+    public BaseJavaInstructionLogical setLabel(Label label) {
         this.label = Objects.requireNonNull(label);
         return this;
     }

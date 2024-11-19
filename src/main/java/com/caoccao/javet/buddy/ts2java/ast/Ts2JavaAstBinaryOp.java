@@ -19,17 +19,14 @@ package com.caoccao.javet.buddy.ts2java.ast;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeHint;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLogicalLabels;
-import com.caoccao.javet.buddy.ts2java.compiler.JavaOpcodeUtils;
 import com.caoccao.javet.buddy.ts2java.compiler.instructions.IJavaInstructionLogical;
-import com.caoccao.javet.buddy.ts2java.compiler.instructions.JavaInstructionLogicalAnd;
 import com.caoccao.javet.buddy.ts2java.compiler.instructions.JavaInstructionLogicalCompare;
-import com.caoccao.javet.buddy.ts2java.compiler.visitors.JavaByteCodeMethodVisitor;
+import com.caoccao.javet.buddy.ts2java.compiler.instructions.JavaInstructionLogicalCondition;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
-import com.caoccao.javet.utils.ListUtils;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
@@ -287,11 +284,11 @@ public final class Ts2JavaAstBinaryOp {
         final List<StackManipulation> stackManipulations = functionContext.getStackManipulations();
         final Label labelFalse = functionContext.getLogicalLabels().getLastLabel();
         if (!(stackManipulations.get(leftEndIndex - 1) instanceof IJavaInstructionLogical)) {
-            stackManipulations.add(leftEndIndex, new JavaInstructionLogicalAnd(labelFalse));
+            stackManipulations.add(leftEndIndex, new JavaInstructionLogicalCondition(Opcodes.IFEQ, labelFalse));
             ++leftEndIndex;
         }
         if (!(stackManipulations.get(stackManipulations.size() - 1) instanceof IJavaInstructionLogical)) {
-            stackManipulations.add(new JavaInstructionLogicalAnd(labelFalse));
+            stackManipulations.add(new JavaInstructionLogicalCondition(Opcodes.IFEQ, labelFalse));
         }
     }
 
@@ -331,138 +328,20 @@ public final class Ts2JavaAstBinaryOp {
         final JavaLogicalLabels logicalLabels = functionContext.getLogicalLabels();
         Label labelFalse = logicalLabels.getLastLabel();
         Label labelTrue = logicalLabels.append();
-        if (stackManipulations.get(leftEndIndex - 1) instanceof IJavaInstructionLogical) {
-            JavaByteCodeMethodVisitor byteCodeMethodVisitor = new JavaByteCodeMethodVisitor(Opcodes.ASM9);
-            StackManipulation stackManipulationCompare = stackManipulations.get(leftEndIndex - 1);
-            stackManipulationCompare.apply(byteCodeMethodVisitor, null);
-            List<JavaByteCodeMethodVisitor.OpcodeAndLabel> opcodeAndLabels = byteCodeMethodVisitor.getJumpInstList();
-            if (opcodeAndLabels.size() != 1) {
-                throw new Ts2JavaAstException(
-                        rightExpression,
-                        SimpleFreeMarkerFormat.format("Unsupported left type ${type} in logical OR (||).",
-                                SimpleMap.of("type", rightHint.getType().getName())));
-            }
-            JavaByteCodeMethodVisitor.OpcodeAndLabel opcodeAndLabel = opcodeAndLabels.get(0);
-            int originalOpcodeCompare = Opcodes.NOP;
-            if (ListUtils.isNotEmpty(byteCodeMethodVisitor.getInstList())) {
-                int opcode = byteCodeMethodVisitor.getInstList().get(byteCodeMethodVisitor.getInstList().size() - 1);
-                switch (opcode) {
-                    case Opcodes.DCMPG:
-                    case Opcodes.DCMPL:
-                    case Opcodes.FCMPG:
-                    case Opcodes.FCMPL:
-                    case Opcodes.LCMP:
-                        originalOpcodeCompare = opcode;
-                        break;
-                }
-            }
-            final int opcodeCompare, opcodeIf;
-            switch (opcodeAndLabel.getOpcode()) {
-                case Opcodes.IF_ICMPEQ:
-                case Opcodes.IF_ICMPGE:
-                case Opcodes.IF_ICMPGT:
-                case Opcodes.IF_ICMPLE:
-                case Opcodes.IF_ICMPLT:
-                case Opcodes.IF_ICMPNE:
-                    opcodeCompare = Opcodes.NOP;
-                    opcodeIf = JavaOpcodeUtils.getOpposite(opcodeAndLabel.getOpcode());
-                    break;
-                case Opcodes.IFEQ:
-                case Opcodes.IFGE:
-                case Opcodes.IFGT:
-                case Opcodes.IFLE:
-                case Opcodes.IFLT:
-                case Opcodes.IFNE:
-                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
-                    opcodeIf = JavaOpcodeUtils.getOpposite(opcodeAndLabel.getOpcode());
-                    break;
-                default:
-                    throw new Ts2JavaAstException(
-                            rightExpression,
-                            SimpleFreeMarkerFormat.format("Unsupported left type ${type} in logical OR (||).",
-                                    SimpleMap.of("type", rightHint.getType().getName())));
-            }
-            stackManipulations.set(leftEndIndex - 1, new StackManipulation.Simple(
-                    (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
-                        if (opcodeCompare > Opcodes.NOP) {
-                            methodVisitor.visitInsn(opcodeCompare);
-                        }
-                        methodVisitor.visitJumpInsn(opcodeIf, labelTrue);
-                        return new StackManipulation.Size(-2, 0);
-                    }));
+        StackManipulation leftStackManipulation = stackManipulations.get(leftEndIndex - 1);
+        if (leftStackManipulation instanceof IJavaInstructionLogical) {
+            ((IJavaInstructionLogical) leftStackManipulation).flip().setLabel(labelTrue);
         } else {
-            stackManipulations.add(leftEndIndex, new StackManipulation.Simple(
-                    (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
-                        methodVisitor.visitJumpInsn(Opcodes.IFGT, labelTrue);
-                        return new StackManipulation.Size(-1, 0);
-                    }));
+            stackManipulations.add(
+                    leftEndIndex,
+                    new JavaInstructionLogicalCondition(Opcodes.IFGT, labelTrue));
             ++leftEndIndex;
         }
-        if (stackManipulations.get(stackManipulations.size() - 1) instanceof IJavaInstructionLogical) {
-            JavaByteCodeMethodVisitor byteCodeMethodVisitor = new JavaByteCodeMethodVisitor(Opcodes.ASM9);
-            StackManipulation stackManipulationCompare = stackManipulations.get(stackManipulations.size() - 1);
-            stackManipulationCompare.apply(byteCodeMethodVisitor, null);
-            List<JavaByteCodeMethodVisitor.OpcodeAndLabel> opcodeAndLabels = byteCodeMethodVisitor.getJumpInstList();
-            if (opcodeAndLabels.size() != 1) {
-                throw new Ts2JavaAstException(
-                        rightExpression,
-                        SimpleFreeMarkerFormat.format("Unsupported right type ${type} in logical OR (||).",
-                                SimpleMap.of("type", rightHint.getType().getName())));
-            }
-            int originalOpcodeCompare = Opcodes.NOP;
-            if (ListUtils.isNotEmpty(byteCodeMethodVisitor.getInstList())) {
-                int opcode = byteCodeMethodVisitor.getInstList().get(byteCodeMethodVisitor.getInstList().size() - 1);
-                switch (opcode) {
-                    case Opcodes.DCMPG:
-                    case Opcodes.DCMPL:
-                    case Opcodes.FCMPG:
-                    case Opcodes.FCMPL:
-                    case Opcodes.LCMP:
-                        originalOpcodeCompare = opcode;
-                        break;
-                }
-            }
-            JavaByteCodeMethodVisitor.OpcodeAndLabel opcodeAndLabel = opcodeAndLabels.get(0);
-            final int opcodeCompare, opcodeIf;
-            switch (opcodeAndLabel.getOpcode()) {
-                case Opcodes.IF_ICMPEQ:
-                case Opcodes.IF_ICMPGE:
-                case Opcodes.IF_ICMPGT:
-                case Opcodes.IF_ICMPLE:
-                case Opcodes.IF_ICMPLT:
-                case Opcodes.IF_ICMPNE:
-                    opcodeCompare = Opcodes.NOP;
-                    opcodeIf = opcodeAndLabel.getOpcode();
-                    break;
-                case Opcodes.IFEQ:
-                case Opcodes.IFGE:
-                case Opcodes.IFGT:
-                case Opcodes.IFLE:
-                case Opcodes.IFLT:
-                case Opcodes.IFNE:
-                    opcodeCompare = originalOpcodeCompare > Opcodes.NOP ? originalOpcodeCompare : Opcodes.LCMP;
-                    opcodeIf = opcodeAndLabel.getOpcode();
-                    break;
-                default:
-                    throw new Ts2JavaAstException(
-                            rightExpression,
-                            SimpleFreeMarkerFormat.format("Unsupported right type ${type} in logical OR (||).",
-                                    SimpleMap.of("type", rightHint.getType().getName())));
-            }
-            stackManipulations.set(stackManipulations.size() - 1, new StackManipulation.Simple(
-                    (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
-                        if (opcodeCompare > Opcodes.NOP) {
-                            methodVisitor.visitInsn(opcodeCompare);
-                        }
-                        methodVisitor.visitJumpInsn(opcodeIf, labelFalse);
-                        return new StackManipulation.Size(-2, 0);
-                    }));
+        StackManipulation rightStackManipulation = stackManipulations.get(stackManipulations.size() - 1);
+        if (rightStackManipulation instanceof IJavaInstructionLogical) {
+            ((IJavaInstructionLogical) rightStackManipulation).setLabel(labelFalse);
         } else {
-            stackManipulations.add(new StackManipulation.Simple(
-                    (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
-                        methodVisitor.visitJumpInsn(Opcodes.IFLE, labelFalse);
-                        return new StackManipulation.Size(-1, 0);
-                    }));
+            stackManipulations.add(new JavaInstructionLogicalCondition(Opcodes.IFLE, labelFalse));
         }
     }
 }
