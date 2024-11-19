@@ -19,7 +19,7 @@ package com.caoccao.javet.buddy.ts2java.compiler.instructions;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
-import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAst;
+import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
@@ -32,20 +32,20 @@ import net.bytebuddy.jar.asm.Opcodes;
 import java.util.Objects;
 
 public class JavaInstructionLogicalCompare implements StackManipulation {
-    protected ISwc4jAst ast;
+    protected Swc4jAstBinExpr binExpr;
     protected Swc4jAstBinaryOp binaryOp;
     protected Label label;
     protected TypeDescription type;
 
     public JavaInstructionLogicalCompare(
-            ISwc4jAst ast,
+            Swc4jAstBinExpr binExpr,
             Swc4jAstBinaryOp binaryOp,
             TypeDescription type,
             Label label) {
-        setAst(ast);
+        setBinExpr(binExpr);
         setBinaryOp(binaryOp);
-        setType(type);
         setLabel(label);
+        setType(type);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class JavaInstructionLogicalCompare implements StackManipulation {
                     break;
                 default:
                     throw new Ts2JavaAstException(
-                            ast,
+                            binExpr,
                             SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} in logical compare int operation.",
                                     SimpleMap.of("binaryOp", binaryOp.name())));
             }
@@ -145,7 +145,7 @@ public class JavaInstructionLogicalCompare implements StackManipulation {
                     break;
                 default:
                     throw new Ts2JavaAstException(
-                            ast,
+                            binExpr,
                             SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} in logical compare float operation.",
                                     SimpleMap.of("binaryOp", binaryOp.name())));
             }
@@ -180,14 +180,14 @@ public class JavaInstructionLogicalCompare implements StackManipulation {
                     break;
                 default:
                     throw new Ts2JavaAstException(
-                            ast,
+                            binExpr,
                             SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} in logical compare double operation.",
                                     SimpleMap.of("binaryOp", binaryOp.name())));
             }
             stackImpact = -2;
         } else {
             throw new Ts2JavaAstException(
-                    ast,
+                    binExpr,
                     SimpleFreeMarkerFormat.format("Unsupported type ${type} in logical operation.",
                             SimpleMap.of("type", type.getName())));
         }
@@ -198,8 +198,8 @@ public class JavaInstructionLogicalCompare implements StackManipulation {
         return new StackManipulation.Size(stackImpact, 0);
     }
 
-    public ISwc4jAst getAst() {
-        return ast;
+    public Swc4jAstBinExpr getBinExpr() {
+        return binExpr;
     }
 
     public Swc4jAstBinaryOp getBinaryOp() {
@@ -219,8 +219,8 @@ public class JavaInstructionLogicalCompare implements StackManipulation {
         return true;
     }
 
-    public JavaInstructionLogicalCompare setAst(ISwc4jAst ast) {
-        this.ast = Objects.requireNonNull(ast);
+    public JavaInstructionLogicalCompare setBinExpr(Swc4jAstBinExpr binExpr) {
+        this.binExpr = binExpr;
         return this;
     }
 

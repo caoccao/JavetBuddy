@@ -20,12 +20,10 @@ import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeHint;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLogicalLabels;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaOpcodeUtils;
-import com.caoccao.javet.buddy.ts2java.compiler.instructions.JavaInstructionLogicalCompare;
 import com.caoccao.javet.buddy.ts2java.compiler.visitors.JavaByteCodeMethodVisitor;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
-import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAst;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.utils.ListUtils;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
@@ -300,19 +298,6 @@ public final class Ts2JavaAstBinaryOp {
                         return new StackManipulation.Size(-1, 0);
                     }));
         }
-    }
-
-    public static void manipulateLogicalCompare(
-            JavaFunctionContext functionContext,
-            ISwc4jAst ast,
-            Swc4jAstBinaryOp binaryOp,
-            JavaByteCodeHint hint) {
-        JavaInstructionLogicalCompare instruction = new JavaInstructionLogicalCompare(
-                ast,
-                binaryOp,
-                hint.getType(),
-                functionContext.getLogicalLabels().getLastLabel());
-        functionContext.getStackManipulations().add(instruction);
     }
 
     public static void manipulateLogicalOr(
