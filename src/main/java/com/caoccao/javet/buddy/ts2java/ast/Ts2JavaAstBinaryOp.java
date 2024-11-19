@@ -20,6 +20,7 @@ import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeHint;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLogicalLabels;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaOpcodeUtils;
+import com.caoccao.javet.buddy.ts2java.compiler.instructions.JavaInstructionLogicalCompare;
 import com.caoccao.javet.buddy.ts2java.compiler.visitors.JavaByteCodeMethodVisitor;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
@@ -134,179 +135,6 @@ public final class Ts2JavaAstBinaryOp {
                         SimpleFreeMarkerFormat.format("Unsupported binary op ${op} in logical operation.",
                                 SimpleMap.of("op", binaryOp.name())));
         }
-    }
-
-    private static StackManipulation getLogicalCompareForDouble(
-            JavaLogicalLabels logicalLabels,
-            Swc4jAstBinaryOp binaryOp) {
-        int opcodeCompare1;
-        int opcodeCompare2;
-        switch (binaryOp) {
-            case Gt:
-                opcodeCompare1 = Opcodes.DCMPL;
-                opcodeCompare2 = Opcodes.IFLE;
-                break;
-            case GtEq:
-                opcodeCompare1 = Opcodes.DCMPL;
-                opcodeCompare2 = Opcodes.IFLT;
-                break;
-            case Lt:
-                opcodeCompare1 = Opcodes.DCMPG;
-                opcodeCompare2 = Opcodes.IFGE;
-                break;
-            case LtEq:
-                opcodeCompare1 = Opcodes.DCMPG;
-                opcodeCompare2 = Opcodes.IFGT;
-                break;
-            case EqEq:
-            case EqEqEq:
-                opcodeCompare1 = Opcodes.DCMPL;
-                opcodeCompare2 = Opcodes.IFNE;
-                break;
-            case NotEq:
-            case NotEqEq:
-                opcodeCompare1 = Opcodes.DCMPL;
-                opcodeCompare2 = Opcodes.IFEQ;
-                break;
-            default:
-                throw new Ts2JavaException(
-                        SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} in logical operation.",
-                                SimpleMap.of("binaryOp", binaryOp.name())));
-        }
-        final Label labelFalse = logicalLabels.getLastLabel();
-        return new StackManipulation.Simple((
-                MethodVisitor methodVisitor,
-                Implementation.Context implementationContext) -> {
-            methodVisitor.visitInsn(opcodeCompare1);
-            methodVisitor.visitJumpInsn(opcodeCompare2, labelFalse);
-            return new StackManipulation.Size(-2, 0);
-        });
-    }
-
-    private static StackManipulation getLogicalCompareForFloat(
-            JavaLogicalLabels logicalLabels,
-            Swc4jAstBinaryOp binaryOp) {
-        int opcodeCompare1;
-        int opcodeCompare2;
-        switch (binaryOp) {
-            case Gt:
-                opcodeCompare1 = Opcodes.FCMPL;
-                opcodeCompare2 = Opcodes.IFLE;
-                break;
-            case GtEq:
-                opcodeCompare1 = Opcodes.FCMPL;
-                opcodeCompare2 = Opcodes.IFLT;
-                break;
-            case Lt:
-                opcodeCompare1 = Opcodes.FCMPG;
-                opcodeCompare2 = Opcodes.IFGE;
-                break;
-            case LtEq:
-                opcodeCompare1 = Opcodes.FCMPG;
-                opcodeCompare2 = Opcodes.IFGT;
-                break;
-            case EqEq:
-            case EqEqEq:
-                opcodeCompare1 = Opcodes.FCMPL;
-                opcodeCompare2 = Opcodes.IFNE;
-                break;
-            case NotEq:
-            case NotEqEq:
-                opcodeCompare1 = Opcodes.FCMPL;
-                opcodeCompare2 = Opcodes.IFEQ;
-                break;
-            default:
-                throw new Ts2JavaException(
-                        SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} in logical operation.",
-                                SimpleMap.of("binaryOp", binaryOp.name())));
-        }
-        final Label labelFalse = logicalLabels.getLastLabel();
-        return new StackManipulation.Simple((
-                MethodVisitor methodVisitor,
-                Implementation.Context implementationContext) -> {
-            methodVisitor.visitInsn(opcodeCompare1);
-            methodVisitor.visitJumpInsn(opcodeCompare2, labelFalse);
-            return new StackManipulation.Size(-1, 0);
-        });
-    }
-
-    private static StackManipulation getLogicalCompareForInt(
-            JavaLogicalLabels logicalLabels,
-            Swc4jAstBinaryOp binaryOp) {
-        int opcodeCompare;
-        switch (binaryOp) {
-            case Gt:
-                opcodeCompare = Opcodes.IF_ICMPLE;
-                break;
-            case GtEq:
-                opcodeCompare = Opcodes.IF_ICMPLT;
-                break;
-            case Lt:
-                opcodeCompare = Opcodes.IF_ICMPGE;
-                break;
-            case LtEq:
-                opcodeCompare = Opcodes.IF_ICMPGT;
-                break;
-            case EqEq:
-            case EqEqEq:
-                opcodeCompare = Opcodes.IF_ICMPNE;
-                break;
-            case NotEq:
-            case NotEqEq:
-                opcodeCompare = Opcodes.IF_ICMPEQ;
-                break;
-            default:
-                throw new Ts2JavaException(
-                        SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} in logical operation.",
-                                SimpleMap.of("binaryOp", binaryOp.name())));
-        }
-        final Label labelFalse = logicalLabels.getLastLabel();
-        return new StackManipulation.Simple((
-                MethodVisitor methodVisitor,
-                Implementation.Context implementationContext) -> {
-            methodVisitor.visitJumpInsn(opcodeCompare, labelFalse);
-            return new StackManipulation.Size(-1, 0);
-        });
-    }
-
-    private static StackManipulation getLogicalCompareForLong(
-            JavaLogicalLabels logicalLabels,
-            Swc4jAstBinaryOp binaryOp) {
-        int opcodeCompare;
-        switch (binaryOp) {
-            case Gt:
-                opcodeCompare = Opcodes.IFLE;
-                break;
-            case GtEq:
-                opcodeCompare = Opcodes.IFLT;
-                break;
-            case Lt:
-                opcodeCompare = Opcodes.IFGE;
-                break;
-            case LtEq:
-                opcodeCompare = Opcodes.IFGT;
-                break;
-            case EqEq:
-            case EqEqEq:
-                opcodeCompare = Opcodes.IFNE;
-                break;
-            case NotEq:
-            case NotEqEq:
-                opcodeCompare = Opcodes.IFEQ;
-                break;
-            default:
-                throw new Ts2JavaException(
-                        SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} in logical operation.",
-                                SimpleMap.of("binaryOp", binaryOp.name())));
-        }
-        final Label labelFalse = logicalLabels.getLastLabel();
-        return new StackManipulation.Simple((
-                MethodVisitor methodVisitor,
-                Implementation.Context implementationContext) -> {
-            methodVisitor.visitInsn(Opcodes.LCMP);
-            methodVisitor.visitJumpInsn(opcodeCompare, labelFalse);
-            return new StackManipulation.Size(-2, 0);
-        });
     }
 
     private static Multiplication getMultiplication(TypeDescription type) {
@@ -435,33 +263,6 @@ public final class Ts2JavaAstBinaryOp {
         }
     }
 
-    public static void manipulateLogical(
-            JavaFunctionContext functionContext,
-            ISwc4jAst ast,
-            Swc4jAstBinaryOp binaryOp,
-            JavaByteCodeHint hint) {
-        final List<StackManipulation> stackManipulations = functionContext.getStackManipulations();
-        final JavaLogicalLabels logicalLabels = functionContext.getLogicalLabels();
-        final TypeDescription type = hint.getType();
-        if (type.represents(int.class)
-                || type.represents(short.class)
-                || type.represents(byte.class)
-                || type.represents(char.class)) {
-            stackManipulations.add(getLogicalCompareForInt(logicalLabels, binaryOp));
-        } else if (type.represents(long.class)) {
-            stackManipulations.add(getLogicalCompareForLong(logicalLabels, binaryOp));
-        } else if (type.represents(float.class)) {
-            stackManipulations.add(getLogicalCompareForFloat(logicalLabels, binaryOp));
-        } else if (type.represents(double.class)) {
-            stackManipulations.add(getLogicalCompareForDouble(logicalLabels, binaryOp));
-        } else {
-            throw new Ts2JavaAstException(
-                    ast,
-                    SimpleFreeMarkerFormat.format("Unsupported type ${type} in logical operation.",
-                            SimpleMap.of("type", type.getName())));
-        }
-    }
-
     public static void manipulateLogicalAnd(
             JavaFunctionContext functionContext,
             int leftEndIndex,
@@ -499,6 +300,19 @@ public final class Ts2JavaAstBinaryOp {
                         return new StackManipulation.Size(-1, 0);
                     }));
         }
+    }
+
+    public static void manipulateLogicalCompare(
+            JavaFunctionContext functionContext,
+            ISwc4jAst ast,
+            Swc4jAstBinaryOp binaryOp,
+            JavaByteCodeHint hint) {
+        JavaInstructionLogicalCompare instruction = new JavaInstructionLogicalCompare(
+                ast,
+                binaryOp,
+                hint.getType(),
+                functionContext.getLogicalLabels().getLastLabel());
+        functionContext.getStackManipulations().add(instruction);
     }
 
     public static void manipulateLogicalOr(

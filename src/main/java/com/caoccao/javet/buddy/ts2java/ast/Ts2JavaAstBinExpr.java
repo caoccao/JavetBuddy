@@ -131,7 +131,7 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
                             functionContext, leftEndIndex, leftExpression, leftHint, rightExpression, rightHint);
                     break;
                 default:
-                    Ts2JavaAstBinaryOp.manipulateLogical(functionContext, ast, binaryOp, hint);
+                    Ts2JavaAstBinaryOp.manipulateLogicalCompare(functionContext, ast, binaryOp, hint);
                     break;
             }
             hint.setJump(true);
