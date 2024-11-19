@@ -63,16 +63,11 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
     }
 
     private static StackManipulation getLogicalClose(JavaLogicalLabels logicalLabels) {
+        final Label labelFalse = logicalLabels.get(1);
+        final Label labelClose = logicalLabels.get(0);
         return new StackManipulation.Simple((
                 MethodVisitor methodVisitor,
                 Implementation.Context implementationContext) -> {
-            if (logicalLabels.size() > 2) {
-                Label labelTrue = logicalLabels.get(2);
-                methodVisitor.visitLabel(labelTrue);
-                methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-            }
-            Label labelFalse = logicalLabels.get(1);
-            Label labelClose = logicalLabels.get(0);
             methodVisitor.visitInsn(Opcodes.ICONST_1);
             methodVisitor.visitJumpInsn(Opcodes.GOTO, labelClose);
             methodVisitor.visitLabel(labelFalse);

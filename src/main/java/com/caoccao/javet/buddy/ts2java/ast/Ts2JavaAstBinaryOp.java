@@ -288,7 +288,10 @@ public final class Ts2JavaAstBinaryOp {
             ++leftEndIndex;
         }
         if (!(stackManipulations.get(stackManipulations.size() - 1) instanceof IJavaInstructionLogical)) {
-            stackManipulations.add(new JavaInstructionLogicalCondition(Opcodes.IFEQ, labelFalse));
+            final Label label = functionContext.getLogicalLabels().size() > 2
+                    ? functionContext.getLogicalLabels().getByReverseIndex(1)
+                    : labelFalse;
+            stackManipulations.add(new JavaInstructionLogicalCondition(Opcodes.IFEQ, label));
         }
     }
 
@@ -326,8 +329,8 @@ public final class Ts2JavaAstBinaryOp {
         }
         final List<StackManipulation> stackManipulations = functionContext.getStackManipulations();
         final JavaLogicalLabels logicalLabels = functionContext.getLogicalLabels();
-        Label labelFalse = logicalLabels.getLastLabel();
-        Label labelTrue = logicalLabels.append();
+        final Label labelFalse = logicalLabels.getLastLabel();
+        final Label labelTrue = logicalLabels.append();
         StackManipulation leftStackManipulation = stackManipulations.get(leftEndIndex - 1);
         if (leftStackManipulation instanceof IJavaInstructionLogical) {
             ((IJavaInstructionLogical) leftStackManipulation).flip().setLabel(labelTrue);
@@ -342,6 +345,15 @@ public final class Ts2JavaAstBinaryOp {
             ((IJavaInstructionLogical) rightStackManipulation).setLabel(labelFalse);
         } else {
             stackManipulations.add(new JavaInstructionLogicalCondition(Opcodes.IFLE, labelFalse));
+        }
+        final int logicalLabelSize = logicalLabels.size();
+        if (logicalLabelSize == 3) {
+            stackManipulations.add(new StackManipulation.Simple(
+                    (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
+                        methodVisitor.visitLabel(labelTrue);
+                        methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+                        return StackManipulation.Size.ZERO;
+                    }));
         }
     }
 }
