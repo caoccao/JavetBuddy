@@ -19,7 +19,6 @@ package com.caoccao.javet.buddy.ts2java.compiler;
 import net.bytebuddy.description.type.TypeDescription;
 
 public final class JavaByteCodeHint {
-    private boolean jump;
     private TypeDescription type;
 
     public JavaByteCodeHint() {
@@ -28,25 +27,10 @@ public final class JavaByteCodeHint {
 
     public JavaByteCodeHint(TypeDescription type) {
         this.type = type;
-        reset();
     }
 
     public TypeDescription getType() {
         return type;
-    }
-
-    public boolean isJump() {
-        return jump;
-    }
-
-    public JavaByteCodeHint reset() {
-        jump = false;
-        return this;
-    }
-
-    public JavaByteCodeHint setJump(boolean jump) {
-        this.jump = jump;
-        return this;
     }
 
     public JavaByteCodeHint setType(TypeDescription type) {

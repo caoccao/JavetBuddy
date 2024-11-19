@@ -46,6 +46,6 @@ public final class Ts2JavaAstBlockStmt implements ITs2JavaAstStackManipulation<S
                                     SimpleMap.of("type", stmt.getType().name())));
             }
         }
-        return hint.reset();
+        return hint;
     }
 }

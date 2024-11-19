@@ -20,10 +20,14 @@ import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeHint;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLogicalLabels;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaOpcodeUtils;
+import com.caoccao.javet.buddy.ts2java.compiler.instructions.IJavaInstructionLogical;
+import com.caoccao.javet.buddy.ts2java.compiler.instructions.JavaInstructionLogicalAnd;
+import com.caoccao.javet.buddy.ts2java.compiler.instructions.JavaInstructionLogicalCompare;
 import com.caoccao.javet.buddy.ts2java.compiler.visitors.JavaByteCodeMethodVisitor;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
+import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.utils.ListUtils;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
@@ -281,23 +285,27 @@ public final class Ts2JavaAstBinaryOp {
                             SimpleMap.of("type", rightHint.getType().getName())));
         }
         final List<StackManipulation> stackManipulations = functionContext.getStackManipulations();
-        final JavaLogicalLabels logicalLabels = functionContext.getLogicalLabels();
-        Label labelFalse = logicalLabels.getLastLabel();
-        if (!leftHint.isJump()) {
-            stackManipulations.add(leftEndIndex, new StackManipulation.Simple(
-                    (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
-                        methodVisitor.visitJumpInsn(Opcodes.IFEQ, labelFalse);
-                        return new StackManipulation.Size(-1, 0);
-                    }));
+        final Label labelFalse = functionContext.getLogicalLabels().getLastLabel();
+        if (!(stackManipulations.get(leftEndIndex - 1) instanceof IJavaInstructionLogical)) {
+            stackManipulations.add(leftEndIndex, new JavaInstructionLogicalAnd(labelFalse));
             ++leftEndIndex;
         }
-        if (!rightHint.isJump()) {
-            stackManipulations.add(new StackManipulation.Simple(
-                    (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
-                        methodVisitor.visitJumpInsn(Opcodes.IFEQ, labelFalse);
-                        return new StackManipulation.Size(-1, 0);
-                    }));
+        if (!(stackManipulations.get(stackManipulations.size() - 1) instanceof IJavaInstructionLogical)) {
+            stackManipulations.add(new JavaInstructionLogicalAnd(labelFalse));
         }
+    }
+
+    public static void manipulateLogicalCompare(
+            JavaFunctionContext functionContext,
+            Swc4jAstBinExpr binExpr,
+            Swc4jAstBinaryOp binaryOp,
+            JavaByteCodeHint hint) {
+        JavaInstructionLogicalCompare instruction = new JavaInstructionLogicalCompare(
+                binExpr,
+                binaryOp,
+                hint.getType(),
+                functionContext.getLogicalLabels().getLastLabel());
+        functionContext.getStackManipulations().add(instruction);
     }
 
     public static void manipulateLogicalOr(
@@ -323,7 +331,7 @@ public final class Ts2JavaAstBinaryOp {
         final JavaLogicalLabels logicalLabels = functionContext.getLogicalLabels();
         Label labelFalse = logicalLabels.getLastLabel();
         Label labelTrue = logicalLabels.append();
-        if (leftHint.isJump()) {
+        if (stackManipulations.get(leftEndIndex - 1) instanceof IJavaInstructionLogical) {
             JavaByteCodeMethodVisitor byteCodeMethodVisitor = new JavaByteCodeMethodVisitor(Opcodes.ASM9);
             StackManipulation stackManipulationCompare = stackManipulations.get(leftEndIndex - 1);
             stackManipulationCompare.apply(byteCodeMethodVisitor, null);
@@ -390,7 +398,7 @@ public final class Ts2JavaAstBinaryOp {
                     }));
             ++leftEndIndex;
         }
-        if (rightHint.isJump()) {
+        if (stackManipulations.get(stackManipulations.size() - 1) instanceof IJavaInstructionLogical) {
             JavaByteCodeMethodVisitor byteCodeMethodVisitor = new JavaByteCodeMethodVisitor(Opcodes.ASM9);
             StackManipulation stackManipulationCompare = stackManipulations.get(stackManipulations.size() - 1);
             stackManipulationCompare.apply(byteCodeMethodVisitor, null);

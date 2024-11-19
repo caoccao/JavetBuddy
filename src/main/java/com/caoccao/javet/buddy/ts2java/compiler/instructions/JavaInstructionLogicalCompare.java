@@ -31,7 +31,7 @@ import net.bytebuddy.jar.asm.Opcodes;
 
 import java.util.Objects;
 
-public class JavaInstructionLogicalCompare implements StackManipulation {
+public class JavaInstructionLogicalCompare implements IJavaInstructionLogical {
     protected Swc4jAstBinExpr binExpr;
     protected Swc4jAstBinaryOp binaryOp;
     protected Label label;

@@ -20,7 +20,6 @@ import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeHint;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaClassCast;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLogicalLabels;
-import com.caoccao.javet.buddy.ts2java.compiler.instructions.JavaInstructionLogicalCompare;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstUnaryOp;
@@ -132,15 +131,9 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
                             functionContext, leftEndIndex, leftExpression, leftHint, rightExpression, rightHint);
                     break;
                 default:
-                    JavaInstructionLogicalCompare instruction = new JavaInstructionLogicalCompare(
-                            ast,
-                            binaryOp,
-                            hint.getType(),
-                            functionContext.getLogicalLabels().getLastLabel());
-                    stackManipulations.add(instruction);
+                    Ts2JavaAstBinaryOp.manipulateLogicalCompare(functionContext, ast, binaryOp, hint);
                     break;
             }
-            hint.setJump(true);
             hint.setType(TypeDescription.ForLoadedType.of(boolean.class));
 //        } else if (binaryOp.isBitOperator()) {
         } else {
