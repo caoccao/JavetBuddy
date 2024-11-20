@@ -329,8 +329,8 @@ public final class Ts2JavaAstBinaryOp {
         }
         final List<StackManipulation> stackManipulations = functionContext.getStackManipulations();
         final JavaLogicalLabels logicalLabels = functionContext.getLogicalLabels();
-        final Label labelFalse = logicalLabels.getLastLabel();
-        final Label labelTrue = logicalLabels.append();
+        final Label labelFalse = logicalLabels.getByReverseIndex(1);
+        final Label labelTrue = logicalLabels.getLastLabel();
         StackManipulation leftStackManipulation = stackManipulations.get(leftEndIndex - 1);
         if (leftStackManipulation instanceof IJavaInstructionLogical) {
             ((IJavaInstructionLogical) leftStackManipulation).flip().setLabel(labelTrue);

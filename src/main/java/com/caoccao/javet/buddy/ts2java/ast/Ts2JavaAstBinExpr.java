@@ -85,6 +85,12 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
         Swc4jAstBinaryOp binaryOp = ast.getOp();
         if (binaryOp.isLogicalOperator()) {
             functionContext.increaseLogicalDepth();
+            if (getBangCount(ast.getParent()) % 2 == 1) {
+                binaryOp = Ts2JavaAstBinaryOp.getFlippedBinaryOpLogical(binaryOp);
+            }
+            if (binaryOp == Swc4jAstBinaryOp.LogicalOr) {
+                functionContext.getLogicalLabels().append();
+            }
         }
         final List<StackManipulation> stackManipulations = functionContext.getStackManipulations();
         final ISwc4jAstExpr leftExpression = ast.getLeft().unParenExpr();
@@ -113,9 +119,6 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
         if (binaryOp.isArithmeticOperator()) {
             Ts2JavaAstBinaryOp.manipulateArithmetic(stackManipulations, binaryOp, hint);
         } else if (binaryOp.isLogicalOperator()) {
-            if (getBangCount(ast.getParent()) % 2 == 1) {
-                binaryOp = Ts2JavaAstBinaryOp.getFlippedBinaryOpLogical(binaryOp);
-            }
             switch (binaryOp) {
                 case LogicalAnd:
                     Ts2JavaAstBinaryOp.manipulateLogicalAnd(
