@@ -26,7 +26,6 @@ import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
-import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
@@ -264,20 +263,19 @@ public final class Ts2JavaAstBinaryOp {
 
     public static void manipulateLogicalAnd(
             JavaFunctionContext functionContext,
+            Swc4jAstBinExpr binExpr,
             int leftEndIndex,
-            ISwc4jAstExpr leftExpression,
             JavaByteCodeHint leftHint,
-            ISwc4jAstExpr rightExpression,
             JavaByteCodeHint rightHint) {
         if (!leftHint.getType().represents(boolean.class)) {
             throw new Ts2JavaAstException(
-                    leftExpression,
+                    binExpr.getLeft(),
                     SimpleFreeMarkerFormat.format("Unsupported left type ${type} in logical AND (&&).",
                             SimpleMap.of("type", leftHint.getType().getName())));
         }
         if (!rightHint.getType().represents(boolean.class)) {
             throw new Ts2JavaAstException(
-                    rightExpression,
+                    binExpr.getRight(),
                     SimpleFreeMarkerFormat.format("Unsupported right type ${type} in logical AND (&&).",
                             SimpleMap.of("type", rightHint.getType().getName())));
         }
@@ -310,20 +308,19 @@ public final class Ts2JavaAstBinaryOp {
 
     public static void manipulateLogicalOr(
             JavaFunctionContext functionContext,
+            Swc4jAstBinExpr binExpr,
             int leftEndIndex,
-            ISwc4jAstExpr leftExpression,
             JavaByteCodeHint leftHint,
-            ISwc4jAstExpr rightExpression,
             JavaByteCodeHint rightHint) {
         if (!leftHint.getType().represents(boolean.class)) {
             throw new Ts2JavaAstException(
-                    leftExpression,
+                    binExpr.getLeft(),
                     SimpleFreeMarkerFormat.format("Unsupported left type ${type} in logical OR (||).",
                             SimpleMap.of("type", leftHint.getType().getName())));
         }
         if (!rightHint.getType().represents(boolean.class)) {
             throw new Ts2JavaAstException(
-                    rightExpression,
+                    binExpr.getRight(),
                     SimpleFreeMarkerFormat.format("Unsupported right type ${type} in logical OR (||).",
                             SimpleMap.of("type", rightHint.getType().getName())));
         }

@@ -94,6 +94,18 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
         }
     }
 
+    @Deprecated // TODO To be replaced by a built-in function in swc4j
+    public static Optional<Swc4jAstBinExpr> getParentBinExpr(ISwc4jAst ast) {
+        switch (ast.getType()) {
+            case BinExpr:
+                return Optional.of(ast.as(Swc4jAstBinExpr.class));
+            case ParenExpr:
+                return getParentBinExpr(ast.getParent());
+            default:
+                return Optional.empty();
+        }
+    }
+
     @Override
     public JavaByteCodeHint manipulate(JavaFunctionContext functionContext, Swc4jAstBinExpr ast) {
         Ts2JavaAst.manipulateLineNumber(functionContext, ast);
@@ -135,12 +147,10 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
         } else if (binaryOp.isLogicalOperator()) {
             switch (binaryOp) {
                 case LogicalAnd:
-                    Ts2JavaAstBinaryOp.manipulateLogicalAnd(
-                            functionContext, leftEndIndex, leftExpression, leftHint, rightExpression, rightHint);
+                    Ts2JavaAstBinaryOp.manipulateLogicalAnd(functionContext, ast, leftEndIndex, leftHint, rightHint);
                     break;
                 case LogicalOr:
-                    Ts2JavaAstBinaryOp.manipulateLogicalOr(
-                            functionContext, leftEndIndex, leftExpression, leftHint, rightExpression, rightHint);
+                    Ts2JavaAstBinaryOp.manipulateLogicalOr(functionContext, ast, leftEndIndex, leftHint, rightHint);
                     break;
                 default:
                     Ts2JavaAstBinaryOp.manipulateLogicalCompare(functionContext, ast, binaryOp, hint);

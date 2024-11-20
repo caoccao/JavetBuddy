@@ -423,6 +423,24 @@ public class TestLogicalOperations extends BaseTestTs2Java {
         return a || b;
     }
 
+//    @Test
+    public void testLogicalAndOrAnd_II_Z() throws Exception {
+        enableLogging();
+        assertTrue(logicalAndOrAnd_II_Z(2, 2));
+        assertFalse(logicalAndOrAnd_II_Z(1, 1));
+        assertTrue(logicalAndOrAnd_II_Z(1, 2));
+        assertFalse(logicalAndOrAnd_II_Z(2, 1));
+        TsClass tsClass = new TsClass(
+                "return (a == b && a > 1) || (a != b && b > 1);",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertTrue((boolean) tsClass.invoke(2, 2));
+        assertFalse((boolean) tsClass.invoke(1, 1));
+        assertTrue((boolean) tsClass.invoke(1, 2));
+        assertFalse((boolean) tsClass.invoke(2, 1));
+    }
+
     @Test
     public void testLogicalAnd_II_Z() throws Exception {
         assertTrue(logicalAnd_II_Z(2, 2));
