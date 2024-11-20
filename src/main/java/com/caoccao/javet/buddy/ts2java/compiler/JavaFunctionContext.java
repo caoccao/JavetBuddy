@@ -36,13 +36,11 @@ public final class JavaFunctionContext {
     private final TypeDescription returnType;
     private final List<StackManipulation> stackManipulations;
     private int lineNumber;
-    private int logicalDepth;
     private int maxOffset;
     private int nextOffset;
 
     public JavaFunctionContext(boolean _static, TypeDescription returnType) {
         lineNumber = -1;
-        logicalDepth = 0;
         logicalLabels = new JavaLogicalLabels();
         maxOffset = nextOffset;
         nextOffset = _static ? 0 : 1;
@@ -62,13 +60,6 @@ public final class JavaFunctionContext {
         }
     }
 
-    public void decreaseLogicalDepth() {
-        logicalDepth--;
-        if (logicalDepth <= 0) {
-            logicalDepth = 0;
-        }
-    }
-
     public int getLineNumber() {
         return lineNumber;
     }
@@ -84,10 +75,6 @@ public final class JavaFunctionContext {
         throw new Ts2JavaException(
                 SimpleFreeMarkerFormat.format("The variable ${name} is not defined.",
                         SimpleMap.of("name", name)));
-    }
-
-    public int getLogicalDepth() {
-        return logicalDepth;
     }
 
     public JavaLogicalLabels getLogicalLabels() {
@@ -115,13 +102,6 @@ public final class JavaFunctionContext {
 
     public List<StackManipulation> getStackManipulations() {
         return stackManipulations;
-    }
-
-    public void increaseLogicalDepth() {
-        logicalDepth++;
-        if (logicalDepth == 1) {
-            logicalLabels.reset();
-        }
     }
 
     public boolean isStatic() {

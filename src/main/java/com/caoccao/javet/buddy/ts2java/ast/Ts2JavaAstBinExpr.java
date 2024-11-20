@@ -79,12 +79,26 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
         });
     }
 
+    @Deprecated // TODO To be replaced by a built-in function in swc4j
+    private static int getLogicalOperatorCount(ISwc4jAst ast) {
+        switch (ast.getType()) {
+            case BinExpr:
+                if (ast.as(Swc4jAstBinExpr.class).getOp().isLogicalOperator()) {
+                    return getLogicalOperatorCount(ast.getParent()) + 1;
+                }
+                return 0;
+            case ParenExpr:
+                return getLogicalOperatorCount(ast.getParent());
+            default:
+                return 0;
+        }
+    }
+
     @Override
     public JavaByteCodeHint manipulate(JavaFunctionContext functionContext, Swc4jAstBinExpr ast) {
         Ts2JavaAst.manipulateLineNumber(functionContext, ast);
         Swc4jAstBinaryOp binaryOp = ast.getOp();
         if (binaryOp.isLogicalOperator()) {
-            functionContext.increaseLogicalDepth();
             if (getBangCount(ast.getParent()) % 2 == 1) {
                 binaryOp = Ts2JavaAstBinaryOp.getFlippedBinaryOpLogical(binaryOp);
             }
@@ -141,10 +155,9 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
                             SimpleMap.of("op", binaryOp.name())));
         }
         if (binaryOp.isLogicalOperator()) {
-            if (functionContext.getLogicalDepth() == 1) {
+            if (getLogicalOperatorCount(ast.getParent()) == 0) {
                 stackManipulations.add(getLogicalClose(functionContext.getLogicalLabels()));
             }
-            functionContext.decreaseLogicalDepth();
         }
         return hint;
     }
