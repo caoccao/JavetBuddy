@@ -22,12 +22,10 @@ import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLogicalLabels;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
-import com.caoccao.javet.swc4j.ast.enums.Swc4jAstUnaryOp;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstUnaryExpr;
 import com.caoccao.javet.swc4j.ast.expr.lit.Swc4jAstNumber;
-import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAst;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
@@ -42,26 +40,6 @@ import java.util.List;
 import java.util.Optional;
 
 public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc4jAstBinExpr> {
-    @Deprecated // TODO To be replaced by a built-in function in swc4j
-    private static int getBangCount(ISwc4jAst ast) {
-        switch (ast.getType()) {
-            case BinExpr:
-                if (ast.as(Swc4jAstBinExpr.class).getOp().isLogicalOperator()) {
-                    return getBangCount(ast.getParent());
-                }
-                return 0;
-            case ParenExpr:
-                return getBangCount(ast.getParent());
-            case UnaryExpr:
-                if (ast.as(Swc4jAstUnaryExpr.class).getOp() == Swc4jAstUnaryOp.Bang) {
-                    return getBangCount(ast.getParent()) + 1;
-                }
-                return 0;
-            default:
-                return 0;
-        }
-    }
-
     private static StackManipulation getLogicalClose(JavaLogicalLabels logicalLabels) {
         final Label labelFalse = logicalLabels.get(1);
         final Label labelClose = logicalLabels.get(0);
@@ -79,40 +57,13 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
         });
     }
 
-    @Deprecated // TODO To be replaced by a built-in function in swc4j
-    private static int getLogicalOperatorCount(ISwc4jAst ast) {
-        switch (ast.getType()) {
-            case BinExpr:
-                if (ast.as(Swc4jAstBinExpr.class).getOp().isLogicalOperator()) {
-                    return getLogicalOperatorCount(ast.getParent()) + 1;
-                }
-                return 0;
-            case ParenExpr:
-                return getLogicalOperatorCount(ast.getParent());
-            default:
-                return 0;
-        }
-    }
-
-    @Deprecated // TODO To be replaced by a built-in function in swc4j
-    public static Optional<Swc4jAstBinExpr> getParentBinExpr(ISwc4jAst ast) {
-        switch (ast.getType()) {
-            case BinExpr:
-                return Optional.of(ast.as(Swc4jAstBinExpr.class));
-            case ParenExpr:
-                return getParentBinExpr(ast.getParent());
-            default:
-                return Optional.empty();
-        }
-    }
-
     @Override
     public JavaByteCodeHint manipulate(JavaFunctionContext functionContext, Swc4jAstBinExpr ast) {
         Ts2JavaAst.manipulateLineNumber(functionContext, ast);
         Swc4jAstBinaryOp binaryOp = ast.getOp();
         if (binaryOp.isLogicalOperator()) {
-            if (getBangCount(ast.getParent()) % 2 == 1) {
-                binaryOp = Ts2JavaAstBinaryOp.getFlippedBinaryOpLogical(binaryOp);
+            if (ast.getBangCount() % 2 == 1) {
+                binaryOp = binaryOp.getOppositeOperator();
             }
             if (binaryOp == Swc4jAstBinaryOp.LogicalOr) {
                 functionContext.getLogicalLabels().append();
@@ -165,7 +116,7 @@ public final class Ts2JavaAstBinExpr implements ITs2JavaAstStackManipulation<Swc
                             SimpleMap.of("op", binaryOp.name())));
         }
         if (binaryOp.isLogicalOperator()) {
-            if (getLogicalOperatorCount(ast.getParent()) == 0) {
+            if (ast.getLogicalOperatorCount() == 0) {
                 stackManipulations.add(getLogicalClose(functionContext.getLogicalLabels()));
             }
         }

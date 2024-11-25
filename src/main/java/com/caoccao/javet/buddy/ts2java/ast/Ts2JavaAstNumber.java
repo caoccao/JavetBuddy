@@ -19,10 +19,7 @@ package com.caoccao.javet.buddy.ts2java.ast;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaByteCodeHint;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
-import com.caoccao.javet.swc4j.ast.enums.Swc4jAstUnaryOp;
-import com.caoccao.javet.swc4j.ast.expr.Swc4jAstUnaryExpr;
 import com.caoccao.javet.swc4j.ast.expr.lit.Swc4jAstNumber;
-import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAst;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import com.caoccao.javet.utils.StringUtils;
@@ -38,21 +35,6 @@ public final class Ts2JavaAstNumber implements ITs2JavaAstStackManipulation<Swc4
 
     public Ts2JavaAstNumber() {
         valueType = null;
-    }
-
-    @Deprecated // TODO To be replaced by a built-in function in swc4j
-    private static int getMinusCount(ISwc4jAst ast) {
-        switch (ast.getType()) {
-            case ParenExpr:
-                return getMinusCount(ast.getParent());
-            case UnaryExpr:
-                if (ast.as(Swc4jAstUnaryExpr.class).getOp() == Swc4jAstUnaryOp.Minus) {
-                    return getMinusCount(ast.getParent()) + 1;
-                }
-                return 0;
-            default:
-                return 0;
-        }
     }
 
     public TypeDescription getValueType() {
@@ -84,7 +66,7 @@ public final class Ts2JavaAstNumber implements ITs2JavaAstStackManipulation<Swc4
                     })
                     .orElse(TypeDescription.ForLoadedType.of(int.class));
         }
-        final boolean isNegative = getMinusCount(ast.getParent()) % 2 == 1;
+        final boolean isNegative = ast.getMinusCount() % 2 == 1;
         if (type.represents(int.class) || type.represents(short.class) || type.represents(byte.class)) {
             stackManipulation = IntegerConstant.forValue(isNegative ? -ast.asInt() : ast.asInt());
         } else if (type.represents(long.class)) {

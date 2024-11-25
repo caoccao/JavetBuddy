@@ -105,36 +105,6 @@ public final class Ts2JavaAstBinaryOp {
         });
     }
 
-    @Deprecated // TODO To be replaced by a built-in function in swc4j
-    public static Swc4jAstBinaryOp getFlippedBinaryOpLogical(Swc4jAstBinaryOp binaryOp) {
-        switch (binaryOp) {
-            case EqEq:
-                return Swc4jAstBinaryOp.NotEq;
-            case EqEqEq:
-                return Swc4jAstBinaryOp.NotEqEq;
-            case Gt:
-                return Swc4jAstBinaryOp.LtEq;
-            case GtEq:
-                return Swc4jAstBinaryOp.Lt;
-            case Lt:
-                return Swc4jAstBinaryOp.GtEq;
-            case LtEq:
-                return Swc4jAstBinaryOp.Gt;
-            case LogicalAnd:
-                return Swc4jAstBinaryOp.LogicalOr;
-            case LogicalOr:
-                return Swc4jAstBinaryOp.LogicalAnd;
-            case NotEq:
-                return Swc4jAstBinaryOp.EqEq;
-            case NotEqEq:
-                return Swc4jAstBinaryOp.EqEqEq;
-            default:
-                throw new Ts2JavaException(
-                        SimpleFreeMarkerFormat.format("Unsupported binary op ${op} in logical operation.",
-                                SimpleMap.of("op", binaryOp.name())));
-        }
-    }
-
     private static Multiplication getMultiplication(TypeDescription type) {
         if (type.represents(int.class)) {
             return Multiplication.INTEGER;
