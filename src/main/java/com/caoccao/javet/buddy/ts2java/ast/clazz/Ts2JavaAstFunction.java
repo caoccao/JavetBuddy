@@ -14,30 +14,31 @@
  * limitations under the License.
  */
 
-package com.caoccao.javet.buddy.ts2java.ast.stmt;
+package com.caoccao.javet.buddy.ts2java.ast.clazz;
 
 import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAstWithBuilderStore;
 import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaDynamicTypeBuilderStore;
-import com.caoccao.javet.buddy.ts2java.ast.clazz.Ts2JavaAstClass;
-import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstDecl;
-import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstClassDecl;
-import com.caoccao.javet.utils.StringUtils;
+import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstFunction;
+import com.caoccao.javet.swc4j.ast.enums.Swc4jAstAccessibility;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
-public class Ts2JavaAstClassDecl
-        extends BaseTs2JavaAstWithBuilderStore<Swc4jAstClassDecl>
-        implements ITs2JavaAstDecl<Swc4jAstClassDecl> {
-    protected final Ts2JavaAstClass clazz;
-    protected final String packageName;
+public class Ts2JavaAstFunction
+        extends BaseTs2JavaAstWithBuilderStore<Swc4jAstFunction> {
+    protected final boolean _static;
+    protected final Swc4jAstAccessibility accessibility;
+    protected final String name;
 
-    public Ts2JavaAstClassDecl(
+    public Ts2JavaAstFunction(
             Ts2JavaDynamicTypeBuilderStore builderStore,
-            Swc4jAstClassDecl ast,
-            String packageName) {
+            Swc4jAstFunction ast,
+            String name,
+            boolean _static,
+            Swc4jAstAccessibility accessibility) {
         super(builderStore, ast);
-        clazz = new Ts2JavaAstClass(builderStore, ast.getClazz());
-        this.packageName = packageName;
+        this._static = _static;
+        this.accessibility = accessibility;
+        this.name = name;
     }
 
     @Override
@@ -47,18 +48,18 @@ public class Ts2JavaAstClassDecl
 
     @Override
     public void compile() {
-        String className = StringUtils.isEmpty(packageName)
-                ? ast.getIdent().getSym()
-                : packageName + "." + ast.getIdent().getSym();
-        builderStore.setBuilder(builderStore.getBuilder().name(className));
-        clazz.compile();
+
     }
 
-    public Ts2JavaAstClass getClazz() {
-        return clazz;
+    public Swc4jAstAccessibility getAccessibility() {
+        return accessibility;
     }
 
-    public String getPackageName() {
-        return packageName;
+    public String getName() {
+        return name;
+    }
+
+    public boolean isStatic() {
+        return _static;
     }
 }

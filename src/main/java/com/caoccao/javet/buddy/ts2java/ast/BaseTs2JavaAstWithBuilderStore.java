@@ -16,21 +16,23 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
-import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaBuilderStore;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAst;
 
 import java.util.Objects;
 
-public abstract class BaseTs2JavaAst<AST extends ISwc4jAst>
-        implements ITs2JavaAst<AST> {
-    protected AST ast;
+public abstract class BaseTs2JavaAstWithBuilderStore<AST extends ISwc4jAst>
+        extends BaseTs2JavaAst<AST>
+        implements ITs2JavaBuilderStore {
+    protected final Ts2JavaDynamicTypeBuilderStore builderStore;
 
-    public BaseTs2JavaAst(AST ast) {
-        this.ast = Objects.requireNonNull(ast);
+    public BaseTs2JavaAstWithBuilderStore(Ts2JavaDynamicTypeBuilderStore builderStore, AST ast) {
+        super(ast);
+        this.builderStore = Objects.requireNonNull(builderStore);
     }
 
     @Override
-    public AST getAst() {
-        return ast;
+    public Ts2JavaDynamicTypeBuilderStore getBuilderStore() {
+        return builderStore;
     }
 }
