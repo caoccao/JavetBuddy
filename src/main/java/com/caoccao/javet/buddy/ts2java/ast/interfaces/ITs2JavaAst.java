@@ -16,6 +16,7 @@
 
 package com.caoccao.javet.buddy.ts2java.ast.interfaces;
 
+import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemo;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAst;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
@@ -24,7 +25,7 @@ import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
-public interface ITs2JavaAst<AST extends ISwc4jAst>
+public interface ITs2JavaAst<AST extends ISwc4jAst, Memo extends Ts2JavaMemo>
         extends StackManipulation {
     @Override
     default Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
@@ -36,6 +37,8 @@ public interface ITs2JavaAst<AST extends ISwc4jAst>
     void compile();
 
     AST getAst();
+
+    Memo getMemo();
 
     @Override
     default boolean isValid() {

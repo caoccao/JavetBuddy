@@ -16,25 +16,27 @@
 
 package com.caoccao.javet.buddy.ts2java.ast.stmt;
 
-import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAstWithBuilderStore;
-import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaDynamicTypeBuilderStore;
+import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.clazz.Ts2JavaAstClass;
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstDecl;
+import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoDynamicType;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstClassDecl;
 import com.caoccao.javet.utils.StringUtils;
 
 public class Ts2JavaAstClassDecl
-        extends BaseTs2JavaAstWithBuilderStore<Swc4jAstClassDecl>
-        implements ITs2JavaAstDecl<Swc4jAstClassDecl> {
+        extends BaseTs2JavaAst<Swc4jAstClassDecl, Ts2JavaMemoDynamicType>
+        implements ITs2JavaAstDecl<Swc4jAstClassDecl, Ts2JavaMemoDynamicType> {
     protected final Ts2JavaAstClass clazz;
     protected final String packageName;
 
     public Ts2JavaAstClassDecl(
-            Ts2JavaDynamicTypeBuilderStore builderStore,
+            ITs2JavaAst<?, ?> parent,
             Swc4jAstClassDecl ast,
+            Ts2JavaMemoDynamicType memo,
             String packageName) {
-        super(builderStore, ast);
-        clazz = new Ts2JavaAstClass(builderStore, ast.getClazz());
+        super(parent, ast, memo);
+        clazz = new Ts2JavaAstClass(this, ast.getClazz(), memo);
         this.packageName = packageName;
     }
 
@@ -43,7 +45,7 @@ public class Ts2JavaAstClassDecl
         String className = StringUtils.isEmpty(packageName)
                 ? ast.getIdent().getSym()
                 : packageName + "." + ast.getIdent().getSym();
-        builderStore.setBuilder(builderStore.getBuilder().name(className));
+        memo.setBuilder(memo.getBuilder().name(className));
         clazz.compile();
     }
 

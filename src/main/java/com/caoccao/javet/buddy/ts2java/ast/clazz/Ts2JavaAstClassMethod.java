@@ -16,9 +16,10 @@
 
 package com.caoccao.javet.buddy.ts2java.ast.clazz;
 
-import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAstWithBuilderStore;
-import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaDynamicTypeBuilderStore;
+import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAst;
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstClassMember;
+import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoDynamicType;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstClassMethod;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstAccessibility;
@@ -28,12 +29,12 @@ import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 
 public class Ts2JavaAstClassMethod
-        extends BaseTs2JavaAstWithBuilderStore<Swc4jAstClassMethod>
-        implements ITs2JavaAstClassMember<Swc4jAstClassMethod> {
+        extends BaseTs2JavaAst<Swc4jAstClassMethod, Ts2JavaMemoDynamicType>
+        implements ITs2JavaAstClassMember<Swc4jAstClassMethod, Ts2JavaMemoDynamicType> {
     protected final Ts2JavaAstFunction function;
 
-    public Ts2JavaAstClassMethod(Ts2JavaDynamicTypeBuilderStore builderStore, Swc4jAstClassMethod ast) {
-        super(builderStore, ast);
+    public Ts2JavaAstClassMethod(ITs2JavaAst<?, ?> parent, Swc4jAstClassMethod ast, Ts2JavaMemoDynamicType memo) {
+        super(parent, ast, memo);
         if (ast.isStatic()) {
             throw new Ts2JavaAstException(
                     ast,
@@ -55,7 +56,7 @@ public class Ts2JavaAstClassMethod
         String name = ast.getKey().as(Swc4jAstIdentName.class).getSym();
         boolean _static = ast.isStatic();
         Swc4jAstAccessibility accessibility = ast.getAccessibility().orElse(Swc4jAstAccessibility.Public);
-        function = new Ts2JavaAstFunction(builderStore, ast.getFunction(), name, _static, accessibility);
+        function = new Ts2JavaAstFunction(this, ast.getFunction(), memo, name, _static, accessibility);
     }
 
     @Override

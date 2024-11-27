@@ -16,9 +16,10 @@
 
 package com.caoccao.javet.buddy.ts2java.ast.clazz;
 
-import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAstWithBuilderStore;
-import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaDynamicTypeBuilderStore;
+import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAst;
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstClassMember;
+import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoDynamicType;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstClass;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstClassMethod;
@@ -30,16 +31,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Ts2JavaAstClass
-        extends BaseTs2JavaAstWithBuilderStore<Swc4jAstClass> {
-    protected final List<ITs2JavaAstClassMember<?>> body;
+        extends BaseTs2JavaAst<Swc4jAstClass, Ts2JavaMemoDynamicType> {
+    protected final List<ITs2JavaAstClassMember<?, ?>> body;
 
-    public Ts2JavaAstClass(Ts2JavaDynamicTypeBuilderStore builderStore, Swc4jAstClass ast) {
-        super(builderStore, ast);
+    public Ts2JavaAstClass(ITs2JavaAst<?, ?> parent, Swc4jAstClass ast, Ts2JavaMemoDynamicType memo) {
+        super(parent, ast, memo);
         body = new ArrayList<>();
         for (ISwc4jAstClassMember classMember : ast.getBody()) {
             switch (classMember.getType()) {
                 case ClassMethod:
-                    body.add(new Ts2JavaAstClassMethod(builderStore, classMember.as(Swc4jAstClassMethod.class)));
+                    body.add(new Ts2JavaAstClassMethod(this, classMember.as(Swc4jAstClassMethod.class), memo));
                     break;
                 default:
                     throw new Ts2JavaAstException(
@@ -55,7 +56,7 @@ public class Ts2JavaAstClass
         body.forEach(ITs2JavaAstClassMember::compile);
     }
 
-    public List<ITs2JavaAstClassMember<?>> getBody() {
+    public List<ITs2JavaAstClassMember<?, ?>> getBody() {
         return body;
     }
 }

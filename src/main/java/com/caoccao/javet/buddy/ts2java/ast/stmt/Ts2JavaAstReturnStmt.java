@@ -17,19 +17,18 @@
 package com.caoccao.javet.buddy.ts2java.ast.stmt;
 
 import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAst;
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstStmt;
-import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
+import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstReturnStmt;
 
-import java.util.Optional;
-
 public class Ts2JavaAstReturnStmt
-        extends BaseTs2JavaAst<Swc4jAstReturnStmt>
-        implements ITs2JavaAstStmt<Swc4jAstReturnStmt> {
+        extends BaseTs2JavaAst<Swc4jAstReturnStmt, Ts2JavaMemoFunction>
+        implements ITs2JavaAstStmt<Swc4jAstReturnStmt, Ts2JavaMemoFunction> {
     // TODO
 
-    public Ts2JavaAstReturnStmt(Swc4jAstReturnStmt ast) {
-        super(ast);
+    public Ts2JavaAstReturnStmt(ITs2JavaAst<?, ?> parent, Swc4jAstReturnStmt ast, Ts2JavaMemoFunction memo) {
+        super(parent, ast, memo);
     }
 
     @Override

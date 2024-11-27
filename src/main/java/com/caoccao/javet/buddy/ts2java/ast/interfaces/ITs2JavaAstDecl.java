@@ -16,9 +16,10 @@
 
 package com.caoccao.javet.buddy.ts2java.ast.interfaces;
 
+import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoDynamicType;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstDecl;
 
-public interface ITs2JavaAstDecl<AST extends ISwc4jAstDecl>
-        extends ITs2JavaAstStmt<AST> {
+public interface ITs2JavaAstDecl<AST extends ISwc4jAstDecl, Memo extends Ts2JavaMemoDynamicType>
+        extends ITs2JavaAstStmt<AST, Memo> {
 
 }

@@ -14,24 +14,7 @@
  * limitations under the License.
  */
 
-package com.caoccao.javet.buddy.ts2java.ast;
+package com.caoccao.javet.buddy.ts2java.ast.memo;
 
-import net.bytebuddy.dynamic.DynamicType;
-
-import java.util.Objects;
-
-public final class Ts2JavaDynamicTypeBuilderStore {
-    private DynamicType.Builder<?> builder;
-
-    public Ts2JavaDynamicTypeBuilderStore(DynamicType.Builder<?> builder) {
-        setBuilder(builder);
-    }
-
-    public DynamicType.Builder<?> getBuilder() {
-        return builder;
-    }
-
-    public void setBuilder(DynamicType.Builder<?> builder) {
-        this.builder = Objects.requireNonNull(builder);
-    }
+public abstract class Ts2JavaMemo {
 }

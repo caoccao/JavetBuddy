@@ -16,8 +16,9 @@
 
 package com.caoccao.javet.buddy.ts2java.ast.interfaces;
 
+import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemo;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstStmt;
 
-public interface ITs2JavaAstStmt<AST extends ISwc4jAstStmt>
-        extends ITs2JavaAstModuleItem<AST> {
+public interface ITs2JavaAstStmt<AST extends ISwc4jAstStmt, Memo extends Ts2JavaMemo>
+        extends ITs2JavaAstModuleItem<AST, Memo> {
 }

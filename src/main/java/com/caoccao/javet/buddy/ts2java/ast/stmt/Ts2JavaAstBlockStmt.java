@@ -17,8 +17,10 @@
 package com.caoccao.javet.buddy.ts2java.ast.stmt;
 
 import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAst;
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstBlockStmtOrExpr;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstStmt;
+import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstStmt;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstBlockStmt;
@@ -30,12 +32,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Ts2JavaAstBlockStmt
-        extends BaseTs2JavaAst<Swc4jAstBlockStmt>
-        implements ITs2JavaAstStmt<Swc4jAstBlockStmt>, ITs2JavaAstBlockStmtOrExpr<Swc4jAstBlockStmt> {
-    protected final List<ITs2JavaAstStmt<?>> stmts;
+        extends BaseTs2JavaAst<Swc4jAstBlockStmt, Ts2JavaMemoFunction>
+        implements ITs2JavaAstStmt<Swc4jAstBlockStmt, Ts2JavaMemoFunction>,
+        ITs2JavaAstBlockStmtOrExpr<Swc4jAstBlockStmt, Ts2JavaMemoFunction> {
+    protected final List<ITs2JavaAstStmt<?, ?>> stmts;
 
-    public Ts2JavaAstBlockStmt(Swc4jAstBlockStmt ast) {
-        super(ast);
+    public Ts2JavaAstBlockStmt(ITs2JavaAst<?, ?> parent, Swc4jAstBlockStmt ast, Ts2JavaMemoFunction memo) {
+        super(parent, ast, memo);
         stmts = new ArrayList<>();
         for (ISwc4jAstStmt stmt : ast.getStmts()) {
             switch (stmt.getType()) {
@@ -43,7 +46,7 @@ public class Ts2JavaAstBlockStmt
                     // TODO
                     break;
                 case ReturnStmt:
-                    stmts.add(new Ts2JavaAstReturnStmt(stmt.as(Swc4jAstReturnStmt.class)));
+                    stmts.add(new Ts2JavaAstReturnStmt(this, stmt.as(Swc4jAstReturnStmt.class), memo));
                     break;
                 default:
                     throw new Ts2JavaAstException(
