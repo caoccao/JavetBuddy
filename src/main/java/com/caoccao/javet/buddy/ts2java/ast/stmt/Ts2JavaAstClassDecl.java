@@ -22,8 +22,6 @@ import com.caoccao.javet.buddy.ts2java.ast.clazz.Ts2JavaAstClass;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstDecl;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstClassDecl;
 import com.caoccao.javet.utils.StringUtils;
-import net.bytebuddy.implementation.Implementation;
-import net.bytebuddy.jar.asm.MethodVisitor;
 
 public class Ts2JavaAstClassDecl
         extends BaseTs2JavaAstWithBuilderStore<Swc4jAstClassDecl>
@@ -38,11 +36,6 @@ public class Ts2JavaAstClassDecl
         super(builderStore, ast);
         clazz = new Ts2JavaAstClass(builderStore, ast.getClazz());
         this.packageName = packageName;
-    }
-
-    @Override
-    public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
-        return null;
     }
 
     @Override

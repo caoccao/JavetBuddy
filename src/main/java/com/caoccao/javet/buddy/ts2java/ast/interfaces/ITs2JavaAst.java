@@ -16,17 +16,26 @@
 
 package com.caoccao.javet.buddy.ts2java.ast.interfaces;
 
-import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaDynamicTypeBuilderStore;
+import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAst;
+import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
+import com.caoccao.javet.utils.SimpleMap;
+import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
+import net.bytebuddy.jar.asm.MethodVisitor;
 
 public interface ITs2JavaAst<AST extends ISwc4jAst>
         extends StackManipulation {
+    @Override
+    default Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
+        throw new Ts2JavaException(
+                SimpleFreeMarkerFormat.format("${type} is not supported.",
+                        SimpleMap.of("type", getClass().getSimpleName())));
+    }
+
     void compile();
 
     AST getAst();
-
-    Ts2JavaDynamicTypeBuilderStore getBuilderStore();
 
     @Override
     default boolean isValid() {

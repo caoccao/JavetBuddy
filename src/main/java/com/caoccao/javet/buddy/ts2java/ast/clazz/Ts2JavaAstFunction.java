@@ -18,15 +18,17 @@ package com.caoccao.javet.buddy.ts2java.ast.clazz;
 
 import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAstWithBuilderStore;
 import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaDynamicTypeBuilderStore;
+import com.caoccao.javet.buddy.ts2java.ast.stmt.Ts2JavaAstBlockStmt;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstFunction;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstAccessibility;
-import net.bytebuddy.implementation.Implementation;
-import net.bytebuddy.jar.asm.MethodVisitor;
+
+import java.util.Optional;
 
 public class Ts2JavaAstFunction
         extends BaseTs2JavaAstWithBuilderStore<Swc4jAstFunction> {
     protected final boolean _static;
     protected final Swc4jAstAccessibility accessibility;
+    protected final Optional<Ts2JavaAstBlockStmt> body;
     protected final String name;
 
     public Ts2JavaAstFunction(
@@ -39,11 +41,7 @@ public class Ts2JavaAstFunction
         this._static = _static;
         this.accessibility = accessibility;
         this.name = name;
-    }
-
-    @Override
-    public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
-        return null;
+        body = ast.getBody().map(Ts2JavaAstBlockStmt::new);
     }
 
     @Override
@@ -53,6 +51,10 @@ public class Ts2JavaAstFunction
 
     public Swc4jAstAccessibility getAccessibility() {
         return accessibility;
+    }
+
+    public Optional<Ts2JavaAstBlockStmt> getBody() {
+        return body;
     }
 
     public String getName() {

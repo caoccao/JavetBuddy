@@ -25,8 +25,6 @@ import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstClassMethod;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstClassMember;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
-import net.bytebuddy.implementation.Implementation;
-import net.bytebuddy.jar.asm.MethodVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,11 +48,6 @@ public class Ts2JavaAstClass
                                     SimpleMap.of("type", classMember.getType().name())));
             }
         }
-    }
-
-    @Override
-    public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
-        return null;
     }
 
     @Override
