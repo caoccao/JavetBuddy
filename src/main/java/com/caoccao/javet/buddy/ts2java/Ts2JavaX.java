@@ -95,14 +95,16 @@ public class Ts2JavaX {
         for (Swc4jAstClassDecl classDecl : classDecls) {
             DynamicType.Builder<?> builder = new ByteBuddy()
                     .subclass(Object.class, ConstructorStrategy.Default.DEFAULT_CONSTRUCTOR);
-            Ts2JavaMemoDynamicType memo = new Ts2JavaMemoDynamicType(builder);
-            Ts2JavaAstClassDecl ast = new Ts2JavaAstClassDecl(null, classDecl, memo, getPackageName());
-            ast.compile();
+            Ts2JavaAstClassDecl ts2JavaAstClassDecl = new Ts2JavaAstClassDecl(
+                    null,
+                    classDecl,
+                    new Ts2JavaMemoDynamicType(builder),
+                    getPackageName());
+            ts2JavaAstClassDecl.compile();
             if (logging) {
-                JavaLoggingMethodVisitor methodVisitor = new JavaLoggingMethodVisitor(Opcodes.ASM9);
-                ast.apply(methodVisitor, null);
+                ts2JavaAstClassDecl.apply(new JavaLoggingMethodVisitor(Opcodes.ASM9), null);
             }
-            builder = memo.getBuilder();
+            builder = ts2JavaAstClassDecl.getMemo().getBuilder();
             try (DynamicType.Unloaded<?> unloadedType = builder.make()) {
                 classes.add(unloadedType.load(getClass().getClassLoader()).getLoaded());
             }
