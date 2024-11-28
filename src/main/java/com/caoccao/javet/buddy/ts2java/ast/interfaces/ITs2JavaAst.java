@@ -31,7 +31,7 @@ public interface ITs2JavaAst<AST extends ISwc4jAst, Memo extends Ts2JavaMemo>
     @Override
     default Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
         throw new Ts2JavaException(
-                SimpleFreeMarkerFormat.format("${type} is not supported.",
+                SimpleFreeMarkerFormat.format("${type}.apply() is not implemented.",
                         SimpleMap.of("type", getClass().getSimpleName())));
     }
 

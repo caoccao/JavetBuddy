@@ -30,10 +30,12 @@ import java.util.stream.Collectors;
 
 public class BaseTestTs2Java {
     protected void disableLogging() {
+        Ts2JavaX.disableLogging();
         Ts2JavaAstClassFunction.setMethodVisitor(null);
     }
 
     protected void enableLogging() {
+        Ts2JavaX.enableLogging();
         Ts2JavaAstClassFunction.setMethodVisitor(new JavaLoggingMethodVisitor(Opcodes.ASM9));
     }
 

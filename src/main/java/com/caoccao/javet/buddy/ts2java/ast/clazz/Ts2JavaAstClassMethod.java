@@ -27,6 +27,8 @@ import com.caoccao.javet.swc4j.ast.enums.Swc4jAstMethodKind;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdentName;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
+import net.bytebuddy.implementation.Implementation;
+import net.bytebuddy.jar.asm.MethodVisitor;
 
 public class Ts2JavaAstClassMethod
         extends BaseTs2JavaAst<Swc4jAstClassMethod, Ts2JavaMemoDynamicType>
@@ -57,6 +59,11 @@ public class Ts2JavaAstClassMethod
         boolean _static = ast.isStatic();
         Swc4jAstAccessibility accessibility = ast.getAccessibility().orElse(Swc4jAstAccessibility.Public);
         function = new Ts2JavaAstFunction(this, ast.getFunction(), memo, name, _static, accessibility);
+    }
+
+    @Override
+    public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
+        return function.apply(methodVisitor, context);
     }
 
     @Override

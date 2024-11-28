@@ -23,6 +23,8 @@ import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstDecl;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoDynamicType;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstClassDecl;
 import com.caoccao.javet.utils.StringUtils;
+import net.bytebuddy.implementation.Implementation;
+import net.bytebuddy.jar.asm.MethodVisitor;
 
 public class Ts2JavaAstClassDecl
         extends BaseTs2JavaAst<Swc4jAstClassDecl, Ts2JavaMemoDynamicType>
@@ -38,6 +40,11 @@ public class Ts2JavaAstClassDecl
         super(parent, ast, memo);
         clazz = new Ts2JavaAstClass(this, ast.getClazz(), memo);
         this.packageName = packageName;
+    }
+
+    @Override
+    public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
+        return clazz.apply(methodVisitor, context);
     }
 
     @Override
