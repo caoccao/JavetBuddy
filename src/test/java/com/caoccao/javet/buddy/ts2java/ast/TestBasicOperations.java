@@ -18,6 +18,7 @@ package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.buddy.ts2java.BaseTestTs2Java;
 import com.caoccao.javet.buddy.ts2java.TsClass;
+import com.caoccao.javet.buddy.ts2java.TsClassX;
 import com.caoccao.javet.buddy.ts2java.TsMethodArgument;
 import org.junit.jupiter.api.Test;
 
@@ -227,6 +228,14 @@ public class TestBasicOperations extends BaseTestTs2Java {
                 TsMethodArgument.of("a", int.class),
                 TsMethodArgument.of("b", int.class));
         assertEquals(3 * 2, tsClass.invoke(3, 2));
+    }
+
+    @Test
+    public void testNumber() throws Exception {
+        TsClassX tsClass = new TsClassX(
+                "return 1;",
+                int.class);
+        assertEquals(1, tsClass.invoke());
     }
 
     @Test

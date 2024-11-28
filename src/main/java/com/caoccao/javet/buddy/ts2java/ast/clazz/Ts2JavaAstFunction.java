@@ -17,18 +17,26 @@
 package com.caoccao.javet.buddy.ts2java.ast.clazz;
 
 import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAst;
+import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaAstAccessibility;
+import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaAstParam;
+import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaAstTsTypeAnn;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoDynamicType;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.buddy.ts2java.ast.stmt.Ts2JavaAstBlockStmt;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstFunction;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstAccessibility;
+import net.bytebuddy.description.modifier.Visibility;
+import net.bytebuddy.description.type.TypeDescription;
+import net.bytebuddy.description.type.TypeList;
+import net.bytebuddy.implementation.Implementation;
+import net.bytebuddy.implementation.bytecode.StackManipulation;
+import net.bytebuddy.jar.asm.MethodVisitor;
 
 import java.util.Optional;
 
 public class Ts2JavaAstFunction
         extends BaseTs2JavaAst<Swc4jAstFunction, Ts2JavaMemoDynamicType> {
-    protected final boolean _static;
     protected final Swc4jAstAccessibility accessibility;
     protected final Optional<Ts2JavaAstBlockStmt> body;
     protected final Ts2JavaMemoFunction memoFunction;
@@ -42,16 +50,40 @@ public class Ts2JavaAstFunction
             boolean _static,
             Swc4jAstAccessibility accessibility) {
         super(parent, ast, memo);
-        this._static = _static;
         this.accessibility = accessibility;
-        memoFunction = new Ts2JavaMemoFunction();
+        memoFunction = new Ts2JavaMemoFunction()
+                .setStatic(_static);
         this.name = name;
         body = ast.getBody().map(stmt -> new Ts2JavaAstBlockStmt(this, stmt, memoFunction));
     }
 
     @Override
-    public void compile() {
+    public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
+        if (body.isPresent()) {
+            return body.get().apply(methodVisitor, context);
+        }
+        return Size.ZERO;
+    }
 
+    @Override
+    public void compile() {
+        final Visibility visibility = Ts2JavaAstAccessibility.getVisibility(accessibility);
+        final TypeDescription returnType = ast.getReturnType()
+                .map(Ts2JavaAstTsTypeAnn::getTypeDescription)
+                .orElse(TypeDescription.ForLoadedType.of(void.class));
+        memoFunction.setReturnType(returnType);
+        ast.getParams().stream()
+                .map(Ts2JavaAstParam::getLocalVariable)
+                .forEach(memoFunction::addLocalVariable);
+        final TypeList parameters = memoFunction.getParameters();
+        final int initialOffset = memoFunction.getMaxOffset();
+        memoFunction.pushLexicalScope();
+        body.ifPresent(Ts2JavaAstBlockStmt::compile);
+        memo.setBuilder(memo.getBuilder().defineMethod(name, returnType, visibility)
+                .withParameters(parameters.toArray(new TypeDescription[0]))
+                .intercept(Implementation.Simple.of(
+                        (implementationTarget, instrumentedMethod) -> new StackManipulation.Simple(this::apply),
+                        memoFunction.getMaxOffset() - initialOffset)));
     }
 
     public Swc4jAstAccessibility getAccessibility() {
@@ -68,9 +100,5 @@ public class Ts2JavaAstFunction
 
     public String getName() {
         return name;
-    }
-
-    public boolean isStatic() {
-        return _static;
     }
 }

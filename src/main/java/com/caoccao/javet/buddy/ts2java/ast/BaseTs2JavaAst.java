@@ -18,7 +18,11 @@ package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemo;
+import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAst;
+import net.bytebuddy.description.type.TypeDescription;
+import net.bytebuddy.jar.asm.Label;
+import net.bytebuddy.jar.asm.MethodVisitor;
 
 import java.util.Objects;
 
@@ -27,11 +31,29 @@ public abstract class BaseTs2JavaAst<AST extends ISwc4jAst, Memo extends Ts2Java
     protected AST ast;
     protected Memo memo;
     protected ITs2JavaAst<?, ?> parent;
+    protected TypeDescription type;
 
     public BaseTs2JavaAst(ITs2JavaAst<?, ?> parent, AST ast, Memo memo) {
         this.ast = Objects.requireNonNull(ast);
         this.memo = Objects.requireNonNull(memo);
         this.parent = parent;
+        type = TypeDescription.ForLoadedType.of(void.class);
+    }
+
+    protected static Size mergeSize(Size... sizes) {
+        int sizeImpact = 0;
+        int maximalSize = 0;
+        for (Size size : sizes) {
+            sizeImpact += size.getSizeImpact();
+            maximalSize = Math.max(maximalSize, size.getMaximalSize());
+        }
+        return new Size(sizeImpact, maximalSize);
+    }
+
+    protected static Size mergeSize(Size leftSize, Size rightSize) {
+        return new Size(
+                leftSize.getSizeImpact() + rightSize.getSizeImpact(),
+                Math.max(leftSize.getMaximalSize(), rightSize.getMaximalSize()));
     }
 
     @Override
@@ -46,5 +68,23 @@ public abstract class BaseTs2JavaAst<AST extends ISwc4jAst, Memo extends Ts2Java
 
     public ITs2JavaAst<?, ?> getParent() {
         return parent;
+    }
+
+    @Override
+    public TypeDescription getType() {
+        return type;
+    }
+
+    protected void visitLineNumber(MethodVisitor methodVisitor) {
+        if (memo instanceof Ts2JavaMemoFunction) {
+            Ts2JavaMemoFunction memoFunction = (Ts2JavaMemoFunction) memo;
+            final int lineNumber = ast.getSpan().getLine();
+            if (memoFunction.getLineNumber() < lineNumber) {
+                Label label = new Label();
+                methodVisitor.visitLabel(label);
+                methodVisitor.visitLineNumber(lineNumber, label);
+                memoFunction.setLineNumber(lineNumber);
+            }
+        }
     }
 }

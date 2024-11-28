@@ -21,6 +21,7 @@ import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAst;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
+import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.jar.asm.MethodVisitor;
@@ -39,6 +40,8 @@ public interface ITs2JavaAst<AST extends ISwc4jAst, Memo extends Ts2JavaMemo>
     AST getAst();
 
     Memo getMemo();
+
+    TypeDescription getType();
 
     @Override
     default boolean isValid() {

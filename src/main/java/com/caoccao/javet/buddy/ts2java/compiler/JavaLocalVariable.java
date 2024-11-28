@@ -43,7 +43,7 @@ public final class JavaLocalVariable {
         return type;
     }
 
-    void setOffset(int offset) {
+    public void setOffset(int offset) {
         this.offset = offset;
     }
 }

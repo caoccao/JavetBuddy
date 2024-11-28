@@ -16,7 +16,8 @@
 
 package com.caoccao.javet.buddy.ts2java;
 
-import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaAstClassDecl;
+import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoDynamicType;
+import com.caoccao.javet.buddy.ts2java.ast.stmt.Ts2JavaAstClassDecl;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
 import com.caoccao.javet.swc4j.Swc4j;
 import com.caoccao.javet.swc4j.ast.program.Swc4jAstModule;
@@ -35,7 +36,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class Ts2Java {
+public class Ts2JavaX {
     protected final static Swc4j swc4j = new Swc4j();
     protected final static Swc4jParseOptions swc4jParseOptions = new Swc4jParseOptions()
             .setMediaType(Swc4jMediaType.TypeScript)
@@ -45,7 +46,7 @@ public class Ts2Java {
     protected final String tsCode;
     protected List<Class<?>> classes;
 
-    public Ts2Java(String packageName, String tsCode) {
+    public Ts2JavaX(String packageName, String tsCode) {
         classes = new ArrayList<>();
         this.packageName = packageName;
         this.tsCode = Objects.requireNonNull(tsCode);
@@ -83,7 +84,10 @@ public class Ts2Java {
         for (Swc4jAstClassDecl classDecl : classDecls) {
             DynamicType.Builder<?> builder = new ByteBuddy()
                     .subclass(Object.class, ConstructorStrategy.Default.DEFAULT_CONSTRUCTOR);
-            builder = new Ts2JavaAstClassDecl(getPackageName()).transpile(builder, classDecl);
+            Ts2JavaMemoDynamicType memo = new Ts2JavaMemoDynamicType(builder);
+            Ts2JavaAstClassDecl ast = new Ts2JavaAstClassDecl(null, classDecl, memo, getPackageName());
+            ast.compile();
+            builder = memo.getBuilder();
             try (DynamicType.Unloaded<?> unloadedType = builder.make()) {
                 classes.add(unloadedType.load(getClass().getClassLoader()).getLoaded());
             }

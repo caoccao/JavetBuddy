@@ -27,6 +27,8 @@ import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstBlockStmt;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstReturnStmt;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
+import net.bytebuddy.implementation.Implementation;
+import net.bytebuddy.jar.asm.MethodVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +63,15 @@ public class Ts2JavaAstBlockStmt
     }
 
     @Override
+    public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
+        return stmts.stream()
+                .map((stmt) -> stmt.apply(methodVisitor, context))
+                .reduce(BaseTs2JavaAst::mergeSize)
+                .orElse(Size.ZERO);
+    }
+
+    @Override
     public void compile() {
+        stmts.forEach(ITs2JavaAstStmt::compile);
     }
 }
