@@ -37,7 +37,10 @@ public class Ts2JavaAstBlockStmt
         ITs2JavaAstBlockStmtOrExpr<Swc4jAstBlockStmt, Ts2JavaMemoFunction> {
     protected final List<ITs2JavaAstStmt<?, ?>> stmts;
 
-    public Ts2JavaAstBlockStmt(ITs2JavaAst<?, ?> parent, Swc4jAstBlockStmt ast, Ts2JavaMemoFunction memo) {
+    public Ts2JavaAstBlockStmt(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstBlockStmt ast,
+            Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
         stmts = new ArrayList<>();
         for (ISwc4jAstStmt stmt : ast.getStmts()) {
