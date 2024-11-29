@@ -42,10 +42,12 @@ public class Ts2JavaAstUnaryExpr
     public Ts2JavaAstUnaryExpr(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstUnaryExpr ast,
+            TypeDescription type,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        arg = ITs2JavaAstExpr.cast(this, ast.getArg(), memo);
+        arg = ITs2JavaAstExpr.cast(this, ast.getArg(), type, memo);
         op = ast.getOp();
+        this.type = type;
     }
 
     @Override
@@ -55,13 +57,13 @@ public class Ts2JavaAstUnaryExpr
         switch (op) {
             case Bang:
                 if (!(arg instanceof ITs2JavaBangFlippable)) {
-                    final int opcode = getOpcodeNegative(arg.getType());
+                    final int opcode = getOpcodeNegative();
                     methodVisitor.visitInsn(opcode);
                 }
                 break;
             case Minus: {
                 if (!(arg instanceof ITs2JavaMinusFlippable)) {
-                    final int opcode = getOpcodeNegative(arg.getType());
+                    final int opcode = getOpcodeNegative();
                     methodVisitor.visitInsn(opcode);
                 }
                 break;
@@ -125,29 +127,24 @@ public class Ts2JavaAstUnaryExpr
         return op;
     }
 
-    protected int getOpcodeNegative(TypeDescription type) {
-        if (type.represents(int.class)
-                || type.represents(byte.class)
-                || type.represents(char.class)
-                || type.represents(boolean.class)
-                || type.represents(short.class)) {
+    protected int getOpcodeNegative() {
+        if (arg.getType().represents(int.class)
+                || arg.getType().represents(byte.class)
+                || arg.getType().represents(char.class)
+                || arg.getType().represents(boolean.class)
+                || arg.getType().represents(short.class)) {
             return Opcodes.INEG;
-        } else if (type.represents(long.class)) {
+        } else if (arg.getType().represents(long.class)) {
             return Opcodes.LNEG;
-        } else if (type.represents(float.class)) {
+        } else if (arg.getType().represents(float.class)) {
             return Opcodes.FNEG;
-        } else if (type.represents(double.class)) {
+        } else if (arg.getType().represents(double.class)) {
             return Opcodes.DNEG;
         } else {
             throw new Ts2JavaAstException(
-                    ast,
+                    ast.getArg(),
                     SimpleFreeMarkerFormat.format("Minus cannot be applied to type ${type}.",
-                            SimpleMap.of("type", type.getName())));
+                            SimpleMap.of("type", arg.getType().getName())));
         }
-    }
-
-    @Override
-    public TypeDescription getType() {
-        return arg.getType();
     }
 }

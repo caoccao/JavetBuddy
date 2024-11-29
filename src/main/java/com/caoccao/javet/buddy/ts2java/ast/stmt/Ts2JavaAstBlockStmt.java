@@ -48,7 +48,7 @@ public class Ts2JavaAstBlockStmt
     public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
         return stmts.stream()
                 .map((stmt) -> stmt.apply(methodVisitor, context))
-                .reduce(BaseTs2JavaAst::mergeSize)
+                .reduce(BaseTs2JavaAst::aggregateSize)
                 .orElse(Size.ZERO);
     }
 

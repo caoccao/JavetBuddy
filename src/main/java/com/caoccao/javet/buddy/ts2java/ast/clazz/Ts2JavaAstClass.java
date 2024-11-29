@@ -42,7 +42,7 @@ public class Ts2JavaAstClass
     public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
         return body.stream()
                 .map((classMember) -> classMember.apply(methodVisitor, context))
-                .reduce(BaseTs2JavaAst::mergeSize)
+                .reduce(BaseTs2JavaAst::aggregateSize)
                 .orElse(Size.ZERO);
     }
 

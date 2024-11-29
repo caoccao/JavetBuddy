@@ -29,6 +29,12 @@ import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 public class BaseTestTs2Java {
+    protected TsClassX tsClass;
+
+    public BaseTestTs2Java() {
+        tsClass = null;
+    }
+
     protected void disableLogging() {
         Ts2JavaX.disableLogging();
         Ts2JavaAstClassFunction.setMethodVisitor(null);

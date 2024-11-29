@@ -22,7 +22,10 @@ import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstLit;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstTsLit;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities.ITs2JavaBangFlippable;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
+import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.expr.lit.Swc4jAstBool;
+import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
+import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
@@ -38,10 +41,17 @@ public class Ts2JavaAstBool
     public Ts2JavaAstBool(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstBool ast,
+            TypeDescription type,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
+        if (!type.represents(boolean.class)) {
+            throw new Ts2JavaAstException(
+                    ast,
+                    SimpleFreeMarkerFormat.format("Bool type ${type} is not supported.",
+                            SimpleMap.of("type", type.getName())));
+        }
         value = ast.isValue();
-        type = TypeDescription.ForLoadedType.of(boolean.class);
+        this.type = TypeDescription.ForLoadedType.of(boolean.class);
     }
 
     @Override

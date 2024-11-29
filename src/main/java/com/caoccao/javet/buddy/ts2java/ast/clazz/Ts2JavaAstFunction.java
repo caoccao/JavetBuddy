@@ -51,8 +51,12 @@ public class Ts2JavaAstFunction
             Swc4jAstAccessibility accessibility) {
         super(parent, ast, memo);
         this.accessibility = accessibility;
+        type = ast.getReturnType()
+                .map(Ts2JavaAstTsTypeAnn::getTypeDescription)
+                .orElse(TypeDescription.ForLoadedType.of(void.class));
         memoFunction = new Ts2JavaMemoFunction()
-                .setStatic(_static);
+                .setStatic(_static)
+                .setReturnType(type);
         this.name = name;
         body = ast.getBody().map(stmt -> new Ts2JavaAstBlockStmt(this, stmt, memoFunction));
     }
@@ -68,10 +72,6 @@ public class Ts2JavaAstFunction
     @Override
     public void compile() {
         final Visibility visibility = Ts2JavaAstAccessibility.getVisibility(accessibility);
-        final TypeDescription returnType = ast.getReturnType()
-                .map(Ts2JavaAstTsTypeAnn::getTypeDescription)
-                .orElse(TypeDescription.ForLoadedType.of(void.class));
-        memoFunction.setReturnType(returnType);
         ast.getParams().stream()
                 .map(Ts2JavaAstParam::getLocalVariable)
                 .forEach(memoFunction::addLocalVariable);
@@ -79,7 +79,7 @@ public class Ts2JavaAstFunction
         final int initialOffset = memoFunction.getMaxOffset();
         memoFunction.pushLexicalScope();
         body.ifPresent(Ts2JavaAstBlockStmt::compile);
-        memo.setBuilder(memo.getBuilder().defineMethod(name, returnType, visibility)
+        memo.setBuilder(memo.getBuilder().defineMethod(name, type, visibility)
                 .withParameters(parameters.toArray(new TypeDescription[0]))
                 .intercept(Implementation.Simple.of(
                         (implementationTarget, instrumentedMethod) -> new StackManipulation.Simple(this::apply),

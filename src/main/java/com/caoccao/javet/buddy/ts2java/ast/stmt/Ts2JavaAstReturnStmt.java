@@ -40,7 +40,8 @@ public class Ts2JavaAstReturnStmt
             Swc4jAstReturnStmt ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        arg = ast.getArg().map(arg -> ITs2JavaAstExpr.cast(this, arg, memo));
+        type = memo.getReturnType();
+        arg = ast.getArg().map(arg -> ITs2JavaAstExpr.cast(this, arg, type, memo));
     }
 
     @Override
@@ -53,7 +54,7 @@ public class Ts2JavaAstReturnStmt
                     .map(stackManipulation -> stackManipulation.apply(methodVisitor, context))
                     .orElse(Size.ZERO);
             Size sizeReturn = MethodReturn.of(memo.getReturnType()).apply(methodVisitor, context);
-            return mergeSize(sizeArg, sizeCast, sizeReturn);
+            return aggregateSize(sizeArg, sizeCast, sizeReturn);
         }
         return Size.ZERO;
     }

@@ -19,8 +19,10 @@ package com.caoccao.javet.buddy.ts2java.ast.expr;
 import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.*;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
+import com.caoccao.javet.buddy.ts2java.compiler.JavaClassCast;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLocalVariable;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
+import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
@@ -44,10 +46,12 @@ public class Ts2JavaAstIdent
     public Ts2JavaAstIdent(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstIdent ast,
+            TypeDescription type,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
         optional = ast.isOptional();
         sym = ast.getSym();
+        this.type = type;
     }
 
     @Override
@@ -56,7 +60,11 @@ public class Ts2JavaAstIdent
         JavaLocalVariable localVariable = memo.getLocalVariable(sym);
         MethodVariableAccess methodVariableAccess = MethodVariableAccess.of(localVariable.getType());
         StackManipulation stackManipulation = methodVariableAccess.loadFrom(localVariable.getOffset());
-        return stackManipulation.apply(methodVisitor, context);
+        Size size = stackManipulation.apply(methodVisitor, context);
+        Size sizeCast = JavaClassCast.getUpCastStackManipulation(localVariable.getType(), type)
+                .map(s -> s.apply(methodVisitor, context))
+                .orElse(Size.ZERO);
+        return aggregateSize(size, sizeCast);
     }
 
     @Override

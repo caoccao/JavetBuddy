@@ -35,7 +35,10 @@ public class Ts2JavaAstClassMethod
         implements ITs2JavaAstClassMember<Swc4jAstClassMethod, Ts2JavaMemoDynamicType> {
     protected final Ts2JavaAstFunction function;
 
-    public Ts2JavaAstClassMethod(ITs2JavaAst<?, ?> parent, Swc4jAstClassMethod ast, Ts2JavaMemoDynamicType memo) {
+    public Ts2JavaAstClassMethod(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstClassMethod ast,
+            Ts2JavaMemoDynamicType memo) {
         super(parent, ast, memo);
         if (ast.isStatic()) {
             throw new Ts2JavaAstException(

@@ -31,6 +31,7 @@ import com.caoccao.javet.swc4j.ast.expr.lit.Swc4jAstNumber;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
+import net.bytebuddy.description.type.TypeDescription;
 
 public interface ITs2JavaAstExpr<AST extends ISwc4jAstExpr, Memo extends Ts2JavaMemo>
         extends ITs2JavaAstVarDeclOrExpr<AST, Memo>, ITs2JavaAstPat<AST, Memo>, ITs2JavaAstJsxExpr<AST, Memo>,
@@ -38,18 +39,19 @@ public interface ITs2JavaAstExpr<AST extends ISwc4jAstExpr, Memo extends Ts2Java
     static ITs2JavaAstExpr<?, ?> cast(
             ITs2JavaAst<?, ?> parent,
             ISwc4jAstExpr ast,
+            TypeDescription type,
             Ts2JavaMemoFunction memo) {
         switch (ast.getType()) {
             case Bool:
-                return new Ts2JavaAstBool(parent, ast.as(Swc4jAstBool.class), memo);
+                return new Ts2JavaAstBool(parent, ast.as(Swc4jAstBool.class), type, memo);
             case Ident:
-                return new Ts2JavaAstIdent(parent, ast.as(Swc4jAstIdent.class), memo);
+                return new Ts2JavaAstIdent(parent, ast.as(Swc4jAstIdent.class), type, memo);
             case Number:
-                return new Ts2JavaAstNumber(parent, ast.as(Swc4jAstNumber.class), null, memo);
+                return new Ts2JavaAstNumber(parent, ast.as(Swc4jAstNumber.class), type, memo);
             case ParenExpr:
-                return cast(parent, ast.as(Swc4jAstParenExpr.class).unParenExpr(), memo);
+                return cast(parent, ast.as(Swc4jAstParenExpr.class).unParenExpr(), type, memo);
             case UnaryExpr:
-                return new Ts2JavaAstUnaryExpr(parent, ast.as(Swc4jAstUnaryExpr.class), memo);
+                return new Ts2JavaAstUnaryExpr(parent, ast.as(Swc4jAstUnaryExpr.class), type, memo);
             case BinExpr:
             default:
                 throw new Ts2JavaAstException(

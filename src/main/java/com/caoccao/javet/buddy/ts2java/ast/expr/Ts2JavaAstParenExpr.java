@@ -35,9 +35,11 @@ public class Ts2JavaAstParenExpr
     public Ts2JavaAstParenExpr(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstParenExpr ast,
+            TypeDescription type,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        expr = ITs2JavaAstExpr.cast(this, ast.getExpr(), memo);
+        expr = ITs2JavaAstExpr.cast(this, ast.getExpr(), type, memo);
+        this.type = type;
     }
 
     @Override

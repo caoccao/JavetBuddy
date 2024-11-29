@@ -40,7 +40,7 @@ public abstract class BaseTs2JavaAst<AST extends ISwc4jAst, Memo extends Ts2Java
         type = TypeDescription.ForLoadedType.of(void.class);
     }
 
-    protected static Size mergeSize(Size... sizes) {
+    protected static Size aggregateSize(Size... sizes) {
         int sizeImpact = 0;
         int maximalSize = 0;
         for (Size size : sizes) {
@@ -50,10 +50,8 @@ public abstract class BaseTs2JavaAst<AST extends ISwc4jAst, Memo extends Ts2Java
         return new Size(sizeImpact, maximalSize);
     }
 
-    protected static Size mergeSize(Size leftSize, Size rightSize) {
-        return new Size(
-                leftSize.getSizeImpact() + rightSize.getSizeImpact(),
-                Math.max(leftSize.getMaximalSize(), rightSize.getMaximalSize()));
+    protected static Size aggregateSize(Size leftSize, Size rightSize) {
+        return leftSize.aggregate(rightSize);
     }
 
     @Override
