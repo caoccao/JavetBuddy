@@ -20,17 +20,12 @@ import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstClassMember;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoDynamicType;
-import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstClass;
-import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstClassMethod;
-import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstClassMember;
-import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
-import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Ts2JavaAstClass
         extends BaseTs2JavaAst<Swc4jAstClass, Ts2JavaMemoDynamicType> {
@@ -38,19 +33,9 @@ public class Ts2JavaAstClass
 
     public Ts2JavaAstClass(ITs2JavaAst<?, ?> parent, Swc4jAstClass ast, Ts2JavaMemoDynamicType memo) {
         super(parent, ast, memo);
-        body = new ArrayList<>();
-        for (ISwc4jAstClassMember classMember : ast.getBody()) {
-            switch (classMember.getType()) {
-                case ClassMethod:
-                    body.add(new Ts2JavaAstClassMethod(this, classMember.as(Swc4jAstClassMethod.class), memo));
-                    break;
-                default:
-                    throw new Ts2JavaAstException(
-                            classMember,
-                            SimpleFreeMarkerFormat.format("Class body type ${type} is not supported.",
-                                    SimpleMap.of("type", classMember.getType().name())));
-            }
-        }
+        body = ast.getBody().stream()
+                .map(classMember -> ITs2JavaAstClassMember.cast(this, classMember, memo))
+                .collect(Collectors.toList());
     }
 
     @Override

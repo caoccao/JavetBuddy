@@ -17,20 +17,12 @@
 package com.caoccao.javet.buddy.ts2java.ast.stmt;
 
 import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAst;
-import com.caoccao.javet.buddy.ts2java.ast.expr.Ts2JavaAstParenExpr;
-import com.caoccao.javet.buddy.ts2java.ast.expr.lit.Ts2JavaAstNumber;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstExpr;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstStmt;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaClassCast;
-import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
-import com.caoccao.javet.swc4j.ast.expr.Swc4jAstParenExpr;
-import com.caoccao.javet.swc4j.ast.expr.lit.Swc4jAstNumber;
-import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstReturnStmt;
-import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
-import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.member.MethodReturn;
@@ -48,35 +40,7 @@ public class Ts2JavaAstReturnStmt
             Swc4jAstReturnStmt ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        if (ast.getArg().isPresent()) {
-            ISwc4jAstExpr astExpr = ast.getArg().get();
-            ITs2JavaAstExpr<?, ?> arg = null;
-            switch (astExpr.getType()) {
-                case BinExpr:
-                    // TODO
-                    break;
-                case Number:
-                    arg = new Ts2JavaAstNumber(this, astExpr.as(Swc4jAstNumber.class), null, memo);
-                    break;
-                case Ident:
-                    // TODO
-                    break;
-                case ParenExpr:
-                    arg = new Ts2JavaAstParenExpr(this, astExpr.as(Swc4jAstParenExpr.class), memo);
-                    break;
-                case UnaryExpr:
-                    // TODO
-                    break;
-                default:
-                    throw new Ts2JavaAstException(
-                            astExpr,
-                            SimpleFreeMarkerFormat.format("ReturnStmt arg type ${argType} is not supported.",
-                                    SimpleMap.of("argType", astExpr.getType().name())));
-            }
-            this.arg = Optional.ofNullable(arg);
-        } else {
-            arg = Optional.empty();
-        }
+        arg = ast.getArg().map(arg -> ITs2JavaAstExpr.cast(this, arg, memo));
     }
 
     @Override

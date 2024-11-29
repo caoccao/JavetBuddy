@@ -16,10 +16,28 @@
 
 package com.caoccao.javet.buddy.ts2java.ast.interfaces;
 
+import com.caoccao.javet.buddy.ts2java.ast.clazz.Ts2JavaAstClassMethod;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoDynamicType;
+import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
+import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstClassMethod;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstClassMember;
+import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
+import com.caoccao.javet.utils.SimpleMap;
 
 public interface ITs2JavaAstClassMember<AST extends ISwc4jAstClassMember, Memo extends Ts2JavaMemoDynamicType>
         extends ITs2JavaAst<AST, Memo> {
-
+    static ITs2JavaAstClassMember<?, ?> cast(
+            ITs2JavaAst<?, ?> parent,
+            ISwc4jAstClassMember ast,
+            Ts2JavaMemoDynamicType memo) {
+        switch (ast.getType()) {
+            case ClassMethod:
+                return new Ts2JavaAstClassMethod(parent, ast.as(Swc4jAstClassMethod.class), memo);
+            default:
+                throw new Ts2JavaAstException(
+                        ast,
+                        SimpleFreeMarkerFormat.format("ClassMember type ${type} is not supported.",
+                                SimpleMap.of("type", ast.getType().name())));
+        }
+    }
 }

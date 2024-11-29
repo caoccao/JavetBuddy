@@ -17,8 +17,29 @@
 package com.caoccao.javet.buddy.ts2java.ast.interfaces;
 
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemo;
+import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
+import com.caoccao.javet.buddy.ts2java.ast.stmt.Ts2JavaAstReturnStmt;
+import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstStmt;
+import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstReturnStmt;
+import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
+import com.caoccao.javet.utils.SimpleMap;
 
 public interface ITs2JavaAstStmt<AST extends ISwc4jAstStmt, Memo extends Ts2JavaMemo>
         extends ITs2JavaAstModuleItem<AST, Memo> {
+    static ITs2JavaAstStmt<?, ?> cast(
+            ITs2JavaAst<?, ?> parent,
+            ISwc4jAstStmt ast,
+            Ts2JavaMemoFunction memo) {
+        switch (ast.getType()) {
+            case ReturnStmt:
+                return new Ts2JavaAstReturnStmt(parent, ast.as(Swc4jAstReturnStmt.class), memo);
+            case VarDecl:
+            default:
+                throw new Ts2JavaAstException(
+                        ast,
+                        SimpleFreeMarkerFormat.format("Stmt type ${type} is not supported.",
+                                SimpleMap.of("type", ast.getType().name())));
+        }
+    }
 }

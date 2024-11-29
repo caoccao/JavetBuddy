@@ -21,17 +21,12 @@ import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstBlockStmtOrExpr;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstStmt;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
-import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
-import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstStmt;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstBlockStmt;
-import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstReturnStmt;
-import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
-import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Ts2JavaAstBlockStmt
         extends BaseTs2JavaAst<Swc4jAstBlockStmt, Ts2JavaMemoFunction>
@@ -44,22 +39,9 @@ public class Ts2JavaAstBlockStmt
             Swc4jAstBlockStmt ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        stmts = new ArrayList<>();
-        for (ISwc4jAstStmt stmt : ast.getStmts()) {
-            switch (stmt.getType()) {
-                case VarDecl:
-                    // TODO
-                    break;
-                case ReturnStmt:
-                    stmts.add(new Ts2JavaAstReturnStmt(this, stmt.as(Swc4jAstReturnStmt.class), memo));
-                    break;
-                default:
-                    throw new Ts2JavaAstException(
-                            stmt,
-                            SimpleFreeMarkerFormat.format("BlockStmt type ${type} is not supported.",
-                                    SimpleMap.of("type", stmt.getType().name())));
-            }
-        }
+        stmts = ast.getStmts().stream()
+                .map(stmt -> ITs2JavaAstStmt.cast(this, stmt, memo))
+                .collect(Collectors.toList());
     }
 
     @Override
