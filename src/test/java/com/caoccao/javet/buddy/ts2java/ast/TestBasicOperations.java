@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestBasicOperations extends BaseTestTs2Java {
     /*
@@ -162,6 +162,22 @@ public class TestBasicOperations extends BaseTestTs2Java {
     }
 
     @Test
+    public void testBoolean() throws Exception {
+        TsClassX tsClass = new TsClassX("return true;", boolean.class);
+        assertTrue((boolean) tsClass.invoke());
+        tsClass = new TsClassX("return false;", boolean.class);
+        assertFalse((boolean) tsClass.invoke());
+        tsClass = new TsClassX("return !true;", boolean.class);
+        assertFalse((boolean) tsClass.invoke());
+        tsClass = new TsClassX("return !false;", boolean.class);
+        assertTrue((boolean) tsClass.invoke());
+        tsClass = new TsClassX("return !(!true);", boolean.class);
+        assertTrue((boolean) tsClass.invoke());
+        tsClass = new TsClassX("return !(!false);", boolean.class);
+        assertFalse((boolean) tsClass.invoke());
+    }
+
+    @Test
     public void testDivide_II_I() throws Exception {
         TsClass tsClass = new TsClass(
                 "return a / b;",
@@ -232,14 +248,22 @@ public class TestBasicOperations extends BaseTestTs2Java {
 
     @Test
     public void testNumber() throws Exception {
-        TsClassX tsClass = new TsClassX(
-                "return 1;",
-                int.class);
+        TsClassX tsClass = new TsClassX("return 1;", int.class);
         assertEquals(1, tsClass.invoke());
-        tsClass = new TsClassX(
-                "return (1);",
-                int.class);
+        tsClass = new TsClassX("return (1);", int.class);
         assertEquals(1, tsClass.invoke());
+        tsClass = new TsClassX("return -1;", int.class);
+        assertEquals(-1, tsClass.invoke());
+        tsClass = new TsClassX("return -(1);", int.class);
+        assertEquals(-1, tsClass.invoke());
+        tsClass = new TsClassX("return -(-1);", int.class);
+        assertEquals(1, tsClass.invoke());
+        tsClass = new TsClassX("return +1;", int.class);
+        assertEquals(1, tsClass.invoke());
+        tsClass = new TsClassX("return +(+1);", int.class);
+        assertEquals(1, tsClass.invoke());
+        tsClass = new TsClassX("return +(-1);", int.class);
+        assertEquals(-1, tsClass.invoke());
     }
 
     @Test

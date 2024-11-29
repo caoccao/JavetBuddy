@@ -16,12 +16,15 @@
 
 package com.caoccao.javet.buddy.ts2java.ast.interfaces;
 
-import com.caoccao.javet.buddy.ts2java.ast.expr.Ts2JavaAstParenExpr;
+import com.caoccao.javet.buddy.ts2java.ast.expr.Ts2JavaAstUnaryExpr;
+import com.caoccao.javet.buddy.ts2java.ast.expr.lit.Ts2JavaAstBool;
 import com.caoccao.javet.buddy.ts2java.ast.expr.lit.Ts2JavaAstNumber;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemo;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstParenExpr;
+import com.caoccao.javet.swc4j.ast.expr.Swc4jAstUnaryExpr;
+import com.caoccao.javet.swc4j.ast.expr.lit.Swc4jAstBool;
 import com.caoccao.javet.swc4j.ast.expr.lit.Swc4jAstNumber;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
@@ -35,19 +38,21 @@ public interface ITs2JavaAstExpr<AST extends ISwc4jAstExpr, Memo extends Ts2Java
             ISwc4jAstExpr ast,
             Ts2JavaMemoFunction memo) {
         switch (ast.getType()) {
+            case Bool:
+                return new Ts2JavaAstBool(parent, ast.as(Swc4jAstBool.class), memo);
             case Number:
                 return new Ts2JavaAstNumber(parent, ast.as(Swc4jAstNumber.class), null, memo);
             case ParenExpr:
-                return new Ts2JavaAstParenExpr(parent, ast.as(Swc4jAstParenExpr.class), memo);
+                return cast(parent, ast.as(Swc4jAstParenExpr.class).unParenExpr(), memo);
             case BinExpr:
             case Ident:
             case UnaryExpr:
+                return new Ts2JavaAstUnaryExpr(parent, ast.as(Swc4jAstUnaryExpr.class), memo);
             default:
                 throw new Ts2JavaAstException(
                         ast,
                         SimpleFreeMarkerFormat.format("Expr type ${type} is not supported.",
                                 SimpleMap.of("type", ast.getType().name())));
         }
-
     }
 }
