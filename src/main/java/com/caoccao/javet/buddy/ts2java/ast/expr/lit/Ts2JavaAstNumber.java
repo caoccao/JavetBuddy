@@ -21,6 +21,7 @@ import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstLit;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstPropName;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstTsLit;
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities.ITs2JavaMinusFlippable;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.expr.lit.Swc4jAstNumber;
@@ -38,15 +39,19 @@ import net.bytebuddy.jar.asm.MethodVisitor;
 
 public class Ts2JavaAstNumber
         extends BaseTs2JavaAst<Swc4jAstNumber, Ts2JavaMemoFunction>
-        implements ITs2JavaAstLit<Swc4jAstNumber, Ts2JavaMemoFunction>,
+        implements ITs2JavaMinusFlippable,
+        ITs2JavaAstLit<Swc4jAstNumber, Ts2JavaMemoFunction>,
         ITs2JavaAstPropName<Swc4jAstNumber, Ts2JavaMemoFunction>,
         ITs2JavaAstTsLit<Swc4jAstNumber, Ts2JavaMemoFunction> {
+    protected boolean negative;
+
     public Ts2JavaAstNumber(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstNumber ast,
             TypeDescription type,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
+        negative = false;
         this.type = type;
     }
 
@@ -54,15 +59,14 @@ public class Ts2JavaAstNumber
     public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
         visitLineNumber(methodVisitor);
         StackManipulation stackManipulation;
-        final boolean isNegative = ast.getMinusCount() % 2 == 1;
         if (type.represents(int.class) || type.represents(short.class) || type.represents(byte.class)) {
-            stackManipulation = IntegerConstant.forValue(isNegative ? -ast.asInt() : ast.asInt());
+            stackManipulation = IntegerConstant.forValue(negative ? -ast.asInt() : ast.asInt());
         } else if (type.represents(long.class)) {
-            stackManipulation = LongConstant.forValue(isNegative ? -ast.asLong() : ast.asLong());
+            stackManipulation = LongConstant.forValue(negative ? -ast.asLong() : ast.asLong());
         } else if (type.represents(float.class)) {
-            stackManipulation = FloatConstant.forValue(isNegative ? -ast.asFloat() : ast.asFloat());
+            stackManipulation = FloatConstant.forValue(negative ? -ast.asFloat() : ast.asFloat());
         } else if (type.represents(double.class)) {
-            stackManipulation = DoubleConstant.forValue(isNegative ? -ast.asDouble() : ast.asDouble());
+            stackManipulation = DoubleConstant.forValue(negative ? -ast.asDouble() : ast.asDouble());
         } else {
             throw new Ts2JavaAstException(
                     ast,
@@ -94,5 +98,14 @@ public class Ts2JavaAstNumber
                     })
                     .orElse(TypeDescription.ForLoadedType.of(int.class));
         }
+    }
+
+    @Override
+    public void flipMinus() {
+        negative = !negative;
+    }
+
+    public boolean isNegative() {
+        return negative;
     }
 }

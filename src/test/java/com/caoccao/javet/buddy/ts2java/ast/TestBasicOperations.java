@@ -236,6 +236,10 @@ public class TestBasicOperations extends BaseTestTs2Java {
                 "return 1;",
                 int.class);
         assertEquals(1, tsClass.invoke());
+        tsClass = new TsClassX(
+                "return (1);",
+                int.class);
+        assertEquals(1, tsClass.invoke());
     }
 
     @Test
