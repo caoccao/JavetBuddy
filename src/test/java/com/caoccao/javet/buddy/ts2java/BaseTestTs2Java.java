@@ -29,19 +29,19 @@ import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 public class BaseTestTs2Java {
-    protected TsClassX tsClass;
+    protected TsClass tsClass;
 
     public BaseTestTs2Java() {
         tsClass = null;
     }
 
     protected void disableLogging() {
-        Ts2JavaX.disableLogging();
+        Ts2Java.disableLogging();
         Ts2JavaAstClassFunction.setMethodVisitor(null);
     }
 
     protected void enableLogging() {
-        Ts2JavaX.enableLogging();
+        Ts2Java.enableLogging();
         Ts2JavaAstClassFunction.setMethodVisitor(new JavaLoggingMethodVisitor(Opcodes.ASM9));
     }
 

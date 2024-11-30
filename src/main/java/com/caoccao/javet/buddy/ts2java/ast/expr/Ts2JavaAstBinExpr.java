@@ -68,7 +68,6 @@ public class Ts2JavaAstBinExpr
         Size sizeCastRight = JavaClassCast.getUpCastStackManipulation(right.getType(), type)
                 .map(s -> s.apply(methodVisitor, context))
                 .orElse(Size.ZERO);
-        Size sizeLoadAndCast = aggregateSize(sizeLoadLeft, sizeCastLeft, sizeLoadRight, sizeCastRight);
         StackManipulation stackManipulation;
         if (op.isArithmeticOperator()) {
             stackManipulation = Ts2JavaAstBinaryOp.getArithmeticStackManipulation(op, type);
@@ -79,7 +78,7 @@ public class Ts2JavaAstBinExpr
                             SimpleMap.of("op", op.name())));
         }
         Size sizeOp = stackManipulation.apply(methodVisitor, context);
-        return aggregateSize(sizeLoadAndCast, sizeOp);
+        return aggregateSize(sizeLoadLeft, sizeCastLeft, sizeLoadRight, sizeCastRight, sizeOp);
     }
 
     @Override

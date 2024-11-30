@@ -17,7 +17,7 @@
 package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.buddy.ts2java.BaseTestTs2Java;
-import com.caoccao.javet.buddy.ts2java.TsClass;
+import com.caoccao.javet.buddy.ts2java.TsClassX;
 import com.caoccao.javet.buddy.ts2java.TsMethodArgument;
 import org.junit.jupiter.api.Test;
 
@@ -97,7 +97,7 @@ public class TestAssignments extends BaseTestTs2Java {
     @Test
     public void testAssignAndCast() throws Exception {
         assertEquals(3.0D, assignAndCast(1, 2L), 0.001D);
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "let c: long = a;\n" +
                         "let d: long = b;\n" +
                         "return c + d;",
@@ -110,7 +110,7 @@ public class TestAssignments extends BaseTestTs2Java {
     @Test
     public void testAssignConst() throws Exception {
         assertEquals(105L, assignConst(1, 2L));
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "const c: int = 100;\n" +
                         "const d: long = 2;\n" +
                         "return a + b + c + d;",

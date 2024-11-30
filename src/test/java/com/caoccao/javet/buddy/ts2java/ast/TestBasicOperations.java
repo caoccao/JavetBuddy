@@ -17,11 +17,9 @@
 package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.buddy.ts2java.BaseTestTs2Java;
-import com.caoccao.javet.buddy.ts2java.TsClass;
+import com.caoccao.javet.buddy.ts2java.TsClassX;
 import com.caoccao.javet.buddy.ts2java.TsMethodArgument;
 import org.junit.jupiter.api.Test;
-
-import java.lang.reflect.Method;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -67,7 +65,7 @@ public class TestBasicOperations extends BaseTestTs2Java {
 
     @Test
     public void testDivide_II_I() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a / b;",
                 int.class,
                 TsMethodArgument.of("a", int.class),
@@ -78,7 +76,7 @@ public class TestBasicOperations extends BaseTestTs2Java {
     @Test
     public void testMinus_II_I() throws Exception {
         assertEquals(-5, minus(3, 2));
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return -(a + b);",
                 int.class,
                 TsMethodArgument.of("a", int.class),
@@ -88,7 +86,7 @@ public class TestBasicOperations extends BaseTestTs2Java {
 
     @Test
     public void testMinus_I_I() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return -(a + (-1));",
                 int.class,
                 TsMethodArgument.of("a", int.class));
@@ -97,7 +95,7 @@ public class TestBasicOperations extends BaseTestTs2Java {
 
     @Test
     public void testMinus_L_L() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return -a;",
                 long.class,
                 TsMethodArgument.of("a", long.class));
@@ -106,7 +104,7 @@ public class TestBasicOperations extends BaseTestTs2Java {
 
     @Test
     public void testMinus_Minus_II_I() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return -(-(a + b));",
                 int.class,
                 TsMethodArgument.of("a", int.class),
@@ -116,7 +114,7 @@ public class TestBasicOperations extends BaseTestTs2Java {
 
     @Test
     public void testMod_II_I() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a % b;",
                 int.class,
                 TsMethodArgument.of("a", int.class),
@@ -126,7 +124,7 @@ public class TestBasicOperations extends BaseTestTs2Java {
 
     @Test
     public void testMultiply_II_I() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a * b;",
                 int.class,
                 TsMethodArgument.of("a", int.class),
@@ -137,7 +135,7 @@ public class TestBasicOperations extends BaseTestTs2Java {
     @Test
     public void testPow_DD_D() throws Exception {
         assertEquals(8D, pow(2D, 3D), 0.001D);
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a ** b;",
                 double.class,
                 TsMethodArgument.of("a", double.class),
@@ -147,7 +145,7 @@ public class TestBasicOperations extends BaseTestTs2Java {
 
     @Test
     public void testPow_II_D() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a ** b;",
                 double.class,
                 TsMethodArgument.of("a", int.class),
@@ -157,7 +155,7 @@ public class TestBasicOperations extends BaseTestTs2Java {
 
     @Test
     public void testShiftLeft_II_I() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a << b;",
                 int.class,
                 TsMethodArgument.of("a", int.class),
@@ -167,7 +165,7 @@ public class TestBasicOperations extends BaseTestTs2Java {
 
     @Test
     public void testShiftRight_II_I() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a >> b;",
                 int.class,
                 TsMethodArgument.of("a", int.class),
@@ -177,7 +175,7 @@ public class TestBasicOperations extends BaseTestTs2Java {
 
     @Test
     public void testSubtract_II_I() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a - b;",
                 int.class,
                 TsMethodArgument.of("a", int.class),
@@ -187,7 +185,7 @@ public class TestBasicOperations extends BaseTestTs2Java {
 
     @Test
     public void testZeroFillShiftRight_II_I() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a >>> b;",
                 int.class,
                 TsMethodArgument.of("a", int.class),
@@ -198,7 +196,7 @@ public class TestBasicOperations extends BaseTestTs2Java {
 
     @Test
     public void testZeroFillShiftRight_JJ_J() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a >>> b;",
                 long.class,
                 TsMethodArgument.of("a", long.class),

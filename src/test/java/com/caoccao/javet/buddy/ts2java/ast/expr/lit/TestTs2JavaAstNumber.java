@@ -17,7 +17,7 @@
 package com.caoccao.javet.buddy.ts2java.ast.expr.lit;
 
 import com.caoccao.javet.buddy.ts2java.BaseTestTs2Java;
-import com.caoccao.javet.buddy.ts2java.TsClassX;
+import com.caoccao.javet.buddy.ts2java.TsClass;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,33 +25,33 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TestTs2JavaAstNumber extends BaseTestTs2Java {
     @Test
     public void testDouble() throws Exception {
-        tsClass = new TsClassX("return 1.23;", double.class);
+        tsClass = new TsClass("return 1.23;", double.class);
         assertEquals(1.23D, (double) tsClass.invoke(), 0.001D);
-        tsClass = new TsClassX("return (1.23);", double.class);
+        tsClass = new TsClass("return (1.23);", double.class);
         assertEquals(1.23D, (double) tsClass.invoke(), 0.001D);
     }
 
     @Test
     public void testFloat() throws Exception {
-        tsClass = new TsClassX("return 1.23;", float.class);
+        tsClass = new TsClass("return 1.23;", float.class);
         assertEquals(1.23F, (float) tsClass.invoke(), 0.001F);
-        tsClass = new TsClassX("return (1.23);", float.class);
+        tsClass = new TsClass("return (1.23);", float.class);
         assertEquals(1.23F, (float) tsClass.invoke(), 0.001F);
     }
 
     @Test
     public void testInt() throws Exception {
-        TsClassX tsClass = new TsClassX("return 1;", int.class);
+        TsClass tsClass = new TsClass("return 1;", int.class);
         assertEquals(1, tsClass.invoke());
-        tsClass = new TsClassX("return (1);", int.class);
+        tsClass = new TsClass("return (1);", int.class);
         assertEquals(1, tsClass.invoke());
     }
 
     @Test
     public void testLong() throws Exception {
-        TsClassX tsClass = new TsClassX("return 1;", long.class);
+        TsClass tsClass = new TsClass("return 1;", long.class);
         assertEquals(1L, tsClass.invoke());
-        tsClass = new TsClassX("return (1);", long.class);
+        tsClass = new TsClass("return (1);", long.class);
         assertEquals(1L, tsClass.invoke());
     }
 }

@@ -17,7 +17,7 @@
 package com.caoccao.javet.buddy.ts2java.ast.expr;
 
 import com.caoccao.javet.buddy.ts2java.BaseTestTs2Java;
-import com.caoccao.javet.buddy.ts2java.TsClassX;
+import com.caoccao.javet.buddy.ts2java.TsClass;
 import com.caoccao.javet.buddy.ts2java.TsMethodArgument;
 import org.junit.jupiter.api.Test;
 
@@ -55,7 +55,7 @@ public class TestTs2JavaAstBinExpr extends BaseTestTs2Java {
 
     @Test
     public void testAdd_DD_I() throws Exception {
-        tsClass = new TsClassX(
+        tsClass = new TsClass(
                 "return a + b + (-1);",
                 double.class,
                 TsMethodArgument.of("a", double.class),
@@ -66,7 +66,7 @@ public class TestTs2JavaAstBinExpr extends BaseTestTs2Java {
 
     @Test
     public void testAdd_FF_I() throws Exception {
-        tsClass = new TsClassX(
+        tsClass = new TsClass(
                 "return a + b + (-1);",
                 float.class,
                 TsMethodArgument.of("a", float.class),
@@ -78,7 +78,7 @@ public class TestTs2JavaAstBinExpr extends BaseTestTs2Java {
     @Test
     public void testAdd_II_I() throws Exception {
         assertEquals(3, add_II_I(1, 2));
-        tsClass = new TsClassX(
+        tsClass = new TsClass(
                 "return a + b;",
                 int.class,
                 TsMethodArgument.of("a", int.class),
@@ -89,7 +89,7 @@ public class TestTs2JavaAstBinExpr extends BaseTestTs2Java {
 
     @Test
     public void testAdd_II_J() throws Exception {
-        tsClass = new TsClassX(
+        tsClass = new TsClass(
                 "return a + b;",
                 long.class,
                 TsMethodArgument.of("a", int.class),
@@ -102,7 +102,7 @@ public class TestTs2JavaAstBinExpr extends BaseTestTs2Java {
     @Test
     public void testAdd_IJ_J() throws Exception {
         assertEquals(3, add_IJ_J(1, 2L));
-        tsClass = new TsClassX(
+        tsClass = new TsClass(
                 "return a + b;",
                 long.class,
                 TsMethodArgument.of("a", int.class),
@@ -112,7 +112,7 @@ public class TestTs2JavaAstBinExpr extends BaseTestTs2Java {
 
     @Test
     public void testAdd_JI_J() throws Exception {
-        tsClass = new TsClassX(
+        tsClass = new TsClass(
                 "return a + b;",
                 long.class,
                 TsMethodArgument.of("a", long.class),

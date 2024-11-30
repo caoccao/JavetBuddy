@@ -16,7 +16,9 @@
 
 package com.caoccao.javet.buddy.ts2java;
 
-import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaAstClassDecl;
+import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoDynamicType;
+import com.caoccao.javet.buddy.ts2java.ast.stmt.Ts2JavaAstClassDecl;
+import com.caoccao.javet.buddy.ts2java.compiler.visitors.JavaLoggingMethodVisitor;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
 import com.caoccao.javet.swc4j.Swc4j;
 import com.caoccao.javet.swc4j.ast.program.Swc4jAstModule;
@@ -29,6 +31,7 @@ import com.caoccao.javet.swc4j.outputs.Swc4jParseOutput;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.dynamic.scaffold.subclass.ConstructorStrategy;
+import net.bytebuddy.jar.asm.Opcodes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +44,7 @@ public class Ts2Java {
             .setMediaType(Swc4jMediaType.TypeScript)
             .setParseMode(Swc4jParseMode.Module)
             .setCaptureAst(true);
+    protected static boolean logging = false;
     protected final String packageName;
     protected final String tsCode;
     protected List<Class<?>> classes;
@@ -49,6 +53,14 @@ public class Ts2Java {
         classes = new ArrayList<>();
         this.packageName = packageName;
         this.tsCode = Objects.requireNonNull(tsCode);
+    }
+
+    public static void disableLogging() {
+        logging = false;
+    }
+
+    public static void enableLogging() {
+        logging = true;
     }
 
     public List<Class<?>> getClasses() {
@@ -83,7 +95,16 @@ public class Ts2Java {
         for (Swc4jAstClassDecl classDecl : classDecls) {
             DynamicType.Builder<?> builder = new ByteBuddy()
                     .subclass(Object.class, ConstructorStrategy.Default.DEFAULT_CONSTRUCTOR);
-            builder = new Ts2JavaAstClassDecl(getPackageName()).transpile(builder, classDecl);
+            Ts2JavaAstClassDecl ts2JavaAstClassDecl = new Ts2JavaAstClassDecl(
+                    null,
+                    classDecl,
+                    new Ts2JavaMemoDynamicType(builder),
+                    getPackageName());
+            ts2JavaAstClassDecl.compile();
+            if (logging) {
+                ts2JavaAstClassDecl.apply(new JavaLoggingMethodVisitor(Opcodes.ASM9), null);
+            }
+            builder = ts2JavaAstClassDecl.getMemo().getBuilder();
             try (DynamicType.Unloaded<?> unloadedType = builder.make()) {
                 classes.add(unloadedType.load(getClass().getClassLoader()).getLoaded());
             }

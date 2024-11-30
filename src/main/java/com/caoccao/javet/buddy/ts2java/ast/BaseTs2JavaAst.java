@@ -25,6 +25,7 @@ import net.bytebuddy.jar.asm.Label;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public abstract class BaseTs2JavaAst<AST extends ISwc4jAst, Memo extends Ts2JavaMemo>
         implements ITs2JavaAst<AST, Memo> {
@@ -41,13 +42,7 @@ public abstract class BaseTs2JavaAst<AST extends ISwc4jAst, Memo extends Ts2Java
     }
 
     protected static Size aggregateSize(Size... sizes) {
-        int sizeImpact = 0;
-        int maximalSize = 0;
-        for (Size size : sizes) {
-            sizeImpact += size.getSizeImpact();
-            maximalSize = Math.max(maximalSize, size.getMaximalSize());
-        }
-        return new Size(sizeImpact, maximalSize);
+        return Stream.of(sizes).reduce(BaseTs2JavaAst::aggregateSize).orElse(Size.ZERO);
     }
 
     protected static Size aggregateSize(Size leftSize, Size rightSize) {

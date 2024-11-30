@@ -17,7 +17,7 @@
 package com.caoccao.javet.buddy.ts2java.ast;
 
 import com.caoccao.javet.buddy.ts2java.BaseTestTs2Java;
-import com.caoccao.javet.buddy.ts2java.TsClass;
+import com.caoccao.javet.buddy.ts2java.TsClassX;
 import com.caoccao.javet.buddy.ts2java.TsMethodArgument;
 import org.junit.jupiter.api.Test;
 
@@ -430,7 +430,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
         assertFalse(logicalAndOrAnd_II_Z(1, 1));
         assertTrue(logicalAndOrAnd_II_Z(1, 2));
         assertFalse(logicalAndOrAnd_II_Z(2, 1));
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return (a == b && a > 1) || (a != b && b > 1);",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -446,7 +446,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
         assertTrue(logicalAnd_II_Z(2, 2));
         assertFalse(logicalAnd_II_Z(2, 3));
         assertFalse(logicalAnd_II_Z(1, 1));
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a == b && a > 1;",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -461,7 +461,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
         assertTrue(logicalAnd_ZZ_Z(true, true));
         assertFalse(logicalAnd_ZZ_Z(true, false));
         assertFalse(logicalAnd_ZZ_Z(false, false));
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a && b;",
                 boolean.class,
                 TsMethodArgument.of("a", boolean.class),
@@ -473,7 +473,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalEQEQ_DD_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a === b;",
                 boolean.class,
                 TsMethodArgument.of("a", double.class),
@@ -486,7 +486,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalEQEQ_FF_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a === b;",
                 boolean.class,
                 TsMethodArgument.of("a", float.class),
@@ -499,7 +499,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalEQEQ_II_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a === b;",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -511,7 +511,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalEQEQ_IJ_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a === b;",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -523,7 +523,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalEQ_DD_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a == b;",
                 boolean.class,
                 TsMethodArgument.of("a", double.class),
@@ -536,7 +536,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalEQ_FF_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a == b;",
                 boolean.class,
                 TsMethodArgument.of("a", float.class),
@@ -550,7 +550,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     @Test
     public void testLogicalEQ_II_Z() throws Exception {
         assertFalse(logicalEQ_II_Z(1, 2));
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a == b;",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -562,7 +562,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalEQ_IJ_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a == b;",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -574,7 +574,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalGE_BB_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a >= b;",
                 boolean.class,
                 TsMethodArgument.of("a", byte.class),
@@ -586,7 +586,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalGE_CC_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a >= b;",
                 boolean.class,
                 TsMethodArgument.of("a", char.class),
@@ -598,7 +598,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalGE_DD_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a >= b;",
                 boolean.class,
                 TsMethodArgument.of("a", double.class),
@@ -611,7 +611,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalGE_FF_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a >= b;",
                 boolean.class,
                 TsMethodArgument.of("a", float.class),
@@ -624,7 +624,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalGE_II_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a >= b;",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -637,7 +637,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     @Test
     public void testLogicalGE_IJ_Z() throws Exception {
         assertFalse(logicalGE_IJ_Z(1, 2L));
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a >= b;",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -649,7 +649,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalGE_SS_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a >= b;",
                 boolean.class,
                 TsMethodArgument.of("a", short.class),
@@ -661,7 +661,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalGT_DD_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a > b;",
                 boolean.class,
                 TsMethodArgument.of("a", double.class),
@@ -675,7 +675,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     public void testLogicalGT_FF_Z() throws Exception {
         assertFalse(logicalGT_FF_Z(1F, 2F));
         assertFalse(logicalGT_FF_Z(1.23F, 1.23F));
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a > b;",
                 boolean.class,
                 TsMethodArgument.of("a", float.class),
@@ -688,7 +688,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     @Test
     public void testLogicalGT_II_Z() throws Exception {
         assertFalse(logicalGT_II_Z(1, 2));
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a > b;",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -699,7 +699,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalGT_IJ_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a > b;",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -711,14 +711,14 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalGT_I_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a > 0;",
                 boolean.class,
                 TsMethodArgument.of("a", int.class));
         assertTrue((boolean) tsClass.invoke(1));
         assertFalse((boolean) tsClass.invoke(0));
         assertFalse((boolean) tsClass.invoke(-1));
-        tsClass = new TsClass(
+        tsClass = new TsClassX(
                 "return 0 > a;",
                 boolean.class,
                 TsMethodArgument.of("a", int.class));
@@ -729,7 +729,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalLE_DD_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a <= b;",
                 boolean.class,
                 TsMethodArgument.of("a", double.class),
@@ -742,7 +742,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalLE_FF_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a <= b;",
                 boolean.class,
                 TsMethodArgument.of("a", float.class),
@@ -755,7 +755,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalLE_II_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a <= b;",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -767,7 +767,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalLE_IJ_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a <= b;",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -779,7 +779,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalLT_DD_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a < b;",
                 boolean.class,
                 TsMethodArgument.of("a", double.class),
@@ -792,7 +792,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalLT_FF_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a < b;",
                 boolean.class,
                 TsMethodArgument.of("a", float.class),
@@ -805,7 +805,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalLT_II_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a < b;",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -817,7 +817,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalLT_IJ_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a < b;",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -829,7 +829,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNotEQEQ_DD_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a !== b;",
                 boolean.class,
                 TsMethodArgument.of("a", double.class),
@@ -842,7 +842,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNotEQEQ_FF_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a !== b;",
                 boolean.class,
                 TsMethodArgument.of("a", float.class),
@@ -855,7 +855,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNotEQEQ_II_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a !== b;",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -867,7 +867,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNotEQEQ_IJ_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a !== b;",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -879,7 +879,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNotEQ_DD_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a != b;",
                 boolean.class,
                 TsMethodArgument.of("a", double.class),
@@ -892,7 +892,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNotEQ_FF_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a != b;",
                 boolean.class,
                 TsMethodArgument.of("a", float.class),
@@ -905,7 +905,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNotEQ_II_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a != b;",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -917,7 +917,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNotEQ_IJ_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a != b;",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -929,7 +929,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_EQEQ_DD_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a === b);",
                 boolean.class,
                 TsMethodArgument.of("a", double.class),
@@ -942,7 +942,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_EQEQ_FF_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a === b);",
                 boolean.class,
                 TsMethodArgument.of("a", float.class),
@@ -955,7 +955,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_EQEQ_II_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a === b);",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -967,7 +967,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_EQEQ_IJ_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a === b);",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -979,7 +979,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_EQ_DD_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a == b);",
                 boolean.class,
                 TsMethodArgument.of("a", double.class),
@@ -992,7 +992,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_EQ_FF_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a == b);",
                 boolean.class,
                 TsMethodArgument.of("a", float.class),
@@ -1006,7 +1006,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     @Test
     public void testLogicalNot_EQ_II_Z() throws Exception {
         assertTrue(logicalNot_EQ_II_Z(1, 2));
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a == b);",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -1018,7 +1018,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_EQ_IJ_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a == b);",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -1030,7 +1030,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_GE_DD_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a >= b);",
                 boolean.class,
                 TsMethodArgument.of("a", double.class),
@@ -1043,7 +1043,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_GE_FF_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a >= b);",
                 boolean.class,
                 TsMethodArgument.of("a", float.class),
@@ -1056,7 +1056,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_GE_II_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a >= b);",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -1068,7 +1068,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_GE_IJ_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a >= b);",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -1080,7 +1080,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_GT_DD_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a > b);",
                 boolean.class,
                 TsMethodArgument.of("a", double.class),
@@ -1093,7 +1093,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_GT_II_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a > b);",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -1105,7 +1105,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_GT_IJ_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a > b);",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -1117,7 +1117,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_LE_DD_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a <= b);",
                 boolean.class,
                 TsMethodArgument.of("a", double.class),
@@ -1130,7 +1130,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_LE_FF_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a <= b);",
                 boolean.class,
                 TsMethodArgument.of("a", float.class),
@@ -1143,7 +1143,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_LE_II_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a <= b);",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -1155,7 +1155,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_LE_IJ_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a <= b);",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -1167,7 +1167,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_LT_DD_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a < b);",
                 boolean.class,
                 TsMethodArgument.of("a", double.class),
@@ -1180,7 +1180,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_LT_FF_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a < b);",
                 boolean.class,
                 TsMethodArgument.of("a", float.class),
@@ -1193,7 +1193,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_LT_II_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a < b);",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -1205,7 +1205,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_LT_IJ_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a < b);",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -1217,7 +1217,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_Not_Z_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !!a;",
                 boolean.class,
                 TsMethodArgument.of("a", boolean.class));
@@ -1227,7 +1227,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_Or_II_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !(a == b || a > 1);",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -1240,7 +1240,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
 
     @Test
     public void testLogicalNot_Z_Z() throws Exception {
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return !a;",
                 boolean.class,
                 TsMethodArgument.of("a", boolean.class));
@@ -1253,27 +1253,27 @@ public class TestLogicalOperations extends BaseTestTs2Java {
         assertTrue(logicalOr_DD_Z(2D, 3D));
         assertTrue(logicalOr_DD_Z(3D, 2D));
         assertFalse(logicalOr_DD_Z(2D, 2D));
-        TsClass tsClassGTGT = new TsClass(
+        TsClassX tsClassGTGT = new TsClassX(
                 "return (a > b) || (b > a);",
                 boolean.class,
                 TsMethodArgument.of("a", double.class),
                 TsMethodArgument.of("b", double.class));
-        TsClass tsClassGEEQ = new TsClass(
+        TsClassX tsClassGEEQ = new TsClassX(
                 "return (a >= b) || (b == 1);",
                 boolean.class,
                 TsMethodArgument.of("a", double.class),
                 TsMethodArgument.of("b", double.class));
-        TsClass tsClassEQLE = new TsClass(
+        TsClassX tsClassEQLE = new TsClassX(
                 "return (a == b) || (b <= 2);",
                 boolean.class,
                 TsMethodArgument.of("a", double.class),
                 TsMethodArgument.of("b", double.class));
-        TsClass tsClassLTLT = new TsClass(
+        TsClassX tsClassLTLT = new TsClassX(
                 "return (a < b) || (b < a);",
                 boolean.class,
                 TsMethodArgument.of("a", double.class),
                 TsMethodArgument.of("b", double.class));
-        TsClass tsClassLENE = new TsClass(
+        TsClassX tsClassLENE = new TsClassX(
                 "return (a <= b) || (b != 2);",
                 boolean.class,
                 TsMethodArgument.of("a", double.class),
@@ -1298,27 +1298,27 @@ public class TestLogicalOperations extends BaseTestTs2Java {
         assertTrue(logicalOr_FF_Z(2F, 3F));
         assertTrue(logicalOr_FF_Z(3F, 2F));
         assertFalse(logicalOr_FF_Z(2F, 2F));
-        TsClass tsClassGTGT = new TsClass(
+        TsClassX tsClassGTGT = new TsClassX(
                 "return (a > b) || (b > a);",
                 boolean.class,
                 TsMethodArgument.of("a", float.class),
                 TsMethodArgument.of("b", float.class));
-        TsClass tsClassGEEQ = new TsClass(
+        TsClassX tsClassGEEQ = new TsClassX(
                 "return (a >= b) || (b == 1);",
                 boolean.class,
                 TsMethodArgument.of("a", float.class),
                 TsMethodArgument.of("b", float.class));
-        TsClass tsClassEQLE = new TsClass(
+        TsClassX tsClassEQLE = new TsClassX(
                 "return (a == b) || (b <= 2);",
                 boolean.class,
                 TsMethodArgument.of("a", float.class),
                 TsMethodArgument.of("b", float.class));
-        TsClass tsClassLTLT = new TsClass(
+        TsClassX tsClassLTLT = new TsClassX(
                 "return (a < b) || (b < a);",
                 boolean.class,
                 TsMethodArgument.of("a", float.class),
                 TsMethodArgument.of("b", float.class));
-        TsClass tsClassLENE = new TsClass(
+        TsClassX tsClassLENE = new TsClassX(
                 "return (a <= b) || (b != 2);",
                 boolean.class,
                 TsMethodArgument.of("a", float.class),
@@ -1343,27 +1343,27 @@ public class TestLogicalOperations extends BaseTestTs2Java {
         assertTrue(logicalOr_II_Z(2, 3));
         assertTrue(logicalOr_II_Z(3, 2));
         assertFalse(logicalOr_II_Z(2, 2));
-        TsClass tsClassGTGT = new TsClass(
+        TsClassX tsClassGTGT = new TsClassX(
                 "return (a > b) || (b > a);",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
                 TsMethodArgument.of("b", int.class));
-        TsClass tsClassGEEQ = new TsClass(
+        TsClassX tsClassGEEQ = new TsClassX(
                 "return (a >= b) || (b == 1);",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
                 TsMethodArgument.of("b", int.class));
-        TsClass tsClassEQLE = new TsClass(
+        TsClassX tsClassEQLE = new TsClassX(
                 "return (a == b) || (b <= 2);",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
                 TsMethodArgument.of("b", int.class));
-        TsClass tsClassLTLT = new TsClass(
+        TsClassX tsClassLTLT = new TsClassX(
                 "return (a < b) || (b < a);",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
                 TsMethodArgument.of("b", int.class));
-        TsClass tsClassLENE = new TsClass(
+        TsClassX tsClassLENE = new TsClassX(
                 "return (a <= b) || (b != 2);",
                 boolean.class,
                 TsMethodArgument.of("a", int.class),
@@ -1388,27 +1388,27 @@ public class TestLogicalOperations extends BaseTestTs2Java {
         assertTrue(logicalOr_JJ_Z(2L, 3L));
         assertTrue(logicalOr_JJ_Z(3L, 2L));
         assertFalse(logicalOr_JJ_Z(2L, 2L));
-        TsClass tsClassGTGT = new TsClass(
+        TsClassX tsClassGTGT = new TsClassX(
                 "return (a > b) || (b > a);",
                 boolean.class,
                 TsMethodArgument.of("a", long.class),
                 TsMethodArgument.of("b", long.class));
-        TsClass tsClassGEEQ = new TsClass(
+        TsClassX tsClassGEEQ = new TsClassX(
                 "return (a >= b) || (b == 1);",
                 boolean.class,
                 TsMethodArgument.of("a", long.class),
                 TsMethodArgument.of("b", long.class));
-        TsClass tsClassEQLE = new TsClass(
+        TsClassX tsClassEQLE = new TsClassX(
                 "return (a == b) || (b <= 2);",
                 boolean.class,
                 TsMethodArgument.of("a", long.class),
                 TsMethodArgument.of("b", long.class));
-        TsClass tsClassLTLT = new TsClass(
+        TsClassX tsClassLTLT = new TsClassX(
                 "return (a < b) || (b < a);",
                 boolean.class,
                 TsMethodArgument.of("a", long.class),
                 TsMethodArgument.of("b", long.class));
-        TsClass tsClassLENE = new TsClass(
+        TsClassX tsClassLENE = new TsClassX(
                 "return (a <= b) || (b != 2);",
                 boolean.class,
                 TsMethodArgument.of("a", long.class),
@@ -1434,7 +1434,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
         assertTrue(logicalOr_ZZ_Z(true, false));
         assertTrue(logicalOr_ZZ_Z(false, true));
         assertFalse(logicalOr_ZZ_Z(false, false));
-        TsClass tsClass = new TsClass(
+        TsClassX tsClass = new TsClassX(
                 "return a || b;",
                 boolean.class,
                 TsMethodArgument.of("a", boolean.class),

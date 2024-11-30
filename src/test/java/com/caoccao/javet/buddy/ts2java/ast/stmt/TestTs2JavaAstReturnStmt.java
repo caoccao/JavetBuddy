@@ -17,8 +17,7 @@
 package com.caoccao.javet.buddy.ts2java.ast.stmt;
 
 import com.caoccao.javet.buddy.ts2java.BaseTestTs2Java;
-import com.caoccao.javet.buddy.ts2java.TsClassX;
-import com.caoccao.javet.buddy.ts2java.TsMethodArgument;
+import com.caoccao.javet.buddy.ts2java.TsClass;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,9 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestTs2JavaAstReturnStmt extends BaseTestTs2Java {
     @Test
     public void testReturn() throws Exception {
-        TsClassX tsClass = new TsClassX("return true;", boolean.class);
+        TsClass tsClass = new TsClass("return true;", boolean.class);
         assertTrue((boolean) tsClass.invoke());
-        tsClass = new TsClassX("return 1;", int.class);
+        tsClass = new TsClass("return 1;", int.class);
         assertEquals(1, tsClass.invoke());
     }
 }

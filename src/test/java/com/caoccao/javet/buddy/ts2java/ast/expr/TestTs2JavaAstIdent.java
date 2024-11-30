@@ -17,7 +17,7 @@
 package com.caoccao.javet.buddy.ts2java.ast.expr;
 
 import com.caoccao.javet.buddy.ts2java.BaseTestTs2Java;
-import com.caoccao.javet.buddy.ts2java.TsClassX;
+import com.caoccao.javet.buddy.ts2java.TsClass;
 import com.caoccao.javet.buddy.ts2java.TsMethodArgument;
 import org.junit.jupiter.api.Test;
 
@@ -26,32 +26,32 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class TestTs2JavaAstIdent extends BaseTestTs2Java {
     @Test
     public void testIdent() throws Exception {
-        tsClass = new TsClassX(
+        tsClass = new TsClass(
                 "return a;",
                 double.class,
                 TsMethodArgument.of("a", double.class));
         assertEquals(1.23D, (double) tsClass.invoke(1.23D), 0.001D);
-        tsClass = new TsClassX(
+        tsClass = new TsClass(
                 "return a;",
                 float.class,
                 TsMethodArgument.of("a", float.class));
         assertEquals(1.23F, (float) tsClass.invoke(1.23F), 0.001F);
-        tsClass = new TsClassX(
+        tsClass = new TsClass(
                 "return a;",
                 int.class,
                 TsMethodArgument.of("a", int.class));
         assertEquals(1, tsClass.invoke(1));
-        tsClass = new TsClassX(
+        tsClass = new TsClass(
                 "return a;",
                 long.class,
                 TsMethodArgument.of("a", long.class));
         assertEquals(1L, tsClass.invoke(1L));
-        tsClass = new TsClassX(
+        tsClass = new TsClass(
                 "return a;",
                 double.class,
                 TsMethodArgument.of("a", float.class));
         assertEquals(1.23D, (double) tsClass.invoke(1.23F), 0.001D);
-        tsClass = new TsClassX(
+        tsClass = new TsClass(
                 "return a;",
                 long.class,
                 TsMethodArgument.of("a", int.class));
