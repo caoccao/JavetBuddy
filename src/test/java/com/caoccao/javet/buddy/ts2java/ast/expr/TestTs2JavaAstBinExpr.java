@@ -119,4 +119,44 @@ public class TestTs2JavaAstBinExpr extends BaseTestTs2Java {
                 TsMethodArgument.of("b", int.class));
         assertEquals(1L + 2, tsClass.invoke(1L, 2));
     }
+
+    @Test
+    public void testDivide_FF_F() throws Exception {
+        tsClass = new TsClass(
+                "return a / b;",
+                float.class,
+                TsMethodArgument.of("a", float.class),
+                TsMethodArgument.of("b", float.class));
+        assertEquals(3F / 2F, (float) tsClass.invoke(3F, 2F), 0.001F);
+    }
+
+    @Test
+    public void testDivide_DD_D() throws Exception {
+        tsClass = new TsClass(
+                "return a / b;",
+                double.class,
+                TsMethodArgument.of("a", double.class),
+                TsMethodArgument.of("b", double.class));
+        assertEquals(3D / 2D, (double) tsClass.invoke(3D, 2D), 0.001D);
+    }
+
+    @Test
+    public void testDivide_II_I() throws Exception {
+        tsClass = new TsClass(
+                "return a / b;",
+                int.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertEquals(3 / 2, tsClass.invoke(3, 2));
+    }
+
+    @Test
+    public void testDivide_LL_L() throws Exception {
+        tsClass = new TsClass(
+                "return a / b;",
+                long.class,
+                TsMethodArgument.of("a", long.class),
+                TsMethodArgument.of("b", long.class));
+        assertEquals(3L / 2L, tsClass.invoke(3L, 2L));
+    }
 }

@@ -34,7 +34,7 @@ import net.bytebuddy.jar.asm.Opcodes;
 
 public class Ts2JavaAstUnaryExpr
         extends BaseTs2JavaAst<Swc4jAstUnaryExpr, Ts2JavaMemoFunction>
-        implements ITs2JavaMinusFlippable, ITs2JavaBangFlippable,
+        implements ITs2JavaBangFlippable, ITs2JavaMinusFlippable,
         ITs2JavaAstExpr<Swc4jAstUnaryExpr, Ts2JavaMemoFunction> {
     protected final ITs2JavaAstExpr<?, ?> arg;
     protected Swc4jAstUnaryOp op;
@@ -56,13 +56,13 @@ public class Ts2JavaAstUnaryExpr
         Size size = arg.apply(methodVisitor, context);
         switch (op) {
             case Bang:
-                if (!(arg instanceof ITs2JavaBangFlippable)) {
+                if (!isBangFlippable()) {
                     final int opcode = getOpcodeNegative();
                     methodVisitor.visitInsn(opcode);
                 }
                 break;
             case Minus: {
-                if (!(arg instanceof ITs2JavaMinusFlippable)) {
+                if (!isMinusFlippable()) {
                     final int opcode = getOpcodeNegative();
                     methodVisitor.visitInsn(opcode);
                 }
@@ -107,14 +107,14 @@ public class Ts2JavaAstUnaryExpr
 
     @Override
     public void flipBang() {
-        if (arg instanceof ITs2JavaBangFlippable) {
+        if (op == Swc4jAstUnaryOp.Bang && arg instanceof ITs2JavaBangFlippable) {
             ((ITs2JavaBangFlippable) arg).flipBang();
         }
     }
 
     @Override
     public void flipMinus() {
-        if (arg instanceof ITs2JavaMinusFlippable) {
+        if (op == Swc4jAstUnaryOp.Minus && arg instanceof ITs2JavaMinusFlippable) {
             ((ITs2JavaMinusFlippable) arg).flipMinus();
         }
     }
@@ -146,5 +146,21 @@ public class Ts2JavaAstUnaryExpr
                     SimpleFreeMarkerFormat.format("Minus cannot be applied to type ${type}.",
                             SimpleMap.of("type", arg.getType().getName())));
         }
+    }
+
+    @Override
+    public boolean isBangFlippable() {
+        if (op == Swc4jAstUnaryOp.Bang && arg instanceof ITs2JavaBangFlippable) {
+            return ((ITs2JavaBangFlippable) arg).isBangFlippable();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isMinusFlippable() {
+        if (op == Swc4jAstUnaryOp.Minus && arg instanceof ITs2JavaMinusFlippable) {
+            return ((ITs2JavaMinusFlippable) arg).isMinusFlippable();
+        }
+        return false;
     }
 }

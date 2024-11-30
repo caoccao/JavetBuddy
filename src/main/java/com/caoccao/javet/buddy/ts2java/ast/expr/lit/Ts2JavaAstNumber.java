@@ -105,6 +105,11 @@ public class Ts2JavaAstNumber
         negative = !negative;
     }
 
+    @Override
+    public boolean isMinusFlippable() {
+        return true;
+    }
+
     public boolean isNegative() {
         return negative;
     }

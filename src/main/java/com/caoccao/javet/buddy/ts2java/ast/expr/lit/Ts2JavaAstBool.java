@@ -70,6 +70,11 @@ public class Ts2JavaAstBool
         value = !value;
     }
 
+    @Override
+    public boolean isBangFlippable() {
+        return true;
+    }
+
     public boolean isValue() {
         return value;
     }

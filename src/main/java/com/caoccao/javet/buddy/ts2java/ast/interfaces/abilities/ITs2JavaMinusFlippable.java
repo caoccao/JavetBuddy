@@ -18,4 +18,6 @@ package com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities;
 
 public interface ITs2JavaMinusFlippable {
     void flipMinus();
+
+    boolean isMinusFlippable();
 }
