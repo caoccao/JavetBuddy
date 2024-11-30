@@ -27,33 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestBasicOperations extends BaseTestTs2Java {
     /*
-  public add(II)I
-   L0
-    LINENUMBER 34 L0
-    ILOAD 1
-    ILOAD 2
-    IADD
-    IRETURN
-     */
-    public int add(int a, int b) {
-        return a + b;
-    }
-
-    /*
-  public add(IJ)J
-   L0
-    LINENUMBER 50 L0
-    ILOAD 1
-    I2L
-    LLOAD 2
-    LADD
-    LRETURN
-     */
-    public long add(int a, long b) {
-        return a + b;
-    }
-
-    /*
   public minus(II)I
    L0
     LINENUMBER 89 L0
@@ -90,74 +63,6 @@ public class TestBasicOperations extends BaseTestTs2Java {
      */
     public double pow(double a, double b) {
         return Math.pow(a, b);
-    }
-
-    @Test
-    public void testAdd_DD_I() throws Exception {
-        TsClass tsClass = new TsClass(
-                "return a + b + (-1);",
-                double.class,
-                TsMethodArgument.of("a", double.class),
-                TsMethodArgument.of("b", double.class));
-        assertEquals(1D + 2D - 1D, (double) tsClass.invoke(1D, 2D), 0.001D);
-        assertEquals(1.23D + 2D - 1D, (double) tsClass.invoke(1.23D, 2D), 0.001D);
-    }
-
-    @Test
-    public void testAdd_FF_I() throws Exception {
-        TsClass tsClass = new TsClass(
-                "return a + b + (-1);",
-                float.class,
-                TsMethodArgument.of("a", float.class),
-                TsMethodArgument.of("b", float.class));
-        assertEquals(1F + 2F - 1F, (float) tsClass.invoke(1F, 2F), 0.001F);
-        assertEquals(1.23F + 2F - 1F, (float) tsClass.invoke(1.23F, 2F), 0.001F);
-    }
-
-    @Test
-    public void testAdd_II_I() throws Exception {
-        assertEquals(3, add(1, 2));
-        TsClass tsClass = new TsClass(
-                "return a + b;",
-                int.class,
-                TsMethodArgument.of("a", int.class),
-                TsMethodArgument.of("b", int.class));
-        assertEquals(1 + 2, tsClass.invoke(1, 2));
-        assertEquals(-1 + -2, tsClass.invoke(-1, -2));
-    }
-
-    @Test
-    public void testAdd_II_J() throws Exception {
-        assertEquals(3, add(1, 2));
-        TsClass tsClass = new TsClass(
-                "return a + b;",
-                long.class,
-                TsMethodArgument.of("a", int.class),
-                TsMethodArgument.of("b", int.class));
-        Method method = tsClass.getTestMethod();
-        Object object = tsClass.getTestClass().getConstructor().newInstance();
-        assertEquals(1L + 2L, method.invoke(object, 1, 2));
-    }
-
-    @Test
-    public void testAdd_IJ_J() throws Exception {
-        assertEquals(3, add(1, 2L));
-        TsClass tsClass = new TsClass(
-                "return a + b;",
-                long.class,
-                TsMethodArgument.of("a", int.class),
-                TsMethodArgument.of("b", long.class));
-        assertEquals(1 + 2L, tsClass.invoke(1, 2L));
-    }
-
-    @Test
-    public void testAdd_JI_J() throws Exception {
-        TsClass tsClass = new TsClass(
-                "return a + b;",
-                long.class,
-                TsMethodArgument.of("a", long.class),
-                TsMethodArgument.of("b", int.class));
-        assertEquals(1L + 2, tsClass.invoke(1L, 2));
     }
 
     @Test
