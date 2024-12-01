@@ -48,11 +48,9 @@ public class Ts2JavaAstNumber
     public Ts2JavaAstNumber(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstNumber ast,
-            TypeDescription type,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
         negative = false;
-        this.type = type;
     }
 
     @Override
@@ -83,7 +81,7 @@ public class Ts2JavaAstNumber
                     .map(raw -> {
                         if (StringUtils.isNotEmpty(raw)) {
                             if (raw.contains(".")) {
-                                return TypeDescription.ForLoadedType.of(double.class);
+                                return TypeDescription.ForLoadedType.of(float.class);
                             } else {
                                 long value = Long.parseLong(raw);
                                 if (value <= Integer.MAX_VALUE && value >= Integer.MIN_VALUE) {

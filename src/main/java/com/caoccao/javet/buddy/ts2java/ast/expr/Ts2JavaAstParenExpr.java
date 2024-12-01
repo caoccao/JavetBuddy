@@ -38,7 +38,7 @@ public class Ts2JavaAstParenExpr
             TypeDescription type,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        expr = ITs2JavaAstExpr.cast(this, ast.getExpr(), type, memo);
+        expr = ITs2JavaAstExpr.cast(this, ast.getExpr(), memo);
         this.type = type;
     }
 

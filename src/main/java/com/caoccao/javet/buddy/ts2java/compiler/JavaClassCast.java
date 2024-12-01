@@ -32,7 +32,8 @@ public final class JavaClassCast {
     public static Optional<StackManipulation> getUpCastStackManipulation(
             TypeDescription fromType,
             TypeDescription toType) {
-        if (fromType.isPrimitive() && toType.isPrimitive()
+        if (fromType != null && toType != null
+                && fromType.isPrimitive() && toType.isPrimitive()
                 && !fromType.represents(void.class) && !toType.represents(void.class)) {
             StackManipulation stackManipulation = PrimitiveWideningDelegate.forPrimitive(fromType).widenTo(toType);
             if (stackManipulation.isValid() && stackManipulation != StackManipulation.Trivial.INSTANCE) {

@@ -38,7 +38,7 @@ public abstract class BaseTs2JavaAst<AST extends ISwc4jAst, Memo extends Ts2Java
         this.ast = Objects.requireNonNull(ast);
         this.memo = Objects.requireNonNull(memo);
         this.parent = parent;
-        type = TypeDescription.ForLoadedType.of(void.class);
+        type = null;
     }
 
     protected static Size aggregateSize(Size... sizes) {

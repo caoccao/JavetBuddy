@@ -41,7 +41,7 @@ public class Ts2JavaAstReturnStmt
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
         type = memo.getReturnType();
-        arg = ast.getArg().map(arg -> ITs2JavaAstExpr.cast(this, arg, type, memo));
+        arg = ast.getArg().map(arg -> ITs2JavaAstExpr.cast(this, arg, memo));
     }
 
     @Override

@@ -42,12 +42,10 @@ public class Ts2JavaAstUnaryExpr
     public Ts2JavaAstUnaryExpr(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstUnaryExpr ast,
-            TypeDescription type,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        arg = ITs2JavaAstExpr.cast(this, ast.getArg(), type, memo);
+        arg = ITs2JavaAstExpr.cast(this, ast.getArg(), memo);
         op = ast.getOp();
-        this.type = type;
     }
 
     @Override
@@ -83,6 +81,7 @@ public class Ts2JavaAstUnaryExpr
     @Override
     public void compile() {
         arg.compile();
+        type = arg.getType();
         switch (op) {
             case Bang:
                 if (arg instanceof ITs2JavaBangFlippable) {

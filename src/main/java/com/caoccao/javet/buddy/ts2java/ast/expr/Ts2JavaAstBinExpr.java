@@ -44,19 +44,18 @@ public class Ts2JavaAstBinExpr
     public Ts2JavaAstBinExpr(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstBinExpr ast,
-            TypeDescription type,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
         op = ast.getOp();
         if (op.isArithmeticOperator()) {
-            this.type = op == Swc4jAstBinaryOp.Exp ? TypeDescription.ForLoadedType.of(double.class) : type;
+            if (op == Swc4jAstBinaryOp.Exp) {
+                type = TypeDescription.ForLoadedType.of(double.class);
+            }
         } else if (op.isLogicalOperator()) {
-            this.type = TypeDescription.ForLoadedType.of(boolean.class);
-        } else {
-            this.type = type;
+            type = TypeDescription.ForLoadedType.of(boolean.class);
         }
-        left = ITs2JavaAstExpr.cast(parent, ast.getLeft(), this.type, memo);
-        right = ITs2JavaAstExpr.cast(parent, ast.getRight(), this.type, memo);
+        left = ITs2JavaAstExpr.cast(parent, ast.getLeft(), memo);
+        right = ITs2JavaAstExpr.cast(parent, ast.getRight(), memo);
     }
 
     @Override
@@ -96,6 +95,19 @@ public class Ts2JavaAstBinExpr
     public void compile() {
         left.compile();
         right.compile();
+        if (type == null && (left.getType() != null || right.getType() != null)) {
+            if (left.getType() != null && right.getType() == null) {
+                type = left.getType();
+            } else if (left.getType() == null && right.getType() != null) {
+                type = right.getType();
+            } else if (JavaClassCast.getUpCastStackManipulation(left.getType(), right.getType()).isPresent()) {
+                type = right.getType();
+            } else if (JavaClassCast.getUpCastStackManipulation(right.getType(), left.getType()).isPresent()) {
+                type = left.getType();
+            } else {
+                type = left.getType();
+            }
+        }
     }
 
     public ITs2JavaAstExpr<?, ?> getLeft() {

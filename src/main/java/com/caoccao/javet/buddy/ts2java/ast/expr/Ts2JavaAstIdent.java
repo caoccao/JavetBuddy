@@ -22,7 +22,6 @@ import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaClassCast;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLocalVariable;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
-import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
@@ -47,13 +46,11 @@ public class Ts2JavaAstIdent
     public Ts2JavaAstIdent(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstIdent ast,
-            TypeDescription type,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
         localVariable = null;
         optional = ast.isOptional();
         sym = ast.getSym();
-        this.type = type;
     }
 
     @Override

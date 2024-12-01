@@ -51,7 +51,7 @@ public class Ts2JavaAstVarDeclarator
         super(parent, ast, memo);
         name = ITs2JavaAstPat.cast(this, ast.getName(), memo);
         type = name.getType();
-        init = ast.getInit().map(expr -> ITs2JavaAstExpr.cast(this, expr, type, memo));
+        init = ast.getInit().map(expr -> ITs2JavaAstExpr.cast(this, expr, memo));
     }
 
     @Override

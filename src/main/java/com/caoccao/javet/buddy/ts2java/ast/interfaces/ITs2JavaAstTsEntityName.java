@@ -35,7 +35,7 @@ public interface ITs2JavaAstTsEntityName<AST extends ISwc4jAstTsEntityName, Memo
             Ts2JavaMemoFunction memo) {
         switch (ast.getType()) {
             case Ident:
-                return new Ts2JavaAstIdent(parent, ast.as(Swc4jAstIdent.class), null, memo);
+                return new Ts2JavaAstIdent(parent, ast.as(Swc4jAstIdent.class), memo);
             case TsQualifiedName:
                 return new Ts2JavaAstTsQualifiedName(parent, ast.as(Swc4jAstTsQualifiedName.class), null, memo);
             default:

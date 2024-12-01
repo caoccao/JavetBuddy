@@ -41,17 +41,10 @@ public class Ts2JavaAstBool
     public Ts2JavaAstBool(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstBool ast,
-            TypeDescription type,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        if (!type.represents(boolean.class)) {
-            throw new Ts2JavaAstException(
-                    ast,
-                    SimpleFreeMarkerFormat.format("Bool type ${type} is not supported.",
-                            SimpleMap.of("type", type.getName())));
-        }
         value = ast.isValue();
-        this.type = TypeDescription.ForLoadedType.of(boolean.class);
+        type = TypeDescription.ForLoadedType.of(boolean.class);
     }
 
     @Override

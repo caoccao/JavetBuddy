@@ -48,7 +48,7 @@ public class Ts2JavaAstBindingIdent
         } else {
             throw new Ts2JavaAstException(ast, "Binding ident type ann is missing.");
         }
-        id = new Ts2JavaAstIdent(this, ast.getId(), type, memo);
+        id = new Ts2JavaAstIdent(this, ast.getId(), memo);
     }
 
     @Override
