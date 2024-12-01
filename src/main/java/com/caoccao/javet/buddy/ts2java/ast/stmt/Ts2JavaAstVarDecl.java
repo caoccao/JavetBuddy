@@ -49,7 +49,10 @@ public class Ts2JavaAstVarDecl
     @Override
     public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
         visitLineNumber(methodVisitor);
-        return Size.ZERO;
+        return decls.stream()
+                .map(decl -> decl.apply(methodVisitor, context))
+                .reduce(BaseTs2JavaAst::aggregateSize)
+                .orElse(Size.ZERO);
     }
 
     @Override

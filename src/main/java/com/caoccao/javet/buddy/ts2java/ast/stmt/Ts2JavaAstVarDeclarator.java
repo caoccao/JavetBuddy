@@ -22,8 +22,16 @@ import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstDecl;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstExpr;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstPat;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
+import com.caoccao.javet.buddy.ts2java.ast.pat.Ts2JavaAstBindingIdent;
+import com.caoccao.javet.buddy.ts2java.compiler.JavaClassCast;
+import com.caoccao.javet.buddy.ts2java.compiler.JavaLocalVariable;
+import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstVarDeclarator;
+import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
+import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.implementation.Implementation;
+import net.bytebuddy.implementation.bytecode.StackManipulation;
+import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
 import java.util.Optional;
@@ -47,7 +55,32 @@ public class Ts2JavaAstVarDeclarator
     @Override
     public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
         visitLineNumber(methodVisitor);
-        return Size.ZERO;
+        Size sizeInit = Size.ZERO;
+        if (init.isPresent()) {
+            ITs2JavaAstExpr<?, ?> initExpr = init.get();
+            sizeInit = initExpr.apply(methodVisitor, context);
+            Size sizeCast = JavaClassCast.getUpCastStackManipulation(initExpr.getType(), type)
+                    .map(s -> s.apply(methodVisitor, context))
+                    .orElse(Size.ZERO);
+            sizeInit = aggregateSize(sizeInit, sizeCast);
+        }
+        String variableName;
+        switch (name.getAst().getType()) {
+            case BindingIdent:
+                variableName = name.as(Ts2JavaAstBindingIdent.class).getId().getSym();
+                break;
+            default:
+                throw new Ts2JavaAstException(
+                        ast,
+                        SimpleFreeMarkerFormat.format("Var declarator name type ${type} is not supported.",
+                                SimpleMap.of("type", name.getAst().getType().name())));
+        }
+        JavaLocalVariable localVariable = new JavaLocalVariable(variableName, type);
+        MethodVariableAccess methodVariableAccess = MethodVariableAccess.of(type);
+        StackManipulation stackManipulation = methodVariableAccess.storeAt(memo.getNextOffset());
+        Size sizeStore = stackManipulation.apply(methodVisitor, context);
+        memo.addLocalVariable(localVariable);
+        return aggregateSize(sizeInit, sizeStore);
     }
 
     @Override

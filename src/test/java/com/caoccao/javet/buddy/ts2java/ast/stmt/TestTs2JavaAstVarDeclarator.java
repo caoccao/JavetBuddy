@@ -60,6 +60,7 @@ public class TestTs2JavaAstVarDeclarator extends BaseTestTs2Java {
 //    @Test
     public void testAssignAndCast() throws Exception {
         assertEquals(3.0D, assignAndCast(1, 2L), 0.001D);
+        enableLogging();
         tsClass = new TsClass(
                 "let c: long = a;\n" +
                         "let d: long = b;\n" +

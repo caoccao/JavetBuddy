@@ -32,6 +32,8 @@ import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
+import java.util.Optional;
+
 public class Ts2JavaAstBinExpr
         extends BaseTs2JavaAst<Swc4jAstBinExpr, Ts2JavaMemoFunction>
         implements ITs2JavaAstExpr<Swc4jAstBinExpr, Ts2JavaMemoFunction> {
@@ -53,32 +55,39 @@ public class Ts2JavaAstBinExpr
         } else if (op.isLogicalConditionOperator()) {
             this.type = TypeDescription.ForLoadedType.of(boolean.class);
         }
-        left = ITs2JavaAstExpr.cast(parent, ast.getLeft(), this.type, memo);
-        right = ITs2JavaAstExpr.cast(parent, ast.getRight(), this.type, memo);
+        left = ITs2JavaAstExpr.cast(parent, ast.getLeft(), type, memo);
+        right = ITs2JavaAstExpr.cast(parent, ast.getRight(), type, memo);
     }
 
     @Override
     public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
         visitLineNumber(methodVisitor);
         Size sizeLoadLeft = left.apply(methodVisitor, context);
-        Size sizeCastLeft = JavaClassCast.getUpCastStackManipulation(left.getType(), type)
-                .map(s -> s.apply(methodVisitor, context))
-                .orElse(Size.ZERO);
+        TypeDescription newType = left.getType();
+        Size sizeCastLeft = Size.ZERO;
+        Optional<StackManipulation> optionalStackManipulation =
+                JavaClassCast.getUpCastStackManipulation(newType, right.getType());
+        if (optionalStackManipulation.isPresent()) {
+            sizeCastLeft = optionalStackManipulation.get().apply(methodVisitor, context);
+            newType = right.getType();
+        }
         Size sizeLoadRight = right.apply(methodVisitor, context);
-        Size sizeCastRight = JavaClassCast.getUpCastStackManipulation(right.getType(), type)
+        Size sizeCastRight = JavaClassCast.getUpCastStackManipulation(right.getType(), newType)
                 .map(s -> s.apply(methodVisitor, context))
                 .orElse(Size.ZERO);
-        StackManipulation stackManipulation;
+        Size sizeOp;
         if (op.isArithmeticOperator()) {
-            stackManipulation = Ts2JavaAstBinaryOp.getArithmeticStackManipulation(op, type);
+            sizeOp = Ts2JavaAstBinaryOp.getArithmeticStackManipulation(op, newType).apply(methodVisitor, context);
         } else {
             throw new Ts2JavaAstException(
                     ast,
                     SimpleFreeMarkerFormat.format("Bin expr op ${op} is not supported.",
                             SimpleMap.of("op", op.name())));
         }
-        Size sizeOp = stackManipulation.apply(methodVisitor, context);
-        return aggregateSize(sizeLoadLeft, sizeCastLeft, sizeLoadRight, sizeCastRight, sizeOp);
+        Size sizeCastResult = JavaClassCast.getUpCastStackManipulation(newType, type)
+                .map(s -> s.apply(methodVisitor, context))
+                .orElse(Size.ZERO);
+        return aggregateSize(sizeLoadLeft, sizeCastLeft, sizeLoadRight, sizeCastRight, sizeOp, sizeCastResult);
     }
 
     @Override

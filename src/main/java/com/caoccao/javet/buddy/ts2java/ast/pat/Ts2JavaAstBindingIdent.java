@@ -21,8 +21,8 @@ import com.caoccao.javet.buddy.ts2java.ast.expr.Ts2JavaAstIdent;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.*;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.buddy.ts2java.ast.ts.Ts2JavaAstTsTypeAnn;
+import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.pat.Swc4jAstBindingIdent;
-import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
@@ -43,7 +43,11 @@ public class Ts2JavaAstBindingIdent
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
         this.typeAnn = ast.getTypeAnn().map(typeAnn -> new Ts2JavaAstTsTypeAnn(this, typeAnn, memo));
-        type = typeAnn.map(Ts2JavaAstTsTypeAnn::getType).orElse(TypeDescription.ForLoadedType.of(void.class));
+        if (typeAnn.isPresent()) {
+            type = typeAnn.get().getType();
+        } else {
+            throw new Ts2JavaAstException(ast, "Binding ident type ann is missing.");
+        }
         id = new Ts2JavaAstIdent(this, ast.getId(), type, memo);
     }
 

@@ -35,6 +35,10 @@ public interface ITs2JavaAst<AST extends ISwc4jAst, Memo extends Ts2JavaMemo>
                         SimpleMap.of("type", getClass().getSimpleName())));
     }
 
+    default <T> T as(Class<T> clazz) {
+        return clazz.isAssignableFrom(getClass()) ? (T) this : null;
+    }
+
     void compile();
 
     AST getAst();

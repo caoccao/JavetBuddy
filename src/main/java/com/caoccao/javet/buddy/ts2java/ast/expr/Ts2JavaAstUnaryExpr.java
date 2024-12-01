@@ -86,12 +86,12 @@ public class Ts2JavaAstUnaryExpr
         switch (op) {
             case Bang:
                 if (arg instanceof ITs2JavaBangFlippable) {
-                    ((ITs2JavaBangFlippable) arg).flipBang();
+                    arg.as(ITs2JavaBangFlippable.class).flipBang();
                 }
                 break;
             case Minus:
                 if (arg instanceof ITs2JavaMinusFlippable) {
-                    ((ITs2JavaMinusFlippable) arg).flipMinus();
+                    arg.as(ITs2JavaMinusFlippable.class).flipMinus();
                 }
                 break;
             case Plus:
@@ -108,14 +108,14 @@ public class Ts2JavaAstUnaryExpr
     @Override
     public void flipBang() {
         if (op == Swc4jAstUnaryOp.Bang && arg instanceof ITs2JavaBangFlippable) {
-            ((ITs2JavaBangFlippable) arg).flipBang();
+            arg.as(ITs2JavaBangFlippable.class).flipBang();
         }
     }
 
     @Override
     public void flipMinus() {
         if (op == Swc4jAstUnaryOp.Minus && arg instanceof ITs2JavaMinusFlippable) {
-            ((ITs2JavaMinusFlippable) arg).flipMinus();
+            arg.as(ITs2JavaMinusFlippable.class).flipMinus();
         }
     }
 
@@ -151,7 +151,7 @@ public class Ts2JavaAstUnaryExpr
     @Override
     public boolean isBangFlippable() {
         if (op == Swc4jAstUnaryOp.Bang && arg instanceof ITs2JavaBangFlippable) {
-            return ((ITs2JavaBangFlippable) arg).isBangFlippable();
+            return arg.as(ITs2JavaBangFlippable.class).isBangFlippable();
         }
         return false;
     }
@@ -159,7 +159,7 @@ public class Ts2JavaAstUnaryExpr
     @Override
     public boolean isMinusFlippable() {
         if (op == Swc4jAstUnaryOp.Minus && arg instanceof ITs2JavaMinusFlippable) {
-            return ((ITs2JavaMinusFlippable) arg).isMinusFlippable();
+            return arg.as(ITs2JavaMinusFlippable.class).isMinusFlippable();
         }
         return false;
     }
