@@ -16,28 +16,32 @@
 
 package com.caoccao.javet.buddy.ts2java.ast.interfaces;
 
-import com.caoccao.javet.buddy.ts2java.ast.expr.Ts2JavaAstIdent;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemo;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
+import com.caoccao.javet.buddy.ts2java.ast.ts.Ts2JavaAstTsKeywordType;
+import com.caoccao.javet.buddy.ts2java.ast.ts.Ts2JavaAstTsTypeRef;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
-import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
-import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstTsEntityName;
+import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstTsType;
+import com.caoccao.javet.swc4j.ast.ts.Swc4jAstTsKeywordType;
+import com.caoccao.javet.swc4j.ast.ts.Swc4jAstTsTypeRef;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 
-public interface ITs2JavaAstTsEntityName<AST extends ISwc4jAstTsEntityName, Memo extends Ts2JavaMemo>
-        extends ITs2JavaAstTsModuleRef<AST, Memo>, ITs2JavaAstTsTypeQueryExpr<AST, Memo> {
-    static ITs2JavaAstTsEntityName<?, ?> cast(
+public interface ITs2JavaAstTsType<AST extends ISwc4jAstTsType, Memo extends Ts2JavaMemo>
+        extends ITs2JavaAst<AST, Memo> {
+    static ITs2JavaAstTsType<?, ?> cast(
             ITs2JavaAst<?, ?> parent,
-            ISwc4jAstTsEntityName ast,
+            ISwc4jAstTsType ast,
             Ts2JavaMemoFunction memo) {
         switch (ast.getType()) {
-            case Ident:
-                return new Ts2JavaAstIdent(parent, ast.as(Swc4jAstIdent.class), null, memo);
+            case TsKeywordType:
+                return new Ts2JavaAstTsKeywordType(parent, ast.as(Swc4jAstTsKeywordType.class), memo);
+            case TsTypeRef:
+                return new Ts2JavaAstTsTypeRef(parent, ast.as(Swc4jAstTsTypeRef.class), memo);
             default:
                 throw new Ts2JavaAstException(
                         ast,
-                        SimpleFreeMarkerFormat.format("Ts entity name ${type} is not supported.",
+                        SimpleFreeMarkerFormat.format("Ts type ${type} is not supported.",
                                 SimpleMap.of("type", ast.getType().name())));
         }
     }
