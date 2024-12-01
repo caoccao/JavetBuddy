@@ -49,14 +49,14 @@ public class Ts2JavaAstBinExpr
         super(parent, ast, memo);
         op = ast.getOp();
         if (op.isArithmeticOperator()) {
-            this.type = type;
-        } else if (op.isLogicalCompareOperator()) {
-            this.type = TypeDescription.ForLoadedType.of(void.class);
-        } else if (op.isLogicalConditionOperator()) {
+            this.type = op == Swc4jAstBinaryOp.Exp ? TypeDescription.ForLoadedType.of(double.class) : type;
+        } else if (op.isLogicalOperator()) {
             this.type = TypeDescription.ForLoadedType.of(boolean.class);
+        } else {
+            this.type = type;
         }
-        left = ITs2JavaAstExpr.cast(parent, ast.getLeft(), type, memo);
-        right = ITs2JavaAstExpr.cast(parent, ast.getRight(), type, memo);
+        left = ITs2JavaAstExpr.cast(parent, ast.getLeft(), this.type, memo);
+        right = ITs2JavaAstExpr.cast(parent, ast.getRight(), this.type, memo);
     }
 
     @Override
@@ -65,11 +65,12 @@ public class Ts2JavaAstBinExpr
         Size sizeLoadLeft = left.apply(methodVisitor, context);
         TypeDescription newType = left.getType();
         Size sizeCastLeft = Size.ZERO;
+        TypeDescription rightTargetType = op == Swc4jAstBinaryOp.Exp ? type : right.getType();
         Optional<StackManipulation> optionalStackManipulation =
-                JavaClassCast.getUpCastStackManipulation(newType, right.getType());
+                JavaClassCast.getUpCastStackManipulation(left.getType(), rightTargetType);
         if (optionalStackManipulation.isPresent()) {
             sizeCastLeft = optionalStackManipulation.get().apply(methodVisitor, context);
-            newType = right.getType();
+            newType = rightTargetType;
         }
         Size sizeLoadRight = right.apply(methodVisitor, context);
         Size sizeCastRight = JavaClassCast.getUpCastStackManipulation(right.getType(), newType)
@@ -77,7 +78,8 @@ public class Ts2JavaAstBinExpr
                 .orElse(Size.ZERO);
         Size sizeOp;
         if (op.isArithmeticOperator()) {
-            sizeOp = Ts2JavaAstBinaryOp.getArithmeticStackManipulation(op, newType).apply(methodVisitor, context);
+            sizeOp = Ts2JavaAstBinaryOp.getArithmeticStackManipulation(op, newType)
+                    .apply(methodVisitor, context);
         } else {
             throw new Ts2JavaAstException(
                     ast,

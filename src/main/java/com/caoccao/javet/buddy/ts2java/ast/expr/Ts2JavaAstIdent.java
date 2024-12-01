@@ -42,6 +42,7 @@ public class Ts2JavaAstIdent
         ITs2JavaAstTsEnumMemberId<Swc4jAstIdent, Ts2JavaMemoFunction> {
     protected final boolean optional;
     protected final String sym;
+    protected JavaLocalVariable localVariable;
 
     public Ts2JavaAstIdent(
             ITs2JavaAst<?, ?> parent,
@@ -49,6 +50,7 @@ public class Ts2JavaAstIdent
             TypeDescription type,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
+        localVariable = null;
         optional = ast.isOptional();
         sym = ast.getSym();
         this.type = type;
@@ -57,7 +59,6 @@ public class Ts2JavaAstIdent
     @Override
     public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
         visitLineNumber(methodVisitor);
-        JavaLocalVariable localVariable = memo.getLocalVariable(sym);
         MethodVariableAccess methodVariableAccess = MethodVariableAccess.of(localVariable.getType());
         StackManipulation stackManipulation = methodVariableAccess.loadFrom(localVariable.getOffset());
         Size size = stackManipulation.apply(methodVisitor, context);
@@ -69,6 +70,8 @@ public class Ts2JavaAstIdent
 
     @Override
     public void compile() {
+        localVariable = memo.getLocalVariable(sym);
+        type = localVariable.getType();
     }
 
     public String getSym() {

@@ -56,6 +56,12 @@ public class JavaLoggingMethodVisitor extends MethodVisitor {
     }
 
     @Override
+    public void visitMethodInsn(int opcode, String owner, String name, String descriptor, boolean isInterface) {
+        System.out.println(" " + JavaOpcodeUtils.getOpcodeName(opcode) + " " + owner + " " + name + " " + descriptor + " " + isInterface);
+        super.visitMethodInsn(opcode, owner, name, descriptor, isInterface);
+    }
+
+    @Override
     public void visitVarInsn(int opcode, int varIndex) {
         System.out.println(" " + JavaOpcodeUtils.getOpcodeName(opcode) + " " + varIndex);
         super.visitVarInsn(opcode, varIndex);

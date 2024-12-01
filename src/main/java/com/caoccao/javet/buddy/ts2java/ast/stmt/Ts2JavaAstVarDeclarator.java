@@ -41,6 +41,8 @@ public class Ts2JavaAstVarDeclarator
         implements ITs2JavaAstDecl<Swc4jAstVarDeclarator, Ts2JavaMemoFunction> {
     protected final Optional<ITs2JavaAstExpr<?, ?>> init;
     protected final ITs2JavaAstPat<?, ?> name;
+    protected JavaLocalVariable localVariable;
+    protected int offset;
 
     public Ts2JavaAstVarDeclarator(
             ITs2JavaAst<?, ?> parent,
@@ -64,6 +66,15 @@ public class Ts2JavaAstVarDeclarator
                     .orElse(Size.ZERO);
             sizeInit = aggregateSize(sizeInit, sizeCast);
         }
+        MethodVariableAccess methodVariableAccess = MethodVariableAccess.of(type);
+        StackManipulation stackManipulation = methodVariableAccess.storeAt(offset);
+        Size sizeStore = stackManipulation.apply(methodVisitor, context);
+        return aggregateSize(sizeInit, sizeStore);
+    }
+
+    @Override
+    public void compile() {
+        init.ifPresent(ITs2JavaAstExpr::compile);
         String variableName;
         switch (name.getAst().getType()) {
             case BindingIdent:
@@ -75,16 +86,10 @@ public class Ts2JavaAstVarDeclarator
                         SimpleFreeMarkerFormat.format("Var declarator name type ${type} is not supported.",
                                 SimpleMap.of("type", name.getAst().getType().name())));
         }
-        JavaLocalVariable localVariable = new JavaLocalVariable(variableName, type);
-        MethodVariableAccess methodVariableAccess = MethodVariableAccess.of(type);
-        StackManipulation stackManipulation = methodVariableAccess.storeAt(memo.getNextOffset());
-        Size sizeStore = stackManipulation.apply(methodVisitor, context);
+        offset = memo.getNextOffset();
+        localVariable = new JavaLocalVariable(variableName, type);
         memo.addLocalVariable(localVariable);
-        return aggregateSize(sizeInit, sizeStore);
-    }
-
-    @Override
-    public void compile() {
+        type = localVariable.getType();
     }
 
     public Optional<ITs2JavaAstExpr<?, ?>> getInit() {
