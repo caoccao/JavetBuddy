@@ -17,7 +17,6 @@
 package com.caoccao.javet.buddy.ts2java.ast.ts;
 
 import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAst;
-import com.caoccao.javet.buddy.ts2java.ast.expr.Ts2JavaAstIdent;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstTsEntityName;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstTsType;
@@ -52,19 +51,13 @@ public class Ts2JavaAstTsTypeRef
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
         typeName = ITs2JavaAstTsEntityName.cast(this, ast.getTypeName(), memo);
-        if (!(typeName instanceof Ts2JavaAstIdent)) {
-            throw new Ts2JavaAstException(
-                    ast,
-                    SimpleFreeMarkerFormat.format("Ts type ref type ${type} is not supported.",
-                            SimpleMap.of("type", ast.getType().name())));
-        }
-        String name = ((Ts2JavaAstIdent) typeName).getSym();
-        type = TS_TYPE_REF_MAP.get(name);
+        String entityTypeName = typeName.getTypeName();
+        type = TS_TYPE_REF_MAP.get(entityTypeName);
         if (type == null) {
             throw new Ts2JavaAstException(
                     ast,
                     SimpleFreeMarkerFormat.format("Ts type ref type name ${name} is not supported.",
-                            SimpleMap.of("name", name)));
+                            SimpleMap.of("name", entityTypeName)));
         }
     }
 
@@ -76,5 +69,9 @@ public class Ts2JavaAstTsTypeRef
 
     @Override
     public void compile() {
+    }
+
+    public ITs2JavaAstTsEntityName<?, ?> getTypeName() {
+        return typeName;
     }
 }

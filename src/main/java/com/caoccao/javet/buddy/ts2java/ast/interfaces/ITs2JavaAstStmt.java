@@ -19,9 +19,11 @@ package com.caoccao.javet.buddy.ts2java.ast.interfaces;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemo;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.buddy.ts2java.ast.stmt.Ts2JavaAstReturnStmt;
+import com.caoccao.javet.buddy.ts2java.ast.stmt.Ts2JavaAstVarDecl;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstStmt;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstReturnStmt;
+import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstVarDecl;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 
@@ -35,6 +37,7 @@ public interface ITs2JavaAstStmt<AST extends ISwc4jAstStmt, Memo extends Ts2Java
             case ReturnStmt:
                 return new Ts2JavaAstReturnStmt(parent, ast.as(Swc4jAstReturnStmt.class), memo);
             case VarDecl:
+                return new Ts2JavaAstVarDecl(parent, ast.as(Swc4jAstVarDecl.class), memo);
             default:
                 throw new Ts2JavaAstException(
                         ast,

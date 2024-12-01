@@ -31,8 +31,8 @@ import java.util.Optional;
 public class Ts2JavaAstVarDeclarator
         extends BaseTs2JavaAst<Swc4jAstVarDeclarator, Ts2JavaMemoFunction>
         implements ITs2JavaAstDecl<Swc4jAstVarDeclarator, Ts2JavaMemoFunction> {
-    protected final Optional<ITs2JavaAstExpr> init;
-    protected final ITs2JavaAstPat name;
+    protected final Optional<ITs2JavaAstExpr<?, ?>> init;
+    protected final ITs2JavaAstPat<?, ?> name;
 
     public Ts2JavaAstVarDeclarator(
             ITs2JavaAst<?, ?> parent,
@@ -54,11 +54,11 @@ public class Ts2JavaAstVarDeclarator
     public void compile() {
     }
 
-    public Optional<ITs2JavaAstExpr> getInit() {
+    public Optional<ITs2JavaAstExpr<?, ?>> getInit() {
         return init;
     }
 
-    public ITs2JavaAstPat getName() {
+    public ITs2JavaAstPat<?, ?> getName() {
         return name;
     }
 }

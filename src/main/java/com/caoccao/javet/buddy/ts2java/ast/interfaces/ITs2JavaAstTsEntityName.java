@@ -19,9 +19,11 @@ package com.caoccao.javet.buddy.ts2java.ast.interfaces;
 import com.caoccao.javet.buddy.ts2java.ast.expr.Ts2JavaAstIdent;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemo;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
+import com.caoccao.javet.buddy.ts2java.ast.ts.Ts2JavaAstTsQualifiedName;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdent;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstTsEntityName;
+import com.caoccao.javet.swc4j.ast.ts.Swc4jAstTsQualifiedName;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 
@@ -34,6 +36,8 @@ public interface ITs2JavaAstTsEntityName<AST extends ISwc4jAstTsEntityName, Memo
         switch (ast.getType()) {
             case Ident:
                 return new Ts2JavaAstIdent(parent, ast.as(Swc4jAstIdent.class), null, memo);
+            case TsQualifiedName:
+                return new Ts2JavaAstTsQualifiedName(parent, ast.as(Swc4jAstTsQualifiedName.class), null, memo);
             default:
                 throw new Ts2JavaAstException(
                         ast,
@@ -41,4 +45,6 @@ public interface ITs2JavaAstTsEntityName<AST extends ISwc4jAstTsEntityName, Memo
                                 SimpleMap.of("type", ast.getType().name())));
         }
     }
+
+    String getTypeName();
 }

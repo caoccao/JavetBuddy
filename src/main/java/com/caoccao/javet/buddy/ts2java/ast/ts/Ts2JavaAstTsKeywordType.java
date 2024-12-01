@@ -64,4 +64,8 @@ public class Ts2JavaAstTsKeywordType
     @Override
     public void compile() {
     }
+
+    public Swc4jAstTsKeywordTypeKind getKind() {
+        return kind;
+    }
 }

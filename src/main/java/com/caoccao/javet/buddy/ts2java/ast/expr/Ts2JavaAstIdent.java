@@ -75,6 +75,11 @@ public class Ts2JavaAstIdent
         return sym;
     }
 
+    @Override
+    public String getTypeName() {
+        return sym;
+    }
+
     public boolean isOptional() {
         return optional;
     }

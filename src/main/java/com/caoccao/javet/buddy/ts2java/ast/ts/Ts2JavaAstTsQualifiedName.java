@@ -17,24 +17,30 @@
 package com.caoccao.javet.buddy.ts2java.ast.ts;
 
 import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAst;
+import com.caoccao.javet.buddy.ts2java.ast.expr.Ts2JavaAstIdentName;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
-import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstTsType;
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstTsEntityName;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
-import com.caoccao.javet.swc4j.ast.ts.Swc4jAstTsTypeAnn;
+import com.caoccao.javet.swc4j.ast.ts.Swc4jAstTsQualifiedName;
+import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
-public class Ts2JavaAstTsTypeAnn
-        extends BaseTs2JavaAst<Swc4jAstTsTypeAnn, Ts2JavaMemoFunction> {
-    protected final ITs2JavaAstTsType<?, ?> typeAnn;
+public class Ts2JavaAstTsQualifiedName
+        extends BaseTs2JavaAst<Swc4jAstTsQualifiedName, Ts2JavaMemoFunction>
+        implements ITs2JavaAstTsEntityName<Swc4jAstTsQualifiedName, Ts2JavaMemoFunction> {
+    protected final ITs2JavaAstTsEntityName<?, ?> left;
+    protected final Ts2JavaAstIdentName right;
 
-    public Ts2JavaAstTsTypeAnn(
+    public Ts2JavaAstTsQualifiedName(
             ITs2JavaAst<?, ?> parent,
-            Swc4jAstTsTypeAnn ast,
+            Swc4jAstTsQualifiedName ast,
+            TypeDescription type,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        typeAnn = ITs2JavaAstTsType.cast(this, ast.getTypeAnn(), memo);
-        type = typeAnn.getType();
+        left = ITs2JavaAstTsEntityName.cast(parent, ast.getLeft(), memo);
+        right = new Ts2JavaAstIdentName(parent, ast.getRight(), type, memo);
+        this.type = type;
     }
 
     @Override
@@ -47,7 +53,16 @@ public class Ts2JavaAstTsTypeAnn
     public void compile() {
     }
 
-    public ITs2JavaAstTsType<?, ?> getTypeAnn() {
-        return typeAnn;
+    public ITs2JavaAstTsEntityName<?, ?> getLeft() {
+        return left;
+    }
+
+    public Ts2JavaAstIdentName getRight() {
+        return right;
+    }
+
+    @Override
+    public String getTypeName() {
+        return left.getTypeName() + "." + right.getSym();
     }
 }

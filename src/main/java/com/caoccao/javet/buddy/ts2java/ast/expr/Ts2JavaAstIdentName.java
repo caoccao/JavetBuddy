@@ -14,27 +14,32 @@
  * limitations under the License.
  */
 
-package com.caoccao.javet.buddy.ts2java.ast.ts;
+package com.caoccao.javet.buddy.ts2java.ast.expr;
 
 import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAst;
-import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
-import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstTsType;
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.*;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
-import com.caoccao.javet.swc4j.ast.ts.Swc4jAstTsTypeAnn;
+import com.caoccao.javet.swc4j.ast.expr.Swc4jAstIdentName;
+import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
-public class Ts2JavaAstTsTypeAnn
-        extends BaseTs2JavaAst<Swc4jAstTsTypeAnn, Ts2JavaMemoFunction> {
-    protected final ITs2JavaAstTsType<?, ?> typeAnn;
+public class Ts2JavaAstIdentName
+        extends BaseTs2JavaAst<Swc4jAstIdentName, Ts2JavaMemoFunction>
+        implements ITs2JavaAstSuperProp<Swc4jAstIdentName, Ts2JavaMemoFunction>,
+        ITs2JavaAstPropName<Swc4jAstIdentName, Ts2JavaMemoFunction>,
+        ITs2JavaAstMemberProp<Swc4jAstIdentName, Ts2JavaMemoFunction>,
+        ITs2JavaAstJsxAttrName<Swc4jAstIdentName, Ts2JavaMemoFunction> {
+    protected final String sym;
 
-    public Ts2JavaAstTsTypeAnn(
+    public Ts2JavaAstIdentName(
             ITs2JavaAst<?, ?> parent,
-            Swc4jAstTsTypeAnn ast,
+            Swc4jAstIdentName ast,
+            TypeDescription type,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        typeAnn = ITs2JavaAstTsType.cast(this, ast.getTypeAnn(), memo);
-        type = typeAnn.getType();
+        sym = ast.getSym();
+        this.type = type;
     }
 
     @Override
@@ -47,7 +52,7 @@ public class Ts2JavaAstTsTypeAnn
     public void compile() {
     }
 
-    public ITs2JavaAstTsType<?, ?> getTypeAnn() {
-        return typeAnn;
+    public String getSym() {
+        return sym;
     }
 }
