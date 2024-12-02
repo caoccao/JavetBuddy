@@ -16,7 +16,7 @@
 
 package com.caoccao.javet.buddy.ts2java.ast.interfaces;
 
-import com.caoccao.javet.buddy.ts2java.ast.expr.Ts2JavaAstBinExpr;
+import com.caoccao.javet.buddy.ts2java.ast.expr.Ts2JavaAstBinExprArithmetic;
 import com.caoccao.javet.buddy.ts2java.ast.expr.Ts2JavaAstIdent;
 import com.caoccao.javet.buddy.ts2java.ast.expr.Ts2JavaAstUnaryExpr;
 import com.caoccao.javet.buddy.ts2java.ast.expr.lit.Ts2JavaAstBool;
@@ -33,7 +33,6 @@ import com.caoccao.javet.swc4j.ast.expr.lit.Swc4jAstNumber;
 import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstExpr;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
-import net.bytebuddy.description.type.TypeDescription;
 
 public interface ITs2JavaAstExpr<AST extends ISwc4jAstExpr, Memo extends Ts2JavaMemo>
         extends ITs2JavaAstVarDeclOrExpr<AST, Memo>, ITs2JavaAstPat<AST, Memo>, ITs2JavaAstJsxExpr<AST, Memo>,
@@ -43,8 +42,16 @@ public interface ITs2JavaAstExpr<AST extends ISwc4jAstExpr, Memo extends Ts2Java
             ISwc4jAstExpr ast,
             Ts2JavaMemoFunction memo) {
         switch (ast.getType()) {
-            case BinExpr:
-                return new Ts2JavaAstBinExpr(parent, ast.as(Swc4jAstBinExpr.class), memo);
+            case BinExpr: {
+                Swc4jAstBinExpr binExpr = ast.as(Swc4jAstBinExpr.class);
+                if (binExpr.getOp().isArithmeticOperator()) {
+                    return new Ts2JavaAstBinExprArithmetic(parent, binExpr, memo);
+                }
+                throw new Ts2JavaAstException(
+                        ast,
+                        SimpleFreeMarkerFormat.format("Bin expr op ${op} is not supported.",
+                                SimpleMap.of("op", binExpr.getOp().name())));
+            }
             case Bool:
                 return new Ts2JavaAstBool(parent, ast.as(Swc4jAstBool.class), memo);
             case Ident:
