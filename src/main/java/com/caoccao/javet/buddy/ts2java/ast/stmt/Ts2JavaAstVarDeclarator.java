@@ -86,8 +86,13 @@ public class Ts2JavaAstVarDeclarator
                         SimpleFreeMarkerFormat.format("Var declarator name type ${type} is not supported.",
                                 SimpleMap.of("type", name.getAst().getType().name())));
         }
+        // Type can be deduced from init.
         if (type == null && init.isPresent()) {
             type = init.get().getType();
+        }
+        // Type is missing.
+        if (type == null) {
+            throw new Ts2JavaAstException(ast, "Var declarator type is missing.");
         }
         offset = memo.getNextOffset();
         localVariable = new JavaLocalVariable(variableName, type);
