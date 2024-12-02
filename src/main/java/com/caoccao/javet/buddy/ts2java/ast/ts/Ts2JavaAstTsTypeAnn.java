@@ -33,7 +33,7 @@ public class Ts2JavaAstTsTypeAnn
             Swc4jAstTsTypeAnn ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        typeAnn = ITs2JavaAstTsType.cast(this, ast.getTypeAnn(), memo);
+        typeAnn = ITs2JavaAstTsType.create(this, ast.getTypeAnn(), memo);
         type = typeAnn.getType();
     }
 

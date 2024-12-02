@@ -16,7 +16,7 @@
 
 package com.caoccao.javet.buddy.ts2java.ast.interfaces;
 
-import com.caoccao.javet.buddy.ts2java.ast.expr.Ts2JavaAstBinExprArithmetic;
+import com.caoccao.javet.buddy.ts2java.ast.expr.Ts2JavaAstBinExpr;
 import com.caoccao.javet.buddy.ts2java.ast.expr.Ts2JavaAstIdent;
 import com.caoccao.javet.buddy.ts2java.ast.expr.Ts2JavaAstUnaryExpr;
 import com.caoccao.javet.buddy.ts2java.ast.expr.lit.Ts2JavaAstBool;
@@ -37,21 +37,13 @@ import com.caoccao.javet.utils.SimpleMap;
 public interface ITs2JavaAstExpr<AST extends ISwc4jAstExpr, Memo extends Ts2JavaMemo>
         extends ITs2JavaAstVarDeclOrExpr<AST, Memo>, ITs2JavaAstPat<AST, Memo>, ITs2JavaAstJsxExpr<AST, Memo>,
         ITs2JavaAstCallee<AST, Memo>, ITs2JavaAstBlockStmtOrExpr<AST, Memo>, ITs2JavaAstAssignTarget<AST, Memo> {
-    static ITs2JavaAstExpr<?, ?> cast(
+    static ITs2JavaAstExpr<?, ?> create(
             ITs2JavaAst<?, ?> parent,
             ISwc4jAstExpr ast,
             Ts2JavaMemoFunction memo) {
         switch (ast.getType()) {
-            case BinExpr: {
-                Swc4jAstBinExpr binExpr = ast.as(Swc4jAstBinExpr.class);
-                if (binExpr.getOp().isArithmeticOperator()) {
-                    return new Ts2JavaAstBinExprArithmetic(parent, binExpr, memo);
-                }
-                throw new Ts2JavaAstException(
-                        ast,
-                        SimpleFreeMarkerFormat.format("Bin expr op ${op} is not supported.",
-                                SimpleMap.of("op", binExpr.getOp().name())));
-            }
+            case BinExpr:
+                return Ts2JavaAstBinExpr.create(parent, ast.as(Swc4jAstBinExpr.class), memo);
             case Bool:
                 return new Ts2JavaAstBool(parent, ast.as(Swc4jAstBool.class), memo);
             case Ident:
@@ -59,7 +51,7 @@ public interface ITs2JavaAstExpr<AST extends ISwc4jAstExpr, Memo extends Ts2Java
             case Number:
                 return new Ts2JavaAstNumber(parent, ast.as(Swc4jAstNumber.class), memo);
             case ParenExpr:
-                return cast(parent, ast.as(Swc4jAstParenExpr.class).unParenExpr(), memo);
+                return create(parent, ast.as(Swc4jAstParenExpr.class).unParenExpr(), memo);
             case UnaryExpr:
                 return new Ts2JavaAstUnaryExpr(parent, ast.as(Swc4jAstUnaryExpr.class), memo);
             default:

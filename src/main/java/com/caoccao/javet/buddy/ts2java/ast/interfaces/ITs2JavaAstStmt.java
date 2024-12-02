@@ -29,7 +29,7 @@ import com.caoccao.javet.utils.SimpleMap;
 
 public interface ITs2JavaAstStmt<AST extends ISwc4jAstStmt, Memo extends Ts2JavaMemo>
         extends ITs2JavaAstModuleItem<AST, Memo> {
-    static ITs2JavaAstStmt<?, ?> cast(
+    static ITs2JavaAstStmt<?, ?> create(
             ITs2JavaAst<?, ?> parent,
             ISwc4jAstStmt ast,
             Ts2JavaMemoFunction memo) {

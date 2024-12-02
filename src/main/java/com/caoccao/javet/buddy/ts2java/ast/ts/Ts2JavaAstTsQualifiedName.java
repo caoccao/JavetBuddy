@@ -38,7 +38,7 @@ public class Ts2JavaAstTsQualifiedName
             TypeDescription type,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        left = ITs2JavaAstTsEntityName.cast(parent, ast.getLeft(), memo);
+        left = ITs2JavaAstTsEntityName.create(parent, ast.getLeft(), memo);
         right = new Ts2JavaAstIdentName(parent, ast.getRight(), type, memo);
         this.type = type;
     }

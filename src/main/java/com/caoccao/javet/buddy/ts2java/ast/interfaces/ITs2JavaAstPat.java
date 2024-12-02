@@ -27,7 +27,7 @@ import com.caoccao.javet.utils.SimpleMap;
 
 public interface ITs2JavaAstPat<AST extends ISwc4jAstPat, Memo extends Ts2JavaMemo>
         extends ITs2JavaAstAssignTarget<AST, Memo>, ITs2JavaAstForHead<AST, Memo> {
-    static ITs2JavaAstPat<?, ?> cast(
+    static ITs2JavaAstPat<?, ?> create(
             ITs2JavaAst<?, ?> parent,
             ISwc4jAstPat ast,
             Ts2JavaMemoFunction memo) {

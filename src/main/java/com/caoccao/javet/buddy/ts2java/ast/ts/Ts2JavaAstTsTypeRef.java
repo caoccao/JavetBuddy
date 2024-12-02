@@ -50,7 +50,7 @@ public class Ts2JavaAstTsTypeRef
             Swc4jAstTsTypeRef ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        typeName = ITs2JavaAstTsEntityName.cast(this, ast.getTypeName(), memo);
+        typeName = ITs2JavaAstTsEntityName.create(this, ast.getTypeName(), memo);
         String entityTypeName = typeName.getTypeName();
         type = TS_TYPE_REF_MAP.get(entityTypeName);
         if (type == null) {

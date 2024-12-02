@@ -27,7 +27,6 @@ import com.caoccao.javet.swc4j.ast.enums.Swc4jAstUnaryOp;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstUnaryExpr;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
-import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.jar.asm.MethodVisitor;
 import net.bytebuddy.jar.asm.Opcodes;
@@ -44,7 +43,7 @@ public class Ts2JavaAstUnaryExpr
             Swc4jAstUnaryExpr ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        arg = ITs2JavaAstExpr.cast(this, ast.getArg(), memo);
+        arg = ITs2JavaAstExpr.create(this, ast.getArg(), memo);
         op = ast.getOp();
     }
 

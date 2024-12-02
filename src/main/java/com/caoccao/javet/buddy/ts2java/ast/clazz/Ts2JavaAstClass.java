@@ -34,7 +34,7 @@ public class Ts2JavaAstClass
     public Ts2JavaAstClass(ITs2JavaAst<?, ?> parent, Swc4jAstClass ast, Ts2JavaMemoDynamicType memo) {
         super(parent, ast, memo);
         body = ast.getBody().stream()
-                .map(classMember -> ITs2JavaAstClassMember.cast(this, classMember, memo))
+                .map(classMember -> ITs2JavaAstClassMember.create(this, classMember, memo))
                 .collect(Collectors.toList());
     }
 

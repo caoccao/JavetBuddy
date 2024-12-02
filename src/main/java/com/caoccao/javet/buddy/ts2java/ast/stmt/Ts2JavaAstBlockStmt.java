@@ -41,7 +41,7 @@ public class Ts2JavaAstBlockStmt
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
         stmts = ast.getStmts().stream()
-                .map(stmt -> ITs2JavaAstStmt.cast(this, stmt, memo))
+                .map(stmt -> ITs2JavaAstStmt.create(this, stmt, memo))
                 .collect(Collectors.toList());
     }
 

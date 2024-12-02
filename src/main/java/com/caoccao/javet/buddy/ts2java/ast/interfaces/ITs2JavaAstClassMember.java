@@ -26,7 +26,7 @@ import com.caoccao.javet.utils.SimpleMap;
 
 public interface ITs2JavaAstClassMember<AST extends ISwc4jAstClassMember, Memo extends Ts2JavaMemoDynamicType>
         extends ITs2JavaAst<AST, Memo> {
-    static ITs2JavaAstClassMember<?, ?> cast(
+    static ITs2JavaAstClassMember<?, ?> create(
             ITs2JavaAst<?, ?> parent,
             ISwc4jAstClassMember ast,
             Ts2JavaMemoDynamicType memo) {

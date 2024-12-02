@@ -20,8 +20,11 @@ import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstExpr;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
+import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
+import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
+import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.jar.asm.MethodVisitor;
@@ -43,8 +46,21 @@ public abstract class Ts2JavaAstBinExpr
         if (op.isLogicalOperator()) {
             type = TypeDescription.ForLoadedType.of(boolean.class);
         }
-        left = ITs2JavaAstExpr.cast(parent, ast.getLeft(), memo);
-        right = ITs2JavaAstExpr.cast(parent, ast.getRight(), memo);
+        left = ITs2JavaAstExpr.create(parent, ast.getLeft(), memo);
+        right = ITs2JavaAstExpr.create(parent, ast.getRight(), memo);
+    }
+
+    public static Ts2JavaAstBinExpr create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstBinExpr ast,
+            Ts2JavaMemoFunction memo) {
+        if (ast.getOp().isArithmeticOperator()) {
+            return new Ts2JavaAstBinExprArithmetic(parent, ast, memo);
+        }
+        throw new Ts2JavaAstException(
+                ast,
+                SimpleFreeMarkerFormat.format("Bin expr op ${op} is not supported.",
+                        SimpleMap.of("op", ast.getOp().name())));
     }
 
     @Override

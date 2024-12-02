@@ -49,9 +49,9 @@ public class Ts2JavaAstVarDeclarator
             Swc4jAstVarDeclarator ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        name = ITs2JavaAstPat.cast(this, ast.getName(), memo);
+        name = ITs2JavaAstPat.create(this, ast.getName(), memo);
         type = name.getType();
-        init = ast.getInit().map(expr -> ITs2JavaAstExpr.cast(this, expr, memo));
+        init = ast.getInit().map(expr -> ITs2JavaAstExpr.create(this, expr, memo));
     }
 
     @Override

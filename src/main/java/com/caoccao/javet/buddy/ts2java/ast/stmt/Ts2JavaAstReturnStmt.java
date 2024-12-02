@@ -40,7 +40,7 @@ public class Ts2JavaAstReturnStmt
             Swc4jAstReturnStmt ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        arg = ast.getArg().map(arg -> ITs2JavaAstExpr.cast(this, arg, memo));
+        arg = ast.getArg().map(arg -> ITs2JavaAstExpr.create(this, arg, memo));
         type = memo.getReturnType();
     }
 
