@@ -57,6 +57,43 @@ public class TestTs2JavaAstVarDeclarator extends BaseTestTs2Java {
         return c + d;
     }
 
+    /*
+  public assignConst(IJ)J
+   L0
+    LINENUMBER 97 L0
+    BIPUSH 100
+    ISTORE 4
+   L1
+    LINENUMBER 98 L1
+    LDC 2
+    LSTORE 5
+   L2
+    LINENUMBER 99 L2
+    ILOAD 1
+    I2L
+    LLOAD 2
+    LADD
+    ILOAD 4
+    I2L
+    LADD
+    LLOAD 5
+    LADD
+    LRETURN
+   L3
+    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/TestAssignments; L0 L3 0
+    LOCALVARIABLE a I L0 L3 1
+    LOCALVARIABLE b J L0 L3 2
+    LOCALVARIABLE c I L1 L3 4
+    LOCALVARIABLE d J L2 L3 5
+    MAXSTACK = 4
+    MAXLOCALS = 7
+     */
+    public long assignConst(int a, long b) {
+        int c = 100;
+        long d = 2;
+        return a + b + c + d;
+    }
+
     @Test
     public void testAssignAndCast() throws Exception {
         assertEquals(3.0D, assignAndCast(1, 2L), 0.001D);
@@ -68,5 +105,18 @@ public class TestTs2JavaAstVarDeclarator extends BaseTestTs2Java {
                 TsMethodArgument.of("a", int.class),
                 TsMethodArgument.of("b", long.class));
         assertEquals(3.0D, (double) tsClass.invoke(1, 2L), 0.001D);
+    }
+
+    @Test
+    public void testAssignConst() throws Exception {
+        assertEquals(105L, assignConst(1, 2L));
+        TsClass tsClass = new TsClass(
+                "const c: int = 100;\n" +
+                        "const d: long = 2;\n" +
+                        "return a + b + c + d;",
+                long.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", long.class));
+        assertEquals(105L, tsClass.invoke(1, 2L));
     }
 }
