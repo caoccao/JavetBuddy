@@ -25,10 +25,36 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestTs2JavaAstReturnStmt extends BaseTestTs2Java {
     @Test
-    public void testReturn() throws Exception {
-        TsClass tsClass = new TsClass("return true;", boolean.class);
+    public void testBoolean() throws Exception {
+        tsClass = new TsClass("return true;", boolean.class);
+        assertTrue((boolean) tsClass.invoke());
+        tsClass = new TsClass("return true;");
         assertTrue((boolean) tsClass.invoke());
         tsClass = new TsClass("return 1;", int.class);
         assertEquals(1, tsClass.invoke());
+    }
+
+    @Test
+    public void testFloat() throws Exception {
+        tsClass = new TsClass("return 1.1;", float.class);
+        assertEquals(1.1F, (float) tsClass.invoke(), 0.001F);
+        tsClass = new TsClass("return 1.1;");
+        assertEquals(1.1F, (float) tsClass.invoke(), 0.001F);
+    }
+
+    @Test
+    public void testInt() throws Exception {
+        tsClass = new TsClass("return 1;", int.class);
+        assertEquals(1, tsClass.invoke());
+        tsClass = new TsClass("return 1;");
+        assertEquals(1, tsClass.invoke());
+    }
+
+    @Test
+    public void testLong() throws Exception {
+        tsClass = new TsClass("return 8589934592;", long.class);
+        assertEquals(8589934592L, (long) tsClass.invoke());
+        tsClass = new TsClass("return 8589934592;");
+        assertEquals(8589934592L, (long) tsClass.invoke());
     }
 }

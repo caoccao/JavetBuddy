@@ -22,6 +22,7 @@ import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstBlockStmtOrExpr
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstStmt;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstBlockStmt;
+import com.caoccao.javet.utils.ListUtils;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
@@ -55,5 +56,8 @@ public class Ts2JavaAstBlockStmt
     @Override
     public void compile() {
         stmts.forEach(ITs2JavaAstStmt::compile);
+        if (type == null && ListUtils.isNotEmpty(stmts)) {
+            type = stmts.get(stmts.size() - 1).getType();
+        }
     }
 }

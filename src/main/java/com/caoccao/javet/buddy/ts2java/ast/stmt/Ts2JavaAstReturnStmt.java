@@ -40,8 +40,8 @@ public class Ts2JavaAstReturnStmt
             Swc4jAstReturnStmt ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        type = memo.getReturnType();
         arg = ast.getArg().map(arg -> ITs2JavaAstExpr.cast(this, arg, memo));
+        type = memo.getReturnType();
     }
 
     @Override
@@ -62,6 +62,14 @@ public class Ts2JavaAstReturnStmt
     @Override
     public void compile() {
         arg.ifPresent(ITs2JavaAstExpr::compile);
+        // Type can be deduced from arg.
+        if (type.represents(void.class) && arg.isPresent()) {
+            TypeDescription argType = arg.get().getType();
+            if (argType != null) {
+                type = argType;
+                memo.setReturnType(type);
+            }
+        }
     }
 
     public Optional<ITs2JavaAstExpr<?, ?>> getArg() {

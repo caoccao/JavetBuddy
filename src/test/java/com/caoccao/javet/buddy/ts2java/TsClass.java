@@ -37,9 +37,12 @@ public final class TsClass {
     private Class<?> testClass;
     private Method testMethod;
 
+    public TsClass(String body, TsMethodArgument... arguments) {
+        this(body, null, arguments);
+    }
+
     public TsClass(String body, Class<?> returnType, TsMethodArgument... arguments) {
         assertNotNull(body);
-        assertNotNull(returnType);
         assertNotNull(arguments);
         this.arguments = SimpleList.immutableOf(arguments);
         this.body = body;
@@ -81,7 +84,17 @@ public final class TsClass {
         String argumentsString = arguments.stream()
                 .map(TsMethodArgument::toString)
                 .collect(Collectors.joining(", "));
-        String codeString = SimpleFreeMarkerFormat.format(
+        String codeString = returnType == null
+                ? SimpleFreeMarkerFormat.format(
+                "class Test {\n" +
+                        "  public test(${argumentsString}) {\n" +
+                        "    ${body}\n" +
+                        "  }\n" +
+                        "}\n",
+                SimpleMap.of(
+                        "argumentsString", argumentsString,
+                        "body", body))
+                : SimpleFreeMarkerFormat.format(
                 "class Test {\n" +
                         "  public test(${argumentsString}): ${returnType} {\n" +
                         "    ${body}\n" +
@@ -106,7 +119,11 @@ public final class TsClass {
             testMethod = testClass.getMethod(
                     "test",
                     arguments.stream().map(TsMethodArgument::getType).toArray(Class[]::new));
-            assertEquals(returnType, testMethod.getReturnType());
+            if (returnType == null) {
+                assertNotNull(testMethod.getReturnType());
+            } else {
+                assertEquals(returnType, testMethod.getReturnType());
+            }
             final int argumentsLength = arguments.size();
             final Parameter[] parameters = testMethod.getParameters();
             assertEquals(argumentsLength, testMethod.getParameterCount());

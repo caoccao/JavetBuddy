@@ -79,6 +79,12 @@ public class Ts2JavaAstFunction
         final int initialOffset = memoFunction.getMaxOffset();
         memoFunction.pushLexicalScope();
         body.ifPresent(Ts2JavaAstBlockStmt::compile);
+        if (type.represents(void.class) && body.isPresent()) {
+            TypeDescription bodyType = body.get().getType();
+            if (bodyType != null) {
+                type = bodyType;
+            }
+        }
         memo.setBuilder(memo.getBuilder().defineMethod(name, type, visibility)
                 .withParameters(parameters.toArray(new TypeDescription[0]))
                 .intercept(Implementation.Simple.of(
