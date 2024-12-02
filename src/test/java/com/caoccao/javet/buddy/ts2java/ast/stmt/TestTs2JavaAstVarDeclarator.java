@@ -21,7 +21,7 @@ import com.caoccao.javet.buddy.ts2java.TsClass;
 import com.caoccao.javet.buddy.ts2java.TsMethodArgument;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestTs2JavaAstVarDeclarator extends BaseTestTs2Java {
     /*
@@ -111,12 +111,23 @@ public class TestTs2JavaAstVarDeclarator extends BaseTestTs2Java {
     public void testAssignConst() throws Exception {
         assertEquals(105L, assignConst(1, 2L));
         TsClass tsClass = new TsClass(
-                "const c: int = 100;\n" +
+                "const c = 100;\n" +
                         "const d: long = 2;\n" +
                         "return a + b + c + d;",
                 long.class,
                 TsMethodArgument.of("a", int.class),
                 TsMethodArgument.of("b", long.class));
         assertEquals(105L, tsClass.invoke(1, 2L));
+    }
+
+    @Test
+    public void testBoolean() throws Exception {
+        TsClass tsClass = new TsClass(
+                "const b = a;\n" +
+                        "return b;",
+                boolean.class,
+                TsMethodArgument.of("a", boolean.class));
+        assertTrue((boolean) tsClass.invoke(true));
+        assertFalse((boolean) tsClass.invoke(false));
     }
 }
