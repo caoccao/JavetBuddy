@@ -33,7 +33,7 @@ public interface ITs2JavaAstPat<AST extends ISwc4jAstPat, Memo extends Ts2JavaMe
             Ts2JavaMemoFunction memo) {
         switch (ast.getType()) {
             case BindingIdent:
-                return new Ts2JavaAstBindingIdent(parent, ast.as(Swc4jAstBindingIdent.class), memo);
+                return Ts2JavaAstBindingIdent.create(parent, ast.as(Swc4jAstBindingIdent.class), memo);
             default:
                 throw new Ts2JavaAstException(
                         ast,

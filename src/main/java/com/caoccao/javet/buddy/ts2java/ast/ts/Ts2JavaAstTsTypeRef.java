@@ -45,7 +45,7 @@ public class Ts2JavaAstTsTypeRef
     );
     protected ITs2JavaAstTsEntityName<?, ?> typeName;
 
-    public Ts2JavaAstTsTypeRef(
+    protected Ts2JavaAstTsTypeRef(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstTsTypeRef ast,
             Ts2JavaMemoFunction memo) {
@@ -59,6 +59,13 @@ public class Ts2JavaAstTsTypeRef
                     SimpleFreeMarkerFormat.format("Ts type ref type name ${name} is not supported.",
                             SimpleMap.of("name", entityTypeName)));
         }
+    }
+
+    public static Ts2JavaAstTsTypeRef create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstTsTypeRef ast,
+            Ts2JavaMemoFunction memo) {
+        return new Ts2JavaAstTsTypeRef(parent, ast, memo);
     }
 
     @Override

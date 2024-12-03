@@ -35,7 +35,7 @@ public class Ts2JavaAstBlockStmt
         ITs2JavaAstBlockStmtOrExpr<Swc4jAstBlockStmt, Ts2JavaMemoFunction> {
     protected final List<ITs2JavaAstStmt<?, ?>> stmts;
 
-    public Ts2JavaAstBlockStmt(
+    protected Ts2JavaAstBlockStmt(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstBlockStmt ast,
             Ts2JavaMemoFunction memo) {
@@ -43,6 +43,13 @@ public class Ts2JavaAstBlockStmt
         stmts = ast.getStmts().stream()
                 .map(stmt -> ITs2JavaAstStmt.create(this, stmt, memo))
                 .collect(Collectors.toList());
+    }
+
+    public static Ts2JavaAstBlockStmt create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstBlockStmt ast,
+            Ts2JavaMemoFunction memo) {
+        return new Ts2JavaAstBlockStmt(parent, ast, memo);
     }
 
     @Override

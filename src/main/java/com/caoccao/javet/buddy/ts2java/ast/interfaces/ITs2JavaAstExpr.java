@@ -45,15 +45,15 @@ public interface ITs2JavaAstExpr<AST extends ISwc4jAstExpr, Memo extends Ts2Java
             case BinExpr:
                 return Ts2JavaAstBinExpr.create(parent, ast.as(Swc4jAstBinExpr.class), memo);
             case Bool:
-                return new Ts2JavaAstBool(parent, ast.as(Swc4jAstBool.class), memo);
+                return Ts2JavaAstBool.create(parent, ast.as(Swc4jAstBool.class), memo);
             case Ident:
-                return new Ts2JavaAstIdent(parent, ast.as(Swc4jAstIdent.class), memo);
+                return Ts2JavaAstIdent.create(parent, ast.as(Swc4jAstIdent.class), memo);
             case Number:
-                return new Ts2JavaAstNumber(parent, ast.as(Swc4jAstNumber.class), memo);
+                return Ts2JavaAstNumber.create(parent, ast.as(Swc4jAstNumber.class), memo);
             case ParenExpr:
                 return create(parent, ast.as(Swc4jAstParenExpr.class).unParenExpr(), memo);
             case UnaryExpr:
-                return new Ts2JavaAstUnaryExpr(parent, ast.as(Swc4jAstUnaryExpr.class), memo);
+                return Ts2JavaAstUnaryExpr.create(parent, ast.as(Swc4jAstUnaryExpr.class), memo);
             default:
                 throw new Ts2JavaAstException(
                         ast,

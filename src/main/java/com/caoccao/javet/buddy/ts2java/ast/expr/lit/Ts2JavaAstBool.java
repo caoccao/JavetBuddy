@@ -22,10 +22,7 @@ import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstLit;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstTsLit;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities.ITs2JavaBangFlippable;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
-import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.expr.lit.Swc4jAstBool;
-import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
-import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
@@ -38,13 +35,20 @@ public class Ts2JavaAstBool
         ITs2JavaAstLit<Swc4jAstBool, Ts2JavaMemoFunction>, ITs2JavaAstTsLit<Swc4jAstBool, Ts2JavaMemoFunction> {
     protected boolean value;
 
-    public Ts2JavaAstBool(
+    protected Ts2JavaAstBool(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstBool ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
         value = ast.isValue();
         type = TypeDescription.ForLoadedType.of(boolean.class);
+    }
+
+    public static Ts2JavaAstBool create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstBool ast,
+            Ts2JavaMemoFunction memo) {
+        return new Ts2JavaAstBool(parent, ast, memo);
     }
 
     @Override

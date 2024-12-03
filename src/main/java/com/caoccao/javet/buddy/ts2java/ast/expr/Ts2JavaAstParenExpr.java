@@ -32,14 +32,19 @@ public class Ts2JavaAstParenExpr
         ITs2JavaAstSimpleAssignTarget<Swc4jAstParenExpr, Ts2JavaMemoFunction> {
     protected final ITs2JavaAstExpr<?, ?> expr;
 
-    public Ts2JavaAstParenExpr(
+    protected Ts2JavaAstParenExpr(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstParenExpr ast,
-            TypeDescription type,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
         expr = ITs2JavaAstExpr.create(this, ast.getExpr(), memo);
-        this.type = type;
+    }
+
+    public static Ts2JavaAstParenExpr create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstParenExpr ast,
+            Ts2JavaMemoFunction memo) {
+        return new Ts2JavaAstParenExpr(parent, ast, memo);
     }
 
     @Override
@@ -51,6 +56,7 @@ public class Ts2JavaAstParenExpr
     @Override
     public void compile() {
         expr.compile();
+        type = expr.getType();
     }
 
     public ITs2JavaAstExpr<?, ?> getExpr() {

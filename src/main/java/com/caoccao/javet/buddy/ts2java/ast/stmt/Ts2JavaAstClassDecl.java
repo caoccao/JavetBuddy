@@ -32,14 +32,22 @@ public class Ts2JavaAstClassDecl
     protected final Ts2JavaAstClass clazz;
     protected final String packageName;
 
-    public Ts2JavaAstClassDecl(
+    protected Ts2JavaAstClassDecl(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstClassDecl ast,
             Ts2JavaMemoDynamicType memo,
             String packageName) {
         super(parent, ast, memo);
-        clazz = new Ts2JavaAstClass(this, ast.getClazz(), memo);
+        clazz = Ts2JavaAstClass.create(this, ast.getClazz(), memo);
         this.packageName = packageName;
+    }
+
+    public static Ts2JavaAstClassDecl create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstClassDecl ast,
+            Ts2JavaMemoDynamicType memo,
+            String packageName) {
+        return new Ts2JavaAstClassDecl(parent, ast, memo, packageName);
     }
 
     @Override

@@ -40,7 +40,7 @@ public class Ts2JavaAstTsKeywordType
 
     protected final Swc4jAstTsKeywordTypeKind kind;
 
-    public Ts2JavaAstTsKeywordType(
+    protected Ts2JavaAstTsKeywordType(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstTsKeywordType ast,
             Ts2JavaMemoFunction memo) {
@@ -53,6 +53,13 @@ public class Ts2JavaAstTsKeywordType
                     SimpleFreeMarkerFormat.format("Ts keyword type kind ${kind} is not supported.",
                             SimpleMap.of("kind", ast.getKind().getName())));
         }
+    }
+
+    public static Ts2JavaAstTsKeywordType create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstTsKeywordType ast,
+            Ts2JavaMemoFunction memo) {
+        return new Ts2JavaAstTsKeywordType(parent, ast, memo);
     }
 
     @Override

@@ -38,13 +38,20 @@ public class Ts2JavaAstUnaryExpr
     protected final ITs2JavaAstExpr<?, ?> arg;
     protected Swc4jAstUnaryOp op;
 
-    public Ts2JavaAstUnaryExpr(
+    protected Ts2JavaAstUnaryExpr(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstUnaryExpr ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
         arg = ITs2JavaAstExpr.create(this, ast.getArg(), memo);
         op = ast.getOp();
+    }
+
+    public static Ts2JavaAstUnaryExpr create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstUnaryExpr ast,
+            Ts2JavaMemoFunction memo) {
+        return new Ts2JavaAstUnaryExpr(parent, ast, memo);
     }
 
     @Override

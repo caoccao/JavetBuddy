@@ -28,13 +28,20 @@ public class Ts2JavaAstTsTypeAnn
         extends BaseTs2JavaAst<Swc4jAstTsTypeAnn, Ts2JavaMemoFunction> {
     protected final ITs2JavaAstTsType<?, ?> typeAnn;
 
-    public Ts2JavaAstTsTypeAnn(
+    protected Ts2JavaAstTsTypeAnn(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstTsTypeAnn ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
         typeAnn = ITs2JavaAstTsType.create(this, ast.getTypeAnn(), memo);
         type = typeAnn.getType();
+    }
+
+    public static Ts2JavaAstTsTypeAnn create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstTsTypeAnn ast,
+            Ts2JavaMemoFunction memo) {
+        return new Ts2JavaAstTsTypeAnn(parent, ast, memo);
     }
 
     @Override

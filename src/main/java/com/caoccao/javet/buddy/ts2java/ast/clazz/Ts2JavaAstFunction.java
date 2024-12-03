@@ -58,7 +58,7 @@ public class Ts2JavaAstFunction
                 .setStatic(_static)
                 .setReturnType(type);
         this.name = name;
-        body = ast.getBody().map(stmt -> new Ts2JavaAstBlockStmt(this, stmt, memoFunction));
+        body = ast.getBody().map(stmt -> Ts2JavaAstBlockStmt.create(this, stmt, memoFunction));
     }
 
     @Override

@@ -36,14 +36,21 @@ public class Ts2JavaAstBindingIdent
     protected final Ts2JavaAstIdent id;
     protected final Optional<Ts2JavaAstTsTypeAnn> typeAnn;
 
-    public Ts2JavaAstBindingIdent(
+    protected Ts2JavaAstBindingIdent(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstBindingIdent ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        typeAnn = ast.getTypeAnn().map(typeAnn -> new Ts2JavaAstTsTypeAnn(this, typeAnn, memo));
+        typeAnn = ast.getTypeAnn().map(typeAnn -> Ts2JavaAstTsTypeAnn.create(this, typeAnn, memo));
         typeAnn.ifPresent(ts2JavaAstTsTypeAnn -> type = ts2JavaAstTsTypeAnn.getType());
-        id = new Ts2JavaAstIdent(this, ast.getId(), memo);
+        id = Ts2JavaAstIdent.create(this, ast.getId(), memo);
+    }
+
+    public static Ts2JavaAstBindingIdent create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstBindingIdent ast,
+            Ts2JavaMemoFunction memo) {
+        return new Ts2JavaAstBindingIdent(parent, ast, memo);
     }
 
     @Override

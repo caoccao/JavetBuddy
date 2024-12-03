@@ -35,9 +35,9 @@ public interface ITs2JavaAstStmt<AST extends ISwc4jAstStmt, Memo extends Ts2Java
             Ts2JavaMemoFunction memo) {
         switch (ast.getType()) {
             case ReturnStmt:
-                return new Ts2JavaAstReturnStmt(parent, ast.as(Swc4jAstReturnStmt.class), memo);
+                return Ts2JavaAstReturnStmt.create(parent, ast.as(Swc4jAstReturnStmt.class), memo);
             case VarDecl:
-                return new Ts2JavaAstVarDecl(parent, ast.as(Swc4jAstVarDecl.class), memo);
+                return Ts2JavaAstVarDecl.create(parent, ast.as(Swc4jAstVarDecl.class), memo);
             default:
                 throw new Ts2JavaAstException(
                         ast,

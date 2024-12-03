@@ -32,7 +32,7 @@ public class Ts2JavaAstIdentName
         ITs2JavaAstJsxAttrName<Swc4jAstIdentName, Ts2JavaMemoFunction> {
     protected final String sym;
 
-    public Ts2JavaAstIdentName(
+    protected Ts2JavaAstIdentName(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstIdentName ast,
             TypeDescription type,
@@ -40,6 +40,14 @@ public class Ts2JavaAstIdentName
         super(parent, ast, memo);
         sym = ast.getSym();
         this.type = type;
+    }
+
+    public static Ts2JavaAstIdentName create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstIdentName ast,
+            TypeDescription type,
+            Ts2JavaMemoFunction memo) {
+        return new Ts2JavaAstIdentName(parent, ast, type, memo);
     }
 
     @Override

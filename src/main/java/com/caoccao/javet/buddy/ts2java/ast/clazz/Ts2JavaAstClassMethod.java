@@ -35,7 +35,7 @@ public class Ts2JavaAstClassMethod
         implements ITs2JavaAstClassMember<Swc4jAstClassMethod, Ts2JavaMemoDynamicType> {
     protected final Ts2JavaAstFunction function;
 
-    public Ts2JavaAstClassMethod(
+    protected Ts2JavaAstClassMethod(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstClassMethod ast,
             Ts2JavaMemoDynamicType memo) {
@@ -56,12 +56,18 @@ public class Ts2JavaAstClassMethod
                     ast,
                     SimpleFreeMarkerFormat.format("ClassMethod key type ${keyType} is not supported.",
                             SimpleMap.of("keyType", ast.getKey().getClass().getSimpleName())));
-
         }
         String name = ast.getKey().as(Swc4jAstIdentName.class).getSym();
         boolean _static = ast.isStatic();
         Swc4jAstAccessibility accessibility = ast.getAccessibility().orElse(Swc4jAstAccessibility.Public);
         function = new Ts2JavaAstFunction(this, ast.getFunction(), memo, name, _static, accessibility);
+    }
+
+    public static Ts2JavaAstClassMethod create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstClassMethod ast,
+            Ts2JavaMemoDynamicType memo) {
+        return new Ts2JavaAstClassMethod(parent, ast, memo);
     }
 
     @Override

@@ -44,7 +44,7 @@ public class Ts2JavaAstVarDeclarator
     protected JavaLocalVariable localVariable;
     protected int offset;
 
-    public Ts2JavaAstVarDeclarator(
+    protected Ts2JavaAstVarDeclarator(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstVarDeclarator ast,
             Ts2JavaMemoFunction memo) {
@@ -52,6 +52,13 @@ public class Ts2JavaAstVarDeclarator
         name = ITs2JavaAstPat.create(this, ast.getName(), memo);
         type = name.getType();
         init = ast.getInit().map(expr -> ITs2JavaAstExpr.create(this, expr, memo));
+    }
+
+    public static Ts2JavaAstVarDeclarator create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstVarDeclarator ast,
+            Ts2JavaMemoFunction memo) {
+        return new Ts2JavaAstVarDeclarator(parent, ast, memo);
     }
 
     @Override

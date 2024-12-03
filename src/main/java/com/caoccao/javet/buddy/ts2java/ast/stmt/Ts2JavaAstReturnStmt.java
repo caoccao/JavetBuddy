@@ -35,13 +35,20 @@ public class Ts2JavaAstReturnStmt
         implements ITs2JavaAstStmt<Swc4jAstReturnStmt, Ts2JavaMemoFunction> {
     protected final Optional<ITs2JavaAstExpr<?, ?>> arg;
 
-    public Ts2JavaAstReturnStmt(
+    protected Ts2JavaAstReturnStmt(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstReturnStmt ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
         arg = ast.getArg().map(arg -> ITs2JavaAstExpr.create(this, arg, memo));
         type = memo.getReturnType();
+    }
+
+    public static Ts2JavaAstReturnStmt create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstReturnStmt ast,
+            Ts2JavaMemoFunction memo) {
+        return new Ts2JavaAstReturnStmt(parent, ast, memo);
     }
 
     @Override

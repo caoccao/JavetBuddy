@@ -43,7 +43,7 @@ public class Ts2JavaAstIdent
     protected final String sym;
     protected JavaLocalVariable localVariable;
 
-    public Ts2JavaAstIdent(
+    protected Ts2JavaAstIdent(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstIdent ast,
             Ts2JavaMemoFunction memo) {
@@ -51,6 +51,13 @@ public class Ts2JavaAstIdent
         localVariable = null;
         optional = ast.isOptional();
         sym = ast.getSym();
+    }
+
+    public static Ts2JavaAstIdent create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstIdent ast,
+            Ts2JavaMemoFunction memo) {
+        return new Ts2JavaAstIdent(parent, ast, memo);
     }
 
     @Override

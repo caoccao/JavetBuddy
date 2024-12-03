@@ -31,11 +31,21 @@ public class Ts2JavaAstClass
         extends BaseTs2JavaAst<Swc4jAstClass, Ts2JavaMemoDynamicType> {
     protected final List<ITs2JavaAstClassMember<?, ?>> body;
 
-    public Ts2JavaAstClass(ITs2JavaAst<?, ?> parent, Swc4jAstClass ast, Ts2JavaMemoDynamicType memo) {
+    protected Ts2JavaAstClass(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstClass ast,
+            Ts2JavaMemoDynamicType memo) {
         super(parent, ast, memo);
         body = ast.getBody().stream()
                 .map(classMember -> ITs2JavaAstClassMember.create(this, classMember, memo))
                 .collect(Collectors.toList());
+    }
+
+    public static Ts2JavaAstClass create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstClass ast,
+            Ts2JavaMemoDynamicType memo) {
+        return new Ts2JavaAstClass(parent, ast, memo);
     }
 
     @Override

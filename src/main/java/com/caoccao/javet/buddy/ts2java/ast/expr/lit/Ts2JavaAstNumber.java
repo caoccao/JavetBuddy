@@ -45,12 +45,19 @@ public class Ts2JavaAstNumber
         ITs2JavaAstTsLit<Swc4jAstNumber, Ts2JavaMemoFunction> {
     protected boolean negative;
 
-    public Ts2JavaAstNumber(
+    protected Ts2JavaAstNumber(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstNumber ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
         negative = false;
+    }
+
+    public static Ts2JavaAstNumber create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstNumber ast,
+            Ts2JavaMemoFunction memo) {
+        return new Ts2JavaAstNumber(parent, ast, memo);
     }
 
     @Override

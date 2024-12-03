@@ -32,7 +32,7 @@ public interface ITs2JavaAstClassMember<AST extends ISwc4jAstClassMember, Memo e
             Ts2JavaMemoDynamicType memo) {
         switch (ast.getType()) {
             case ClassMethod:
-                return new Ts2JavaAstClassMethod(parent, ast.as(Swc4jAstClassMethod.class), memo);
+                return Ts2JavaAstClassMethod.create(parent, ast.as(Swc4jAstClassMethod.class), memo);
             default:
                 throw new Ts2JavaAstException(
                         ast,

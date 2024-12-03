@@ -29,15 +29,13 @@ import net.bytebuddy.jar.asm.MethodVisitor;
 
 import java.util.Optional;
 
-public class Ts2JavaAstBinExprArithmetic extends Ts2JavaAstBinExpr {
-    protected Ts2JavaAstBinExprArithmetic(
+public class Ts2JavaAstBinExprLogicalCompare extends Ts2JavaAstBinExpr {
+    protected Ts2JavaAstBinExprLogicalCompare(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstBinExpr ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        if (op == Swc4jAstBinaryOp.Exp) {
-            type = TypeDescription.ForLoadedType.of(double.class);
-        }
+        type = TypeDescription.ForLoadedType.of(boolean.class);
     }
 
     @Override
@@ -57,44 +55,8 @@ public class Ts2JavaAstBinExprArithmetic extends Ts2JavaAstBinExpr {
         Size sizeCastRight = JavaClassCast.getUpCastStackManipulation(right.getType(), upCastType)
                 .map(s -> s.apply(methodVisitor, context))
                 .orElse(Size.ZERO);
-        Size sizeOp = Ts2JavaAstBinaryOp.getArithmeticStackManipulation(op, upCastType).apply(methodVisitor, context);
         // TODO
-//        } else if (op.isLogicalOperator()) {
-//            switch (op) {
-//                case LogicalAnd:
-//                    throw new Ts2JavaAstException(ast, "Bin expr op LogicalAnd is not supported.");
-//                case LogicalOr:
-//                    throw new Ts2JavaAstException(ast, "Bin expr op LogicalOr is not supported.");
-//                default:
-//                    throw new Ts2JavaAstException(ast, "Bin expr op LogicalCompare is not supported.");
-//            }
-//        } else {
-//            throw new Ts2JavaAstException(
-//                    ast,
-//                    SimpleFreeMarkerFormat.format("Bin expr op ${op} is not supported.",
-//                            SimpleMap.of("op", op.name())));
-//        }
-        Size sizeCastResult = JavaClassCast.getUpCastStackManipulation(upCastType, type)
-                .map(s -> s.apply(methodVisitor, context))
-                .orElse(Size.ZERO);
-        return aggregateSize(sizeLoadLeft, sizeCastLeft, sizeLoadRight, sizeCastRight, sizeOp, sizeCastResult);
-    }
-
-    @Override
-    public void compile() {
-        super.compile();
-        if (type == null && (left.getType() != null || right.getType() != null)) {
-            if (left.getType() != null && right.getType() == null) {
-                type = left.getType();
-            } else if (left.getType() == null && right.getType() != null) {
-                type = right.getType();
-            } else if (JavaClassCast.getUpCastStackManipulation(left.getType(), right.getType()).isPresent()) {
-                type = right.getType();
-            } else if (JavaClassCast.getUpCastStackManipulation(right.getType(), left.getType()).isPresent()) {
-                type = left.getType();
-            } else {
-                type = left.getType();
-            }
-        }
+        Size sizeOp = Ts2JavaAstBinaryOp.getArithmeticStackManipulation(op, upCastType).apply(methodVisitor, context);
+        return aggregateSize(sizeLoadLeft, sizeCastLeft, sizeLoadRight, sizeCastRight, sizeOp);
     }
 }

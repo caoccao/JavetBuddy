@@ -95,7 +95,7 @@ public class Ts2Java {
         for (Swc4jAstClassDecl classDecl : classDecls) {
             DynamicType.Builder<?> builder = new ByteBuddy()
                     .subclass(Object.class, ConstructorStrategy.Default.DEFAULT_CONSTRUCTOR);
-            Ts2JavaAstClassDecl ts2JavaAstClassDecl = new Ts2JavaAstClassDecl(
+            Ts2JavaAstClassDecl ts2JavaAstClassDecl = Ts2JavaAstClassDecl.create(
                     null,
                     classDecl,
                     new Ts2JavaMemoDynamicType(builder),

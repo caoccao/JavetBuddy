@@ -35,9 +35,9 @@ public interface ITs2JavaAstTsType<AST extends ISwc4jAstTsType, Memo extends Ts2
             Ts2JavaMemoFunction memo) {
         switch (ast.getType()) {
             case TsKeywordType:
-                return new Ts2JavaAstTsKeywordType(parent, ast.as(Swc4jAstTsKeywordType.class), memo);
+                return Ts2JavaAstTsKeywordType.create(parent, ast.as(Swc4jAstTsKeywordType.class), memo);
             case TsTypeRef:
-                return new Ts2JavaAstTsTypeRef(parent, ast.as(Swc4jAstTsTypeRef.class), memo);
+                return Ts2JavaAstTsTypeRef.create(parent, ast.as(Swc4jAstTsTypeRef.class), memo);
             default:
                 throw new Ts2JavaAstException(
                         ast,

@@ -36,14 +36,21 @@ public class Ts2JavaAstVarDecl
         ITs2JavaAstForHead<Swc4jAstVarDecl, Ts2JavaMemoFunction> {
     protected final List<Ts2JavaAstVarDeclarator> decls;
 
-    public Ts2JavaAstVarDecl(
+    protected Ts2JavaAstVarDecl(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstVarDecl ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
         decls = ast.getDecls().stream()
-                .map(decl -> new Ts2JavaAstVarDeclarator(this, decl, memo))
+                .map(decl -> Ts2JavaAstVarDeclarator.create(this, decl, memo))
                 .collect(Collectors.toList());
+    }
+
+    public static Ts2JavaAstVarDecl create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstVarDecl ast,
+            Ts2JavaMemoFunction memo) {
+        return new Ts2JavaAstVarDecl(parent, ast, memo);
     }
 
     @Override

@@ -25,7 +25,6 @@ import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
-import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
@@ -36,16 +35,12 @@ public abstract class Ts2JavaAstBinExpr
     protected final ITs2JavaAstExpr<?, ?> right;
     protected Swc4jAstBinaryOp op;
 
-    public Ts2JavaAstBinExpr(
+    protected Ts2JavaAstBinExpr(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstBinExpr ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
         op = ast.getOp();
-        // TODO
-        if (op.isLogicalOperator()) {
-            type = TypeDescription.ForLoadedType.of(boolean.class);
-        }
         left = ITs2JavaAstExpr.create(parent, ast.getLeft(), memo);
         right = ITs2JavaAstExpr.create(parent, ast.getRight(), memo);
     }
@@ -54,8 +49,11 @@ public abstract class Ts2JavaAstBinExpr
             ITs2JavaAst<?, ?> parent,
             Swc4jAstBinExpr ast,
             Ts2JavaMemoFunction memo) {
-        if (ast.getOp().isArithmeticOperator()) {
+        Swc4jAstBinaryOp op = ast.getOp();
+        if (op.isArithmeticOperator()) {
             return new Ts2JavaAstBinExprArithmetic(parent, ast, memo);
+        } else if (op.isLogicalCompareOperator()) {
+            return new Ts2JavaAstBinExprLogicalCompare(parent, ast, memo);
         }
         throw new Ts2JavaAstException(
                 ast,
