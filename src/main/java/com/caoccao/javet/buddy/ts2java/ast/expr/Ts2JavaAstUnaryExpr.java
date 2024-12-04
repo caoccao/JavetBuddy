@@ -112,14 +112,14 @@ public class Ts2JavaAstUnaryExpr
 
     @Override
     public void flipBang() {
-        if (op == Swc4jAstUnaryOp.Bang && arg instanceof ITs2JavaBangFlippable) {
+        if (isBangFlippable()) {
             arg.as(ITs2JavaBangFlippable.class).flipBang();
         }
     }
 
     @Override
     public void flipMinus() {
-        if (op == Swc4jAstUnaryOp.Minus && arg instanceof ITs2JavaMinusFlippable) {
+        if (isMinusFlippable()) {
             arg.as(ITs2JavaMinusFlippable.class).flipMinus();
         }
     }
