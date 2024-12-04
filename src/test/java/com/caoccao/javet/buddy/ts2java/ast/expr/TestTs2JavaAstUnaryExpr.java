@@ -24,10 +24,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestTs2JavaAstUnaryExpr extends BaseTestTs2Java {
-    boolean a() {
-        return !(!true);
-    }
-
     @Test
     public void testBang() throws Exception {
         tsClass = new TsClass("return !true;", boolean.class);
@@ -38,6 +34,12 @@ public class TestTs2JavaAstUnaryExpr extends BaseTestTs2Java {
         assertTrue((boolean) tsClass.invoke());
         tsClass = new TsClass("return !(!false);", boolean.class);
         assertFalse((boolean) tsClass.invoke());
+        tsClass = new TsClass("return !a;", boolean.class, TsMethodArgument.of("a", boolean.class));
+        assertTrue((boolean) tsClass.invoke(true));
+        assertFalse((boolean) tsClass.invoke(false));
+        tsClass = new TsClass("return !!a;", boolean.class, TsMethodArgument.of("a", boolean.class));
+        assertTrue((boolean) tsClass.invoke(true));
+        assertFalse((boolean) tsClass.invoke(false));
     }
 
     @Test

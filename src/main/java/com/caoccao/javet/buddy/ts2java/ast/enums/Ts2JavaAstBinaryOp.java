@@ -16,13 +16,16 @@
 
 package com.caoccao.javet.buddy.ts2java.ast.enums;
 
+import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaException;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
+import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.*;
+import net.bytebuddy.jar.asm.Label;
 import net.bytebuddy.jar.asm.MethodVisitor;
 import net.bytebuddy.jar.asm.Opcodes;
 
@@ -101,6 +104,162 @@ public final class Ts2JavaAstBinaryOp {
                     false);
             return new StackManipulation.Size(-2, 0);
         });
+    }
+
+    public static StackManipulation getLogicalCompareStackManipulation(
+            Swc4jAstBinExpr binExpr,
+            Swc4jAstBinaryOp binaryOp,
+            TypeDescription type,
+            Label label) {
+        final int opcodeCompare;
+        final int opcodeCompareAndJump;
+        final int sizeImpact;
+        if (type.represents(int.class)
+                || type.represents(short.class)
+                || type.represents(byte.class)
+                || type.represents(char.class)) {
+            switch (binaryOp) {
+                case Gt:
+                    opcodeCompareAndJump = Opcodes.IF_ICMPLE;
+                    break;
+                case GtEq:
+                    opcodeCompareAndJump = Opcodes.IF_ICMPLT;
+                    break;
+                case Lt:
+                    opcodeCompareAndJump = Opcodes.IF_ICMPGE;
+                    break;
+                case LtEq:
+                    opcodeCompareAndJump = Opcodes.IF_ICMPGT;
+                    break;
+                case EqEq:
+                case EqEqEq:
+                    opcodeCompareAndJump = Opcodes.IF_ICMPNE;
+                    break;
+                case NotEq:
+                case NotEqEq:
+                    opcodeCompareAndJump = Opcodes.IF_ICMPEQ;
+                    break;
+                default:
+                    throw new Ts2JavaAstException(
+                            binExpr,
+                            SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} in logical compare int operation.",
+                                    SimpleMap.of("binaryOp", binaryOp.name())));
+            }
+            opcodeCompare = Opcodes.NOP;
+            sizeImpact = -1;
+        } else if (type.represents(long.class)) {
+            switch (binaryOp) {
+                case Gt:
+                    opcodeCompareAndJump = Opcodes.IFLE;
+                    break;
+                case GtEq:
+                    opcodeCompareAndJump = Opcodes.IFLT;
+                    break;
+                case Lt:
+                    opcodeCompareAndJump = Opcodes.IFGE;
+                    break;
+                case LtEq:
+                    opcodeCompareAndJump = Opcodes.IFGT;
+                    break;
+                case EqEq:
+                case EqEqEq:
+                    opcodeCompareAndJump = Opcodes.IFNE;
+                    break;
+                case NotEq:
+                case NotEqEq:
+                    opcodeCompareAndJump = Opcodes.IFEQ;
+                    break;
+                default:
+                    throw new Ts2JavaException(
+                            SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} in logical compare long operation.",
+                                    SimpleMap.of("binaryOp", binaryOp.name())));
+            }
+            opcodeCompare = Opcodes.LCMP;
+            sizeImpact = -2;
+        } else if (type.represents(float.class)) {
+            switch (binaryOp) {
+                case Gt:
+                    opcodeCompare = Opcodes.FCMPL;
+                    opcodeCompareAndJump = Opcodes.IFLE;
+                    break;
+                case GtEq:
+                    opcodeCompare = Opcodes.FCMPL;
+                    opcodeCompareAndJump = Opcodes.IFLT;
+                    break;
+                case Lt:
+                    opcodeCompare = Opcodes.FCMPG;
+                    opcodeCompareAndJump = Opcodes.IFGE;
+                    break;
+                case LtEq:
+                    opcodeCompare = Opcodes.FCMPG;
+                    opcodeCompareAndJump = Opcodes.IFGT;
+                    break;
+                case EqEq:
+                case EqEqEq:
+                    opcodeCompare = Opcodes.FCMPL;
+                    opcodeCompareAndJump = Opcodes.IFNE;
+                    break;
+                case NotEq:
+                case NotEqEq:
+                    opcodeCompare = Opcodes.FCMPL;
+                    opcodeCompareAndJump = Opcodes.IFEQ;
+                    break;
+                default:
+                    throw new Ts2JavaAstException(
+                            binExpr,
+                            SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} in logical compare float operation.",
+                                    SimpleMap.of("binaryOp", binaryOp.name())));
+            }
+            sizeImpact = -1;
+        } else if (type.represents(double.class)) {
+            switch (binaryOp) {
+                case Gt:
+                    opcodeCompare = Opcodes.DCMPL;
+                    opcodeCompareAndJump = Opcodes.IFLE;
+                    break;
+                case GtEq:
+                    opcodeCompare = Opcodes.DCMPL;
+                    opcodeCompareAndJump = Opcodes.IFLT;
+                    break;
+                case Lt:
+                    opcodeCompare = Opcodes.DCMPG;
+                    opcodeCompareAndJump = Opcodes.IFGE;
+                    break;
+                case LtEq:
+                    opcodeCompare = Opcodes.DCMPG;
+                    opcodeCompareAndJump = Opcodes.IFGT;
+                    break;
+                case EqEq:
+                case EqEqEq:
+                    opcodeCompare = Opcodes.DCMPL;
+                    opcodeCompareAndJump = Opcodes.IFNE;
+                    break;
+                case NotEq:
+                case NotEqEq:
+                    opcodeCompare = Opcodes.DCMPL;
+                    opcodeCompareAndJump = Opcodes.IFEQ;
+                    break;
+                default:
+                    throw new Ts2JavaAstException(
+                            binExpr,
+                            SimpleFreeMarkerFormat.format("Unsupported binary operation ${binaryOp} in logical compare double operation.",
+                                    SimpleMap.of("binaryOp", binaryOp.name())));
+            }
+            sizeImpact = -2;
+        } else {
+            throw new Ts2JavaAstException(
+                    binExpr,
+                    SimpleFreeMarkerFormat.format("Unsupported type ${type} in logical compare operation.",
+                            SimpleMap.of("type", type.getName())));
+        }
+        return new StackManipulation.Simple(
+                (MethodVisitor methodVisitor, Implementation.Context implementationContext) -> {
+                    if (opcodeCompare > Opcodes.NOP) {
+                        methodVisitor.visitInsn(opcodeCompare);
+                    }
+                    methodVisitor.visitJumpInsn(opcodeCompareAndJump, label);
+                    return new StackManipulation.Size(sizeImpact, 0);
+                });
     }
 
     private static Multiplication getMultiplication(TypeDescription type) {

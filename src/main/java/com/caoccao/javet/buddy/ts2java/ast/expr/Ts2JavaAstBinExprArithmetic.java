@@ -58,22 +58,6 @@ public class Ts2JavaAstBinExprArithmetic extends Ts2JavaAstBinExpr {
                 .map(s -> s.apply(methodVisitor, context))
                 .orElse(Size.ZERO);
         Size sizeOp = Ts2JavaAstBinaryOp.getArithmeticStackManipulation(op, upCastType).apply(methodVisitor, context);
-        // TODO
-//        } else if (op.isLogicalOperator()) {
-//            switch (op) {
-//                case LogicalAnd:
-//                    throw new Ts2JavaAstException(ast, "Bin expr op LogicalAnd is not supported.");
-//                case LogicalOr:
-//                    throw new Ts2JavaAstException(ast, "Bin expr op LogicalOr is not supported.");
-//                default:
-//                    throw new Ts2JavaAstException(ast, "Bin expr op LogicalCompare is not supported.");
-//            }
-//        } else {
-//            throw new Ts2JavaAstException(
-//                    ast,
-//                    SimpleFreeMarkerFormat.format("Bin expr op ${op} is not supported.",
-//                            SimpleMap.of("op", op.name())));
-//        }
         Size sizeCastResult = JavaClassCast.getUpCastStackManipulation(upCastType, type)
                 .map(s -> s.apply(methodVisitor, context))
                 .orElse(Size.ZERO);
