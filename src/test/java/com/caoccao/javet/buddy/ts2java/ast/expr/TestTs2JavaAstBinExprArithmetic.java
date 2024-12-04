@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestTs2JavaAstBinExpr extends BaseTestTs2Java {
+public class TestTs2JavaAstBinExprArithmetic extends BaseTestTs2Java {
     /*
   public add_II_I(II)I
    L0

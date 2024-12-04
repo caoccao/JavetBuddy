@@ -472,56 +472,6 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     @Test
-    public void testLogicalEQEQ_DD_Z() throws Exception {
-        TsClassX tsClass = new TsClassX(
-                "return a === b;",
-                boolean.class,
-                TsMethodArgument.of("a", double.class),
-                TsMethodArgument.of("b", double.class));
-        assertFalse((boolean) tsClass.invoke(1D, 2D));
-        assertFalse((boolean) tsClass.invoke(2D, 1D));
-        assertTrue((boolean) tsClass.invoke(1D, 1D));
-        assertTrue((boolean) tsClass.invoke(1.23D, 1.23D));
-    }
-
-    @Test
-    public void testLogicalEQEQ_FF_Z() throws Exception {
-        TsClassX tsClass = new TsClassX(
-                "return a === b;",
-                boolean.class,
-                TsMethodArgument.of("a", float.class),
-                TsMethodArgument.of("b", float.class));
-        assertFalse((boolean) tsClass.invoke(1F, 2F));
-        assertFalse((boolean) tsClass.invoke(2F, 1F));
-        assertTrue((boolean) tsClass.invoke(1F, 1F));
-        assertTrue((boolean) tsClass.invoke(1.23F, 1.23F));
-    }
-
-    @Test
-    public void testLogicalEQEQ_II_Z() throws Exception {
-        TsClassX tsClass = new TsClassX(
-                "return a === b;",
-                boolean.class,
-                TsMethodArgument.of("a", int.class),
-                TsMethodArgument.of("b", int.class));
-        assertFalse((boolean) tsClass.invoke(1, 2));
-        assertFalse((boolean) tsClass.invoke(2, 1));
-        assertTrue((boolean) tsClass.invoke(1, 1));
-    }
-
-    @Test
-    public void testLogicalEQEQ_IJ_Z() throws Exception {
-        TsClassX tsClass = new TsClassX(
-                "return a === b;",
-                boolean.class,
-                TsMethodArgument.of("a", int.class),
-                TsMethodArgument.of("b", long.class));
-        assertFalse((boolean) tsClass.invoke(1, 2L));
-        assertFalse((boolean) tsClass.invoke(2, 1L));
-        assertTrue((boolean) tsClass.invoke(1, 1L));
-    }
-
-    @Test
     public void testLogicalEQ_DD_Z() throws Exception {
         TsClassX tsClass = new TsClassX(
                 "return a == b;",
