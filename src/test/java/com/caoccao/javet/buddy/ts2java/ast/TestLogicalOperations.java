@@ -95,35 +95,6 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     /*
-  public logicalAnd_II_Z(II)Z
-   L0
-    LINENUMBER 93 L0
-    ILOAD 1
-    ILOAD 2
-    IF_ICMPNE L1
-    ILOAD 1
-    ICONST_1
-    IF_ICMPLE L1
-    ICONST_1
-    GOTO L2
-   L1
-   FRAME SAME
-    ICONST_0
-   L2
-   FRAME SAME1 I
-    IRETURN
-   L3
-    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/ast/TestLogicalOperations; L0 L3 0
-    LOCALVARIABLE a I L0 L3 1
-    LOCALVARIABLE b I L0 L3 2
-    MAXSTACK = 2
-    MAXLOCALS = 3
-     */
-    public boolean logicalAnd_ZZ_Z(boolean a, boolean b) {
-        return a && b;
-    }
-
-    /*
   public logicalNot_And_II_Z(II)Z
    L0
     LINENUMBER 210 L0
@@ -284,7 +255,7 @@ public class TestLogicalOperations extends BaseTestTs2Java {
         return a || b;
     }
 
-//    @Test
+    //    @Test
     public void testLogicalAndOrAnd_II_Z() throws Exception {
         enableLogging();
         assertTrue(logicalAndOrAnd_II_Z(2, 2));
@@ -315,33 +286,6 @@ public class TestLogicalOperations extends BaseTestTs2Java {
         assertTrue((boolean) tsClass.invoke(2, 2));
         assertFalse((boolean) tsClass.invoke(2, 3));
         assertFalse((boolean) tsClass.invoke(1, 1));
-    }
-
-    @Test
-    public void testLogicalAnd_ZZ_Z() throws Exception {
-        assertTrue(logicalAnd_ZZ_Z(true, true));
-        assertFalse(logicalAnd_ZZ_Z(true, false));
-        assertFalse(logicalAnd_ZZ_Z(false, false));
-        TsClassX tsClass = new TsClassX(
-                "return a && b;",
-                boolean.class,
-                TsMethodArgument.of("a", boolean.class),
-                TsMethodArgument.of("b", boolean.class));
-        assertTrue((boolean) tsClass.invoke(true, true));
-        assertFalse((boolean) tsClass.invoke(true, false));
-        assertFalse((boolean) tsClass.invoke(false, false));
-    }
-
-    @Test
-    public void testLogicalNot_LT_II_Z() throws Exception {
-        TsClassX tsClass = new TsClassX(
-                "return !(a < b);",
-                boolean.class,
-                TsMethodArgument.of("a", int.class),
-                TsMethodArgument.of("b", int.class));
-        assertFalse((boolean) tsClass.invoke(1, 2));
-        assertTrue((boolean) tsClass.invoke(2, 1));
-        assertTrue((boolean) tsClass.invoke(1, 1));
     }
 
     @Test

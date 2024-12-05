@@ -32,16 +32,16 @@ public abstract class Ts2JavaAstBinExpr
         extends BaseTs2JavaAst<Swc4jAstBinExpr, Ts2JavaMemoFunction>
         implements ITs2JavaAstExpr<Swc4jAstBinExpr, Ts2JavaMemoFunction> {
     protected final ITs2JavaAstExpr<?, ?> left;
+    protected final Swc4jAstBinaryOp op;
     protected final ITs2JavaAstExpr<?, ?> right;
-    protected Swc4jAstBinaryOp op;
 
     protected Ts2JavaAstBinExpr(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstBinExpr ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        op = ast.getOp();
         left = ITs2JavaAstExpr.create(parent, ast.getLeft(), memo);
+        op = ast.getOp();
         right = ITs2JavaAstExpr.create(parent, ast.getRight(), memo);
     }
 
@@ -54,6 +54,8 @@ public abstract class Ts2JavaAstBinExpr
             return new Ts2JavaAstBinExprArithmetic(parent, ast, memo);
         } else if (op.isLogicalCompareOperator()) {
             return new Ts2JavaAstBinExprLogicalCompare(parent, ast, memo);
+        } else if (op.isLogicalConditionOperator()) {
+            return new Ts2JavaAstBinExprLogicalCondition(parent, ast, memo);
         }
         throw new Ts2JavaAstException(
                 ast,

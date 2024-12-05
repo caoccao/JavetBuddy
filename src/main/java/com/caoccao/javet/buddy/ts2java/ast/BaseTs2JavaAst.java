@@ -24,6 +24,7 @@ import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.jar.asm.Label;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -39,6 +40,10 @@ public abstract class BaseTs2JavaAst<AST extends ISwc4jAst, Memo extends Ts2Java
         this.memo = Objects.requireNonNull(memo);
         this.parent = parent;
         type = null;
+    }
+
+    protected static Size aggregateSize(List<Size> sizes) {
+        return sizes.stream().reduce(BaseTs2JavaAst::aggregateSize).orElse(Size.ZERO);
     }
 
     protected static Size aggregateSize(Size... sizes) {

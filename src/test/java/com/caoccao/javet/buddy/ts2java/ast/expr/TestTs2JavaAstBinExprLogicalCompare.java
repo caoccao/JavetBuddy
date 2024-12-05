@@ -885,6 +885,18 @@ public class TestTs2JavaAstBinExprLogicalCompare extends BaseTestTs2Java {
     }
 
     @Test
+    public void testLogicalNot_LT_II_Z() throws Exception {
+        tsClass = new TsClass(
+                "return !(a < b);",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertFalse((boolean) tsClass.invoke(1, 2));
+        assertTrue((boolean) tsClass.invoke(2, 1));
+        assertTrue((boolean) tsClass.invoke(1, 1));
+    }
+
+    @Test
     public void testLogicalNot_LT_IJ_Z() throws Exception {
         tsClass = new TsClass(
                 "return !(a < b);",

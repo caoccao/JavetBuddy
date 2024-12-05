@@ -25,10 +25,10 @@ import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
-import net.bytebuddy.jar.asm.Label;
 import net.bytebuddy.jar.asm.MethodVisitor;
-import net.bytebuddy.jar.asm.Opcodes;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class Ts2JavaAstBinExprLogicalCompare extends Ts2JavaAstBinExprLogical {
@@ -43,33 +43,24 @@ public class Ts2JavaAstBinExprLogicalCompare extends Ts2JavaAstBinExprLogical {
     @Override
     public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
         super.apply(methodVisitor, context);
-        Size sizeLoadLeft = left.apply(methodVisitor, context);
+        final List<Size> sizes = new ArrayList<>();
+        sizes.add(left.apply(methodVisitor, context));
         TypeDescription upCastType = left.getType();
-        Size sizeCastLeft = Size.ZERO;
         TypeDescription rightTargetType = op == Swc4jAstBinaryOp.Exp ? type : right.getType();
         Optional<StackManipulation> optionalStackManipulation =
                 JavaClassCast.getUpCastStackManipulation(left.getType(), rightTargetType);
         if (optionalStackManipulation.isPresent()) {
-            sizeCastLeft = optionalStackManipulation.get().apply(methodVisitor, context);
+            sizes.add(optionalStackManipulation.get().apply(methodVisitor, context));
             upCastType = rightTargetType;
         }
-        Size sizeLoadRight = right.apply(methodVisitor, context);
-        Size sizeCastRight = JavaClassCast.getUpCastStackManipulation(right.getType(), upCastType)
+        sizes.add(right.apply(methodVisitor, context));
+        sizes.add(JavaClassCast.getUpCastStackManipulation(right.getType(), upCastType)
                 .map(s -> s.apply(methodVisitor, context))
-                .orElse(Size.ZERO);
-        Size sizeOp = Ts2JavaAstBinaryOp.getLogicalCompareStackManipulation(ast, op, upCastType, labelFalse)
-                .apply(methodVisitor, context);
-        if (!(parent instanceof Ts2JavaAstBinExpr)) {
-            // This is the top bin expr. Let's close it.
-            Label labelClose = new Label();
-            methodVisitor.visitInsn(Opcodes.ICONST_1);
-            methodVisitor.visitJumpInsn(Opcodes.GOTO, labelClose);
-            methodVisitor.visitLabel(labelFalse);
-            methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-            methodVisitor.visitInsn(Opcodes.ICONST_0);
-            methodVisitor.visitLabel(labelClose);
-            methodVisitor.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[]{Opcodes.INTEGER});
-        }
-        return aggregateSize(sizeLoadLeft, sizeCastLeft, sizeLoadRight, sizeCastRight, sizeOp);
+                .orElse(Size.ZERO));
+        final Swc4jAstBinaryOp finalOp = bangFlipped ? op.getOppositeOperator() : op;
+        sizes.add(Ts2JavaAstBinaryOp.getLogicalCompareStackManipulation(ast, finalOp, upCastType, labelFalse)
+                .apply(methodVisitor, context));
+        sizes.add(logicalClose(methodVisitor));
+        return aggregateSize(sizes);
     }
 }

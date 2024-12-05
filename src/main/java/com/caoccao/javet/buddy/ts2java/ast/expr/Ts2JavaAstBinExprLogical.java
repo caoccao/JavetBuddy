@@ -21,18 +21,22 @@ import com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities.ITs2JavaBangFlip
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import net.bytebuddy.description.type.TypeDescription;
+import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.jar.asm.Label;
+import net.bytebuddy.jar.asm.MethodVisitor;
+import net.bytebuddy.jar.asm.Opcodes;
 
 public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
         implements ITs2JavaBangFlippable {
+    protected boolean bangFlipped;
     protected Label labelFalse;
     protected Label labelTrue;
-
     protected Ts2JavaAstBinExprLogical(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstBinExpr ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
+        bangFlipped = false;
         labelFalse = null;
         labelTrue = null;
         type = TypeDescription.ForLoadedType.of(boolean.class);
@@ -48,7 +52,7 @@ public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
 
     @Override
     public void flipBang() {
-        op = op.getOppositeOperator();
+        bangFlipped = !bangFlipped;
     }
 
     public Label getLabelFalse() {
@@ -62,6 +66,28 @@ public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
     @Override
     public boolean isBangFlippable() {
         return true;
+    }
+
+    public boolean isBangFlipped() {
+        return bangFlipped;
+    }
+
+    protected Size logicalClose(MethodVisitor methodVisitor) {
+        if (!(parent instanceof Ts2JavaAstBinExpr)) {
+            // This is the top bin expr. Let's close it.
+            Label labelClose = new Label();
+            if (labelTrue != null) {
+                methodVisitor.visitLabel(labelTrue);
+            }
+            methodVisitor.visitInsn(Opcodes.ICONST_1);
+            methodVisitor.visitJumpInsn(Opcodes.GOTO, labelClose);
+            methodVisitor.visitLabel(labelFalse);
+            methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+            methodVisitor.visitInsn(Opcodes.ICONST_0);
+            methodVisitor.visitLabel(labelClose);
+            methodVisitor.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[]{Opcodes.INTEGER});
+        }
+        return StackManipulation.Size.ZERO;
     }
 
     public Ts2JavaAstBinExprLogical setLabelFalse(Label labelFalse) {

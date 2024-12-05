@@ -27,6 +27,8 @@ import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class Ts2JavaAstBinExprArithmetic extends Ts2JavaAstBinExpr {
@@ -43,25 +45,26 @@ public class Ts2JavaAstBinExprArithmetic extends Ts2JavaAstBinExpr {
     @Override
     public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
         super.apply(methodVisitor, context);
-        Size sizeLoadLeft = left.apply(methodVisitor, context);
+        final List<Size> sizes = new ArrayList<>();
+        sizes.add(left.apply(methodVisitor, context));
         TypeDescription upCastType = left.getType();
-        Size sizeCastLeft = Size.ZERO;
         TypeDescription rightTargetType = op == Swc4jAstBinaryOp.Exp ? type : right.getType();
         Optional<StackManipulation> optionalStackManipulation =
                 JavaClassCast.getUpCastStackManipulation(left.getType(), rightTargetType);
         if (optionalStackManipulation.isPresent()) {
-            sizeCastLeft = optionalStackManipulation.get().apply(methodVisitor, context);
+            sizes.add(optionalStackManipulation.get().apply(methodVisitor, context));
             upCastType = rightTargetType;
         }
-        Size sizeLoadRight = right.apply(methodVisitor, context);
-        Size sizeCastRight = JavaClassCast.getUpCastStackManipulation(right.getType(), upCastType)
+        sizes.add(right.apply(methodVisitor, context));
+        sizes.add(JavaClassCast.getUpCastStackManipulation(right.getType(), upCastType)
                 .map(s -> s.apply(methodVisitor, context))
-                .orElse(Size.ZERO);
-        Size sizeOp = Ts2JavaAstBinaryOp.getArithmeticStackManipulation(op, upCastType).apply(methodVisitor, context);
-        Size sizeCastResult = JavaClassCast.getUpCastStackManipulation(upCastType, type)
+                .orElse(Size.ZERO));
+        sizes.add(Ts2JavaAstBinaryOp.getArithmeticStackManipulation(op, upCastType)
+                .apply(methodVisitor, context));
+        sizes.add(JavaClassCast.getUpCastStackManipulation(upCastType, type)
                 .map(s -> s.apply(methodVisitor, context))
-                .orElse(Size.ZERO);
-        return aggregateSize(sizeLoadLeft, sizeCastLeft, sizeLoadRight, sizeCastRight, sizeOp, sizeCastResult);
+                .orElse(Size.ZERO));
+        return aggregateSize(sizes);
     }
 
     @Override
