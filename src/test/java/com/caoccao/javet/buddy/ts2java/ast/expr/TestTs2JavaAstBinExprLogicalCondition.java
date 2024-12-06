@@ -53,6 +53,35 @@ public class TestTs2JavaAstBinExprLogicalCondition extends BaseTestTs2Java {
     }
 
     /*
+  public logicalOr_ZZ_Z(ZZ)Z
+   L0
+    LINENUMBER 81 L0
+    ILOAD 1
+    IFNE L1
+    ILOAD 2
+    IFEQ L2
+   L1
+   FRAME SAME
+    ICONST_1
+    GOTO L3
+   L2
+   FRAME SAME
+    ICONST_0
+   L3
+   FRAME SAME1 I
+    IRETURN
+   L4
+    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/ast/expr/TestTs2JavaAstBinExprLogicalCondition; L0 L4 0
+    LOCALVARIABLE a Z L0 L4 1
+    LOCALVARIABLE b Z L0 L4 2
+    MAXSTACK = 1
+    MAXLOCALS = 3
+     */
+    public boolean logicalOr_ZZ_Z(boolean a, boolean b) {
+        return a || b;
+    }
+
+    /*
   public not_LogicalAnd_ZZ_Z(ZZ)Z
    L0
     LINENUMBER 56 L0
@@ -91,6 +120,23 @@ public class TestTs2JavaAstBinExprLogicalCondition extends BaseTestTs2Java {
                 TsMethodArgument.of("b", boolean.class));
         assertTrue((boolean) tsClass.invoke(true, true));
         assertFalse((boolean) tsClass.invoke(true, false));
+        assertFalse((boolean) tsClass.invoke(false, false));
+    }
+
+    @Test
+    public void testLogicalOr_ZZ_Z() throws Exception {
+        assertTrue(logicalOr_ZZ_Z(true, true));
+        assertTrue(logicalOr_ZZ_Z(true, false));
+        assertTrue(logicalOr_ZZ_Z(false, true));
+        assertFalse(logicalOr_ZZ_Z(false, false));
+        tsClass = new TsClass(
+                "return a || b;",
+                boolean.class,
+                TsMethodArgument.of("a", boolean.class),
+                TsMethodArgument.of("b", boolean.class));
+        assertTrue((boolean) tsClass.invoke(true, true));
+        assertTrue((boolean) tsClass.invoke(true, false));
+        assertTrue((boolean) tsClass.invoke(false, true));
         assertFalse((boolean) tsClass.invoke(false, false));
     }
 

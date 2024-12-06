@@ -45,14 +45,23 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
         final List<Size> sizes = new ArrayList<>();
         final Swc4jAstBinaryOp finalOp = bangFlipped ? op.getOppositeOperator() : op;
         switch (finalOp) {
-            case LogicalAnd:
+            case LogicalAnd: {
                 final int opcodeCompare = bangFlipped ? Opcodes.IFNE : Opcodes.IFEQ;
                 sizes.add(left.apply(methodVisitor, context));
                 methodVisitor.visitJumpInsn(opcodeCompare, labelFalse);
                 sizes.add(right.apply(methodVisitor, context));
                 methodVisitor.visitJumpInsn(opcodeCompare, labelFalse);
                 break;
-            case LogicalOr:
+            }
+            case LogicalOr: {
+                final int opcodeCompare1 = bangFlipped ? Opcodes.IFEQ : Opcodes.IFNE;
+                final int opcodeCompare2 = bangFlipped ? Opcodes.IFNE : Opcodes.IFEQ;
+                sizes.add(left.apply(methodVisitor, context));
+                methodVisitor.visitJumpInsn(opcodeCompare1, labelTrue);
+                sizes.add(right.apply(methodVisitor, context));
+                methodVisitor.visitJumpInsn(opcodeCompare2, labelFalse);
+                break;
+            }
             default:
                 throw new Ts2JavaAstException(
                         ast,
@@ -84,6 +93,11 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
                     SimpleFreeMarkerFormat.format("Unsupported right type ${type} in logical AND (&&).",
                             SimpleMap.of("type", right.getType().getName())));
         }
+    }
 
+    @Override
+    public boolean isLabelTrueRequired() {
+        return (op == Swc4jAstBinaryOp.LogicalAnd && bangFlipped)
+                || (op == Swc4jAstBinaryOp.LogicalOr && !bangFlipped);
     }
 }

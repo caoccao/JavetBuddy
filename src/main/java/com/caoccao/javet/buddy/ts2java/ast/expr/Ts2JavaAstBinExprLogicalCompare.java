@@ -63,4 +63,9 @@ public class Ts2JavaAstBinExprLogicalCompare extends Ts2JavaAstBinExprLogical {
         sizes.add(logicalClose(methodVisitor));
         return aggregateSize(sizes);
     }
+
+    @Override
+    public boolean isLabelTrueRequired() {
+        return false;
+    }
 }

@@ -226,35 +226,6 @@ public class TestLogicalOperations extends BaseTestTs2Java {
         return (a > b) || (b > a);
     }
 
-    /*
-  public logicalOr_II_Z(II)Z
-   L0
-    LINENUMBER 296 L0
-    ILOAD 1
-    IFGT L1
-    ILOAD 2
-    IFLE L2
-   L1
-   FRAME SAME
-    ICONST_1
-    GOTO L3
-   L2
-   FRAME SAME
-    ICONST_0
-   L3
-   FRAME SAME1 I
-    IRETURN
-   L4
-    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/ast/TestLogicalOperations; L0 L4 0
-    LOCALVARIABLE a I L0 L4 1
-    LOCALVARIABLE b I L0 L4 2
-    MAXSTACK = 1
-    MAXLOCALS = 3
-     */
-    public boolean logicalOr_ZZ_Z(boolean a, boolean b) {
-        return a || b;
-    }
-
     //    @Test
     public void testLogicalAndOrAnd_II_Z() throws Exception {
         enableLogging();
@@ -479,22 +450,5 @@ public class TestLogicalOperations extends BaseTestTs2Java {
             assertEquals((a < b) || (b < a), tsClassLTLT.invoke(a, b), "LT LT " + a + " " + b);
             assertEquals((a <= b) || (b != 2L), tsClassLENE.invoke(a, b), "LE NE " + a + " " + b);
         }
-    }
-
-    @Test
-    public void testLogicalOr_ZZ_Z() throws Exception {
-        assertTrue(logicalOr_ZZ_Z(true, true));
-        assertTrue(logicalOr_ZZ_Z(true, false));
-        assertTrue(logicalOr_ZZ_Z(false, true));
-        assertFalse(logicalOr_ZZ_Z(false, false));
-        TsClassX tsClass = new TsClassX(
-                "return a || b;",
-                boolean.class,
-                TsMethodArgument.of("a", boolean.class),
-                TsMethodArgument.of("b", boolean.class));
-        assertTrue((boolean) tsClass.invoke(true, true));
-        assertTrue((boolean) tsClass.invoke(true, false));
-        assertTrue((boolean) tsClass.invoke(false, true));
-        assertFalse((boolean) tsClass.invoke(false, false));
     }
 }

@@ -31,23 +31,16 @@ public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
     protected boolean bangFlipped;
     protected Label labelFalse;
     protected Label labelTrue;
+
     protected Ts2JavaAstBinExprLogical(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstBinExpr ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
         bangFlipped = false;
-        labelFalse = null;
-        labelTrue = null;
+        labelFalse = new Label();
+        labelTrue = new Label();
         type = TypeDescription.ForLoadedType.of(boolean.class);
-    }
-
-    @Override
-    public void compile() {
-        super.compile();
-        if (labelFalse == null) {
-            labelFalse = new Label();
-        }
     }
 
     @Override
@@ -72,12 +65,15 @@ public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
         return bangFlipped;
     }
 
+    public abstract boolean isLabelTrueRequired();
+
     protected Size logicalClose(MethodVisitor methodVisitor) {
         if (!(parent instanceof Ts2JavaAstBinExpr)) {
             // This is the top bin expr. Let's close it.
             Label labelClose = new Label();
-            if (labelTrue != null) {
+            if (isLabelTrueRequired()) {
                 methodVisitor.visitLabel(labelTrue);
+                methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
             }
             methodVisitor.visitInsn(Opcodes.ICONST_1);
             methodVisitor.visitJumpInsn(Opcodes.GOTO, labelClose);
