@@ -28,6 +28,8 @@ import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.member.MethodReturn;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class Ts2JavaAstReturnStmt
@@ -55,13 +57,14 @@ public class Ts2JavaAstReturnStmt
     public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
         visitLineNumber(methodVisitor);
         if (arg.isPresent()) {
-            Size sizeArg = arg.get().apply(methodVisitor, context);
+            final List<Size> sizes = new ArrayList<>();
+            sizes.add(arg.get().apply(methodVisitor, context));
             TypeDescription argType = arg.get().getType();
-            Size sizeCast = JavaClassCast.getUpCastStackManipulation(argType, memo.getReturnType())
+            sizes.add(JavaClassCast.getUpCastStackManipulation(argType, memo.getReturnType())
                     .map(stackManipulation -> stackManipulation.apply(methodVisitor, context))
-                    .orElse(Size.ZERO);
-            Size sizeReturn = MethodReturn.of(memo.getReturnType()).apply(methodVisitor, context);
-            return aggregateSize(sizeArg, sizeCast, sizeReturn);
+                    .orElse(Size.ZERO));
+            sizes.add(MethodReturn.of(memo.getReturnType()).apply(methodVisitor, context));
+            return aggregateSize(sizes);
         }
         return Size.ZERO;
     }

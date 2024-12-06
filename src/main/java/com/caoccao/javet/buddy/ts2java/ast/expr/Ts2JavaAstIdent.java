@@ -27,6 +27,9 @@ import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Ts2JavaAstIdent
         extends BaseTs2JavaAst<Swc4jAstIdent, Ts2JavaMemoFunction>
         implements ITs2JavaAstExpr<Swc4jAstIdent, Ts2JavaMemoFunction>,
@@ -63,13 +66,14 @@ public class Ts2JavaAstIdent
     @Override
     public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
         visitLineNumber(methodVisitor);
+        final List<Size> sizes = new ArrayList<>();
         MethodVariableAccess methodVariableAccess = MethodVariableAccess.of(localVariable.getType());
         StackManipulation stackManipulation = methodVariableAccess.loadFrom(localVariable.getOffset());
-        Size size = stackManipulation.apply(methodVisitor, context);
-        Size sizeCast = JavaClassCast.getUpCastStackManipulation(localVariable.getType(), type)
+        sizes.add(stackManipulation.apply(methodVisitor, context));
+        sizes.add(JavaClassCast.getUpCastStackManipulation(localVariable.getType(), type)
                 .map(s -> s.apply(methodVisitor, context))
-                .orElse(Size.ZERO);
-        return aggregateSize(size, sizeCast);
+                .orElse(Size.ZERO));
+        return aggregateSize(sizes);
     }
 
     @Override
