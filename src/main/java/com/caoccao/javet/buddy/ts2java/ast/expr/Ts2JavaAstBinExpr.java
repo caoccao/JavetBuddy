@@ -40,9 +40,9 @@ public abstract class Ts2JavaAstBinExpr
             Swc4jAstBinExpr ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        left = ITs2JavaAstExpr.create(parent, ast.getLeft(), memo);
+        left = ITs2JavaAstExpr.create(this, ast.getLeft(), memo);
         op = ast.getOp();
-        right = ITs2JavaAstExpr.create(parent, ast.getRight(), memo);
+        right = ITs2JavaAstExpr.create(this, ast.getRight(), memo);
     }
 
     public static Ts2JavaAstBinExpr create(

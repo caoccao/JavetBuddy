@@ -44,22 +44,39 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
         super.apply(methodVisitor, context);
         final List<Size> sizes = new ArrayList<>();
         final Swc4jAstBinaryOp finalOp = bangFlipped ? op.getOppositeOperator() : op;
+        final boolean isLeftLogical = left instanceof Ts2JavaAstBinExprLogical;
+        final boolean isRightLogical = right instanceof Ts2JavaAstBinExprLogical;
+        if (isLeftLogical) {
+            left.as(Ts2JavaAstBinExprLogical.class)
+                    .setLabelTrue(labelTrue)
+                    .setLabelFalse(labelFalse);
+        }
+        if (isRightLogical) {
+            right.as(Ts2JavaAstBinExprLogical.class)
+                    .setLabelTrue(labelTrue)
+                    .setLabelFalse(labelFalse);
+        }
+        final int opcodeCompareFalse = bangFlipped ? Opcodes.IFNE : Opcodes.IFEQ;
         switch (finalOp) {
             case LogicalAnd: {
-                final int opcodeCompare = bangFlipped ? Opcodes.IFNE : Opcodes.IFEQ;
                 sizes.add(left.apply(methodVisitor, context));
-                methodVisitor.visitJumpInsn(opcodeCompare, labelFalse);
+                if (!isLeftLogical) {
+                    methodVisitor.visitJumpInsn(opcodeCompareFalse, labelFalse);
+                }
                 sizes.add(right.apply(methodVisitor, context));
-                methodVisitor.visitJumpInsn(opcodeCompare, labelFalse);
+                if (!isRightLogical) {
+                    methodVisitor.visitJumpInsn(opcodeCompareFalse, labelFalse);
+                }
                 break;
             }
             case LogicalOr: {
-                final int opcodeCompare1 = bangFlipped ? Opcodes.IFEQ : Opcodes.IFNE;
-                final int opcodeCompare2 = bangFlipped ? Opcodes.IFNE : Opcodes.IFEQ;
+                final int opcodeCompareTrue = bangFlipped ? Opcodes.IFEQ : Opcodes.IFNE;
                 sizes.add(left.apply(methodVisitor, context));
-                methodVisitor.visitJumpInsn(opcodeCompare1, labelTrue);
+                methodVisitor.visitJumpInsn(opcodeCompareTrue, labelTrue);
                 sizes.add(right.apply(methodVisitor, context));
-                methodVisitor.visitJumpInsn(opcodeCompare2, labelFalse);
+                if (!isRightLogical) {
+                    methodVisitor.visitJumpInsn(opcodeCompareFalse, labelFalse);
+                }
                 break;
             }
             default:

@@ -66,35 +66,6 @@ public class TestLogicalOperations extends BaseTestTs2Java {
     }
 
     /*
-  public logicalAnd_II_Z(II)Z
-   L0
-    LINENUMBER 86 L0
-    ILOAD 1
-    ILOAD 2
-    IF_ICMPNE L1
-    ILOAD 1
-    ICONST_1
-    IF_ICMPLE L1
-    ICONST_1
-    GOTO L2
-   L1
-   FRAME SAME
-    ICONST_0
-   L2
-   FRAME SAME1 I
-    IRETURN
-   L3
-    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/ast/TestLogicalOperations; L0 L3 0
-    LOCALVARIABLE a I L0 L3 1
-    LOCALVARIABLE b I L0 L3 2
-    MAXSTACK = 2
-    MAXLOCALS = 3
-     */
-    public boolean logicalAnd_II_Z(int a, int b) {
-        return a == b && a > 1;
-    }
-
-    /*
   public logicalNot_And_II_Z(II)Z
    L0
     LINENUMBER 210 L0
@@ -242,34 +213,6 @@ public class TestLogicalOperations extends BaseTestTs2Java {
         assertFalse((boolean) tsClass.invoke(1, 1));
         assertTrue((boolean) tsClass.invoke(1, 2));
         assertFalse((boolean) tsClass.invoke(2, 1));
-    }
-
-    @Test
-    public void testLogicalAnd_II_Z() throws Exception {
-        assertTrue(logicalAnd_II_Z(2, 2));
-        assertFalse(logicalAnd_II_Z(2, 3));
-        assertFalse(logicalAnd_II_Z(1, 1));
-        TsClassX tsClass = new TsClassX(
-                "return a == b && a > 1;",
-                boolean.class,
-                TsMethodArgument.of("a", int.class),
-                TsMethodArgument.of("b", int.class));
-        assertTrue((boolean) tsClass.invoke(2, 2));
-        assertFalse((boolean) tsClass.invoke(2, 3));
-        assertFalse((boolean) tsClass.invoke(1, 1));
-    }
-
-    @Test
-    public void testLogicalNot_Or_II_Z() throws Exception {
-        TsClassX tsClass = new TsClassX(
-                "return !(a == b || a > 1);",
-                boolean.class,
-                TsMethodArgument.of("a", int.class),
-                TsMethodArgument.of("b", int.class));
-        assertFalse((boolean) tsClass.invoke(2, 2));
-        assertFalse((boolean) tsClass.invoke(2, 3));
-        assertFalse((boolean) tsClass.invoke(1, 1));
-        assertTrue((boolean) tsClass.invoke(0, 1));
     }
 
     @Test

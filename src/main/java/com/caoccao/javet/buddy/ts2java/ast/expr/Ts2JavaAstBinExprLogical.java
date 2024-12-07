@@ -93,6 +93,6 @@ public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
 
     public Ts2JavaAstBinExprLogical setLabelTrue(Label labelTrue) {
         this.labelTrue = labelTrue;
-        return null;
+        return this;
     }
 }
