@@ -46,11 +46,6 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
         final Swc4jAstBinaryOp finalOp = bangFlipped ? op.getOppositeOperator() : op;
         final boolean isLeftLogical = left instanceof Ts2JavaAstBinExprLogical;
         final boolean isRightLogical = right instanceof Ts2JavaAstBinExprLogical;
-        if (isLeftLogical) {
-            left.as(Ts2JavaAstBinExprLogical.class)
-                    .setLabelTrue(labelTrue)
-                    .setLabelFalse(labelFalse);
-        }
         if (isRightLogical) {
             right.as(Ts2JavaAstBinExprLogical.class)
                     .setLabelTrue(labelTrue)
@@ -59,6 +54,11 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
         final int opcodeCompareFalse = bangFlipped ? Opcodes.IFNE : Opcodes.IFEQ;
         switch (finalOp) {
             case LogicalAnd: {
+                if (isLeftLogical) {
+                    left.as(Ts2JavaAstBinExprLogical.class)
+                            .setLabelTrue(labelTrue)
+                            .setLabelFalse(labelFalse);
+                }
                 sizes.add(left.apply(methodVisitor, context));
                 if (!isLeftLogical) {
                     methodVisitor.visitJumpInsn(opcodeCompareFalse, labelFalse);
@@ -70,9 +70,16 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
                 break;
             }
             case LogicalOr: {
+                if (isLeftLogical) {
+                    left.as(Ts2JavaAstBinExprLogical.class)
+                            .setLabelTrue(labelFalse)
+                            .setLabelFalse(labelTrue);
+                }
                 final int opcodeCompareTrue = bangFlipped ? Opcodes.IFEQ : Opcodes.IFNE;
                 sizes.add(left.apply(methodVisitor, context));
-                methodVisitor.visitJumpInsn(opcodeCompareTrue, labelTrue);
+                if (!isLeftLogical) {
+                    methodVisitor.visitJumpInsn(opcodeCompareTrue, labelTrue);
+                }
                 sizes.add(right.apply(methodVisitor, context));
                 if (!isRightLogical) {
                     methodVisitor.visitJumpInsn(opcodeCompareFalse, labelFalse);
@@ -109,6 +116,19 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
                     ast.getRight(),
                     SimpleFreeMarkerFormat.format("Unsupported right type ${type} in logical AND (&&).",
                             SimpleMap.of("type", right.getType().getName())));
+        }
+        if (op == Swc4jAstBinaryOp.LogicalOr && left instanceof Ts2JavaAstBinExprLogical) {
+            left.as(Ts2JavaAstBinExprLogical.class).flipBang();
+        }
+    }
+
+    @Override
+    public void flipBang() {
+        super.flipBang();
+        if (isBangFlippable()) {
+            if (left instanceof Ts2JavaAstBinExprLogical) {
+                left.as(Ts2JavaAstBinExprLogical.class).flipBang();
+            }
         }
     }
 

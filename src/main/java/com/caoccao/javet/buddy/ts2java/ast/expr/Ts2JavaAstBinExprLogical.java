@@ -45,7 +45,15 @@ public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
 
     @Override
     public void flipBang() {
-        bangFlipped = !bangFlipped;
+        if (isBangFlippable()) {
+            bangFlipped = !bangFlipped;
+            if (left instanceof ITs2JavaBangFlippable) {
+                left.as(ITs2JavaBangFlippable.class).flipBang();
+            }
+            if (right instanceof ITs2JavaBangFlippable) {
+                right.as(ITs2JavaBangFlippable.class).flipBang();
+            }
+        }
     }
 
     public Label getLabelFalse() {
