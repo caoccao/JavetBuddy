@@ -72,7 +72,7 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
             }
             case LogicalOr: {
                 if (isLeftLogical) {
-                    left.as(Ts2JavaAstBinExprLogical.class).switchLabel();
+                    left.as(Ts2JavaAstBinExprLogical.class).setLabelSwitched(true);
                 }
                 final int opcodeCompareTrue = bangFlipped ? Opcodes.IFEQ : Opcodes.IFNE;
                 sizes.add(left.apply(methodVisitor, context));

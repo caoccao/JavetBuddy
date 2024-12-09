@@ -97,13 +97,13 @@ public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
         return this;
     }
 
-    public Ts2JavaAstBinExprLogical setLabelTrue(Label labelTrue) {
-        this.labelTrue = labelTrue;
+    public Ts2JavaAstBinExprLogical setLabelSwitched(boolean labelSwitched) {
+        this.labelSwitched = labelSwitched;
         return this;
     }
 
-    public Ts2JavaAstBinExprLogical switchLabel() {
-        labelSwitched = !labelSwitched;
+    public Ts2JavaAstBinExprLogical setLabelTrue(Label labelTrue) {
+        this.labelTrue = labelTrue;
         return this;
     }
 }
