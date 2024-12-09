@@ -102,7 +102,8 @@ public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
         return this;
     }
 
-    public void switchLabel() {
+    public Ts2JavaAstBinExprLogical switchLabel() {
         labelSwitched = !labelSwitched;
+        return this;
     }
 }
