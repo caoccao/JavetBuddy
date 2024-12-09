@@ -30,6 +30,7 @@ public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
         implements ITs2JavaBangFlippable {
     protected boolean bangFlipped;
     protected Label labelFalse;
+    protected boolean labelSwitched;
     protected Label labelTrue;
 
     protected Ts2JavaAstBinExprLogical(
@@ -40,20 +41,13 @@ public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
         bangFlipped = false;
         labelFalse = new Label();
         labelTrue = new Label();
+        labelSwitched = false;
         type = TypeDescription.ForLoadedType.of(boolean.class);
     }
 
     @Override
     public void flipBang() {
-        if (isBangFlippable()) {
-            bangFlipped = !bangFlipped;
-            if (left instanceof ITs2JavaBangFlippable) {
-                left.as(ITs2JavaBangFlippable.class).flipBang();
-            }
-            if (right instanceof ITs2JavaBangFlippable) {
-                right.as(ITs2JavaBangFlippable.class).flipBang();
-            }
-        }
+        bangFlipped = !bangFlipped;
     }
 
     public Label getLabelFalse() {
@@ -71,6 +65,10 @@ public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
 
     public boolean isBangFlipped() {
         return bangFlipped;
+    }
+
+    public boolean isLabelSwitched() {
+        return labelSwitched;
     }
 
     public abstract boolean isLabelTrueRequired();
@@ -102,5 +100,9 @@ public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
     public Ts2JavaAstBinExprLogical setLabelTrue(Label labelTrue) {
         this.labelTrue = labelTrue;
         return this;
+    }
+
+    public void switchLabel() {
+        labelSwitched = !labelSwitched;
     }
 }

@@ -17,6 +17,7 @@
 package com.caoccao.javet.buddy.ts2java.ast.expr;
 
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities.ITs2JavaBangFlippable;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
@@ -46,19 +47,19 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
         final Swc4jAstBinaryOp finalOp = bangFlipped ? op.getOppositeOperator() : op;
         final boolean isLeftLogical = left instanceof Ts2JavaAstBinExprLogical;
         final boolean isRightLogical = right instanceof Ts2JavaAstBinExprLogical;
+        if (isLeftLogical) {
+            left.as(Ts2JavaAstBinExprLogical.class)
+                    .setLabelTrue(labelSwitched ? labelFalse : labelTrue)
+                    .setLabelFalse(labelSwitched ? labelTrue : labelFalse);
+        }
         if (isRightLogical) {
             right.as(Ts2JavaAstBinExprLogical.class)
-                    .setLabelTrue(labelTrue)
-                    .setLabelFalse(labelFalse);
+                    .setLabelTrue(labelSwitched ? labelFalse : labelTrue)
+                    .setLabelFalse(labelSwitched ? labelTrue : labelFalse);
         }
         final int opcodeCompareFalse = bangFlipped ? Opcodes.IFNE : Opcodes.IFEQ;
         switch (finalOp) {
             case LogicalAnd: {
-                if (isLeftLogical) {
-                    left.as(Ts2JavaAstBinExprLogical.class)
-                            .setLabelTrue(labelTrue)
-                            .setLabelFalse(labelFalse);
-                }
                 sizes.add(left.apply(methodVisitor, context));
                 if (!isLeftLogical) {
                     methodVisitor.visitJumpInsn(opcodeCompareFalse, labelFalse);
@@ -71,9 +72,7 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
             }
             case LogicalOr: {
                 if (isLeftLogical) {
-                    left.as(Ts2JavaAstBinExprLogical.class)
-                            .setLabelTrue(labelFalse)
-                            .setLabelFalse(labelTrue);
+                    left.as(Ts2JavaAstBinExprLogical.class).switchLabel();
                 }
                 final int opcodeCompareTrue = bangFlipped ? Opcodes.IFEQ : Opcodes.IFNE;
                 sizes.add(left.apply(methodVisitor, context));
@@ -125,10 +124,8 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
     @Override
     public void flipBang() {
         super.flipBang();
-        if (isBangFlippable()) {
-            if (left instanceof Ts2JavaAstBinExprLogical) {
-                left.as(Ts2JavaAstBinExprLogical.class).flipBang();
-            }
+        if (right instanceof ITs2JavaBangFlippable) {
+            right.as(ITs2JavaBangFlippable.class).flipBang();
         }
     }
 

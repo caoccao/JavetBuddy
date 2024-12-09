@@ -18,6 +18,7 @@ package com.caoccao.javet.buddy.ts2java.ast.expr;
 
 import com.caoccao.javet.buddy.ts2java.ast.enums.Ts2JavaAstBinaryOp;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities.ITs2JavaBangFlippable;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaClassCast;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
@@ -25,6 +26,7 @@ import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
+import net.bytebuddy.jar.asm.Label;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
 import java.util.ArrayList;
@@ -58,10 +60,22 @@ public class Ts2JavaAstBinExprLogicalCompare extends Ts2JavaAstBinExprLogical {
                 .map(s -> s.apply(methodVisitor, context))
                 .orElse(Size.ZERO));
         final Swc4jAstBinaryOp finalOp = bangFlipped ? op.getOppositeOperator() : op;
-        sizes.add(Ts2JavaAstBinaryOp.getLogicalCompareStackManipulation(ast, finalOp, upCastType, labelFalse)
+        final Label label = labelSwitched ? labelTrue : labelFalse;
+        sizes.add(Ts2JavaAstBinaryOp.getLogicalCompareStackManipulation(ast, finalOp, upCastType, label)
                 .apply(methodVisitor, context));
         sizes.add(logicalClose(methodVisitor));
         return aggregateSize(sizes);
+    }
+
+    @Override
+    public void flipBang() {
+        super.flipBang();
+        if (left instanceof ITs2JavaBangFlippable) {
+            left.as(ITs2JavaBangFlippable.class).flipBang();
+        }
+        if (right instanceof ITs2JavaBangFlippable) {
+            right.as(ITs2JavaBangFlippable.class).flipBang();
+        }
     }
 
     @Override
