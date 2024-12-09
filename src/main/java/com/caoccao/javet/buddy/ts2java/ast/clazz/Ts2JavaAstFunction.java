@@ -17,7 +17,7 @@
 package com.caoccao.javet.buddy.ts2java.ast.clazz;
 
 import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAst;
-import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaAstAccessibility;
+import com.caoccao.javet.buddy.ts2java.ast.enums.Ts2JavaAstAccessibility;
 import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaAstParam;
 import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaAstTsTypeAnn;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;

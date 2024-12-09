@@ -16,6 +16,7 @@
 
 package com.caoccao.javet.buddy.ts2java.ast;
 
+import com.caoccao.javet.buddy.ts2java.ast.enums.Ts2JavaAstAccessibility;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaFunctionContext;
 import com.caoccao.javet.buddy.ts2java.compiler.visitors.JavaLoggingMethodVisitor;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstFunction;
