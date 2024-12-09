@@ -21,6 +21,7 @@ import com.caoccao.javet.buddy.ts2java.ast.expr.Ts2JavaAstIdent;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.*;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.buddy.ts2java.ast.ts.Ts2JavaAstTsTypeAnn;
+import com.caoccao.javet.buddy.ts2java.compiler.JavaLocalVariable;
 import com.caoccao.javet.swc4j.ast.pat.Swc4jAstBindingIdent;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.jar.asm.MethodVisitor;
@@ -67,6 +68,10 @@ public class Ts2JavaAstBindingIdent
 
     public Ts2JavaAstIdent getId() {
         return id;
+    }
+
+    public JavaLocalVariable getLocalVariable() {
+        return new JavaLocalVariable(id.getSym(), type);
     }
 
     public Optional<Ts2JavaAstTsTypeAnn> getTypeAnn() {

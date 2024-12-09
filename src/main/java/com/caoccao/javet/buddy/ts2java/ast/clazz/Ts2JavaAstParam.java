@@ -17,18 +17,15 @@
 package com.caoccao.javet.buddy.ts2java.ast.clazz;
 
 import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAst;
-import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaAstBindingIdent;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstPat;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
+import com.caoccao.javet.buddy.ts2java.ast.pat.Ts2JavaAstBindingIdent;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLocalVariable;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstParam;
-import com.caoccao.javet.swc4j.ast.interfaces.ISwc4jAstPat;
-import com.caoccao.javet.swc4j.ast.pat.Swc4jAstBindingIdent;
 import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
-import net.bytebuddy.description.type.TypeDescription;
 
 public class Ts2JavaAstParam
         extends BaseTs2JavaAst<Swc4jAstParam, Ts2JavaMemoFunction> {
@@ -55,20 +52,13 @@ public class Ts2JavaAstParam
     }
 
     public JavaLocalVariable getLocalVariable() {
-        // TODO
-        ISwc4jAstPat pat = ast.getPat();
-        switch (pat.getType()) {
-            case BindingIdent:
-                String ident = pat.as(Swc4jAstBindingIdent.class).getId().getSym();
-                TypeDescription typeDescription =
-                        Ts2JavaAstBindingIdent.getTypeDescription(pat.as(Swc4jAstBindingIdent.class));
-                return new JavaLocalVariable(ident, typeDescription);
-            default:
-                throw new Ts2JavaAstException(
-                        pat,
-                        SimpleFreeMarkerFormat.format("Param pat type ${patType} is not supported.",
-                                SimpleMap.of("patType", pat.getType().name())));
+        if (pat instanceof Ts2JavaAstBindingIdent) {
+            return pat.as(Ts2JavaAstBindingIdent.class).getLocalVariable();
         }
+        throw new Ts2JavaAstException(
+                ast.getPat(),
+                SimpleFreeMarkerFormat.format("Param pat type ${patType} is not supported.",
+                        SimpleMap.of("patType", ast.getPat().getType().name())));
     }
 
     public ITs2JavaAstPat<?, ?> getPat() {
