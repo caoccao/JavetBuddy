@@ -14,8 +14,13 @@
  * limitations under the License.
  */
 
-package com.caoccao.javet.buddy.ts2java.ast;
+package com.caoccao.javet.buddy.ts2java.ast.clazz;
 
+import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAst;
+import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaAstBindingIdent;
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstPat;
+import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLocalVariable;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstParam;
@@ -25,11 +30,32 @@ import com.caoccao.javet.utils.SimpleFreeMarkerFormat;
 import com.caoccao.javet.utils.SimpleMap;
 import net.bytebuddy.description.type.TypeDescription;
 
-public final class Ts2JavaAstParam {
-    private Ts2JavaAstParam() {
+public class Ts2JavaAstParam
+        extends BaseTs2JavaAst<Swc4jAstParam, Ts2JavaMemoFunction> {
+    protected final ITs2JavaAstPat<?, ?> pat;
+
+    public Ts2JavaAstParam(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstParam ast,
+            Ts2JavaMemoFunction memo) {
+        super(parent, ast, memo);
+        pat = ITs2JavaAstPat.create(this, ast.getPat(), memo);
     }
 
-    public static JavaLocalVariable getLocalVariable(Swc4jAstParam ast) {
+    public static Ts2JavaAstParam create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstParam ast,
+            Ts2JavaMemoFunction memo) {
+        return new Ts2JavaAstParam(parent, ast, memo);
+    }
+
+    @Override
+    public void compile() {
+        pat.compile();
+    }
+
+    public JavaLocalVariable getLocalVariable() {
+        // TODO
         ISwc4jAstPat pat = ast.getPat();
         switch (pat.getType()) {
             case BindingIdent:
@@ -43,5 +69,9 @@ public final class Ts2JavaAstParam {
                         SimpleFreeMarkerFormat.format("Param pat type ${patType} is not supported.",
                                 SimpleMap.of("patType", pat.getType().name())));
         }
+    }
+
+    public ITs2JavaAstPat<?, ?> getPat() {
+        return pat;
     }
 }

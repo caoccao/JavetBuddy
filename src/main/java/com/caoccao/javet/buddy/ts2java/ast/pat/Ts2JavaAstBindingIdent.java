@@ -41,8 +41,8 @@ public class Ts2JavaAstBindingIdent
             Swc4jAstBindingIdent ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        typeAnn = ast.getTypeAnn().map(typeAnn -> Ts2JavaAstTsTypeAnn.create(this, typeAnn, memo));
-        typeAnn.ifPresent(ts2JavaAstTsTypeAnn -> type = ts2JavaAstTsTypeAnn.getType());
+        typeAnn = ast.getTypeAnn().map(t -> Ts2JavaAstTsTypeAnn.create(this, t, memo));
+        typeAnn.ifPresent(t -> type = t.getType());
         id = Ts2JavaAstIdent.create(this, ast.getId(), memo);
     }
 
@@ -61,6 +61,8 @@ public class Ts2JavaAstBindingIdent
 
     @Override
     public void compile() {
+        id.compile();
+        typeAnn.ifPresent(Ts2JavaAstTsTypeAnn::compile);
     }
 
     public Ts2JavaAstIdent getId() {

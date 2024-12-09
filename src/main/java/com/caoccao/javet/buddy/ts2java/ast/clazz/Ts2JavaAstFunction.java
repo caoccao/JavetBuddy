@@ -18,12 +18,11 @@ package com.caoccao.javet.buddy.ts2java.ast.clazz;
 
 import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.enums.Ts2JavaAstAccessibility;
-import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaAstParam;
-import com.caoccao.javet.buddy.ts2java.ast.Ts2JavaAstTsTypeAnn;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoDynamicType;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.buddy.ts2java.ast.stmt.Ts2JavaAstBlockStmt;
+import com.caoccao.javet.buddy.ts2java.ast.ts.Ts2JavaAstTsTypeAnn;
 import com.caoccao.javet.swc4j.ast.clazz.Swc4jAstFunction;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstAccessibility;
 import net.bytebuddy.description.modifier.Visibility;
@@ -33,7 +32,9 @@ import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class Ts2JavaAstFunction
         extends BaseTs2JavaAst<Swc4jAstFunction, Ts2JavaMemoDynamicType> {
@@ -41,6 +42,8 @@ public class Ts2JavaAstFunction
     protected final Optional<Ts2JavaAstBlockStmt> body;
     protected final Ts2JavaMemoFunction memoFunction;
     protected final String name;
+    protected final List<Ts2JavaAstParam> params;
+    protected final Optional<Ts2JavaAstTsTypeAnn> returnType;
 
     public Ts2JavaAstFunction(
             ITs2JavaAst<?, ?> parent,
@@ -51,14 +54,17 @@ public class Ts2JavaAstFunction
             Swc4jAstAccessibility accessibility) {
         super(parent, ast, memo);
         this.accessibility = accessibility;
-        type = ast.getReturnType()
-                .map(Ts2JavaAstTsTypeAnn::getTypeDescription)
+        memoFunction = new Ts2JavaMemoFunction().setStatic(_static);
+        returnType = ast.getReturnType().map(r -> Ts2JavaAstTsTypeAnn.create(this, r, memoFunction));
+        type = returnType
+                .map(Ts2JavaAstTsTypeAnn::getType)
                 .orElse(TypeDescription.ForLoadedType.of(void.class));
-        memoFunction = new Ts2JavaMemoFunction()
-                .setStatic(_static)
-                .setReturnType(type);
+        memoFunction.setReturnType(type);
         this.name = name;
         body = ast.getBody().map(stmt -> Ts2JavaAstBlockStmt.create(this, stmt, memoFunction));
+        params = ast.getParams().stream()
+                .map(param -> Ts2JavaAstParam.create(this, param, memoFunction))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -72,7 +78,7 @@ public class Ts2JavaAstFunction
     @Override
     public void compile() {
         final Visibility visibility = Ts2JavaAstAccessibility.getVisibility(accessibility);
-        ast.getParams().stream()
+        params.stream()
                 .map(Ts2JavaAstParam::getLocalVariable)
                 .forEach(memoFunction::addLocalVariable);
         final TypeList parameters = memoFunction.getParameters();
@@ -106,5 +112,9 @@ public class Ts2JavaAstFunction
 
     public String getName() {
         return name;
+    }
+
+    public Optional<Ts2JavaAstTsTypeAnn> getReturnType() {
+        return returnType;
     }
 }
