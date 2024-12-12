@@ -86,4 +86,8 @@ public abstract class Ts2JavaAstBinExpr
     public ITs2JavaAstExpr<?, ?> getRight() {
         return right;
     }
+
+    public boolean isTopBinExpr() {
+        return parent == null || !(parent instanceof Ts2JavaAstBinExpr);
+    }
 }

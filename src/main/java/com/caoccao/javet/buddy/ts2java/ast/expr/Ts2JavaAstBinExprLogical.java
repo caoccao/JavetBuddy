@@ -80,7 +80,7 @@ public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
     public abstract boolean isLabelTrueRequired();
 
     protected Size logicalClose(MethodVisitor methodVisitor) {
-        if (!(parent instanceof Ts2JavaAstBinExpr)) {
+        if (isTopBinExpr()) {
             // This is the top bin expr. Let's close it.
             Label labelClose = new Label();
             if (isLabelTrueRequired()) {

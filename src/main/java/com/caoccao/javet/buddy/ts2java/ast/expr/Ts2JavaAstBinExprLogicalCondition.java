@@ -17,7 +17,6 @@
 package com.caoccao.javet.buddy.ts2java.ast.expr;
 
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
-import com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities.ITs2JavaBangFlippable;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
@@ -54,10 +53,18 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
                 if (!isLeftLogical) {
                     methodVisitor.visitJumpInsn(opcodeCompareFalse, labelFalse);
                 }
+                if (!isTopBinExpr() && isRightLogical) {
+                    right.as(Ts2JavaAstBinExprLogical.class).setLabelSwitched(true);
+                }
                 sizes.add(right.apply(methodVisitor, context));
                 if (!isRightLogical) {
                     methodVisitor.visitJumpInsn(opcodeCompareFalse, labelFalse);
                 }
+//                if (!isTopBinExpr() && isLeftLogical) {
+//                    Ts2JavaAstBinExprLogical leftLogical = left.as(Ts2JavaAstBinExprLogical.class);
+//                    methodVisitor.visitLabel(labelFalse);
+//                    methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+//                }
                 break;
             }
             case LogicalOr: {
