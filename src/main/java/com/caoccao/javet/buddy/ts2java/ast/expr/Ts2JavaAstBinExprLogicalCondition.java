@@ -69,13 +69,6 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
                 if (!isLeftLogical) {
                     methodVisitor.visitJumpInsn(opcodeCompareTrue, labelSwitched ? labelFalse : labelTrue);
                 }
-                if (isLeftLogical && isRightLogical) {
-                    Ts2JavaAstBinExprLogical leftLogical = left.as(Ts2JavaAstBinExprLogical.class);
-                    methodVisitor.visitLabel(leftLogical.isLabelSwitched()
-                            ? leftLogical.getLabelTrue()
-                            : leftLogical.getLabelFalse());
-                    methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-                }
                 sizes.add(right.apply(methodVisitor, context));
                 if (!isRightLogical) {
                     methodVisitor.visitJumpInsn(opcodeCompareFalse, labelFalse);
@@ -130,17 +123,6 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
             Ts2JavaAstBinExprLogical rightLogical = right.as(Ts2JavaAstBinExprLogical.class);
             labelTrue = rightLogical.getLabelTrue();
             labelFalse = rightLogical.getLabelFalse();
-        }
-        if (op == Swc4jAstBinaryOp.LogicalOr && isLeftLogical) {
-            left.as(Ts2JavaAstBinExprLogical.class).flipBang();
-        }
-    }
-
-    @Override
-    public void flipBang() {
-        super.flipBang();
-        if (right instanceof ITs2JavaBangFlippable) {
-            right.as(ITs2JavaBangFlippable.class).flipBang();
         }
     }
 

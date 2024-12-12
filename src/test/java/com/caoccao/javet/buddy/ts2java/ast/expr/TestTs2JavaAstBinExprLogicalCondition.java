@@ -338,7 +338,7 @@ public class TestTs2JavaAstBinExprLogicalCondition extends BaseTestTs2Java {
         return !(a || b);
     }
 
-//    @Test
+    //    @Test
     public void testLogicalAndOrAnd_II_Z() throws Exception {
         enableLogging();
         assertTrue(logicalAndOrAnd_II_Z(2, 2));
