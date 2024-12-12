@@ -53,18 +53,18 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
                 if (!isLeftLogical) {
                     methodVisitor.visitJumpInsn(opcodeCompareFalse, labelFalse);
                 }
-                if (!isTopBinExpr() && isRightLogical) {
+                if (labelSwitched && isRightLogical) {
                     right.as(Ts2JavaAstBinExprLogical.class).setLabelSwitched(true);
                 }
                 sizes.add(right.apply(methodVisitor, context));
                 if (!isRightLogical) {
-                    methodVisitor.visitJumpInsn(opcodeCompareFalse, labelFalse);
+                    methodVisitor.visitJumpInsn(opcodeCompareFalse, labelSwitched ? labelTrue : labelFalse);
                 }
-//                if (!isTopBinExpr() && isLeftLogical) {
-//                    Ts2JavaAstBinExprLogical leftLogical = left.as(Ts2JavaAstBinExprLogical.class);
-//                    methodVisitor.visitLabel(labelFalse);
-//                    methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-//                }
+                if (labelSwitched && isLeftLogical) {
+                    Ts2JavaAstBinExprLogical leftLogical = left.as(Ts2JavaAstBinExprLogical.class);
+                    methodVisitor.visitLabel(leftLogical.getLabelFalse());
+                    methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+                }
                 break;
             }
             case LogicalOr: {
