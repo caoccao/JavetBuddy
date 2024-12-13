@@ -16,6 +16,7 @@
 
 package com.caoccao.javet.buddy.ts2java.ast.expr;
 
+import com.caoccao.javet.buddy.ts2java.ast.expr.lit.Ts2JavaAstBool;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
@@ -44,14 +45,26 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
         super.apply(methodVisitor, context);
         final List<Size> sizes = new ArrayList<>();
         final Swc4jAstBinaryOp resolvedOp = getResolvedOp();
+        final boolean isLeftBool = left instanceof Ts2JavaAstBool;
+        final boolean isRightBool = right instanceof Ts2JavaAstBool;
         final boolean isLeftLogical = left instanceof Ts2JavaAstBinExprLogical;
         final boolean isRightLogical = right instanceof Ts2JavaAstBinExprLogical;
+        boolean ignoreClose = false;
         final int opcodeCompareFalse = bangFlipped ? Opcodes.IFNE : Opcodes.IFEQ;
         switch (resolvedOp) {
             case LogicalAnd: {
-                sizes.add(left.apply(methodVisitor, context));
-                if (!isLeftLogical) {
-                    methodVisitor.visitJumpInsn(opcodeCompareFalse, labelFalse);
+                if (isLeftBool) {
+                    Ts2JavaAstBool leftBool = left.as(Ts2JavaAstBool.class);
+                    if (!leftBool.isValue()) {
+                        sizes.add(leftBool.apply(methodVisitor, context));
+                        ignoreClose = true;
+                        break;
+                    }
+                } else {
+                    sizes.add(left.apply(methodVisitor, context));
+                    if (!isLeftLogical) {
+                        methodVisitor.visitJumpInsn(opcodeCompareFalse, labelFalse);
+                    }
                 }
                 if (labelSwitched && isRightLogical) {
                     right.as(Ts2JavaAstBinExprLogical.class).setLabelSwitched(true);
@@ -92,7 +105,9 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
                         SimpleFreeMarkerFormat.format("Bin expr op ${op} is not supported.",
                                 SimpleMap.of("op", ast.getOp().name())));
         }
-        sizes.add(logicalClose(methodVisitor));
+        if (!ignoreClose) {
+            sizes.add(logicalClose(methodVisitor));
+        }
         return aggregateSize(sizes);
     }
 
@@ -124,10 +139,10 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
             Ts2JavaAstBinExprLogical rightLogical = right.as(Ts2JavaAstBinExprLogical.class);
 //            TODO
 //            if (op == Swc4jAstBinaryOp.LogicalAnd) {
-                labelTrue = leftLogical.getLabelTrue();
-                labelFalse = rightLogical.getLabelFalse();
-                leftLogical.setLabelFalse(labelFalse);
-                rightLogical.setLabelTrue(labelTrue);
+            labelTrue = leftLogical.getLabelTrue();
+            labelFalse = rightLogical.getLabelFalse();
+            leftLogical.setLabelFalse(labelFalse);
+            rightLogical.setLabelTrue(labelTrue);
 //            } else {
 //                throw new Ts2JavaAstException(ast, "Logical OR (||) is not supported.");
 //            }

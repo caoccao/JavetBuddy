@@ -501,6 +501,22 @@ public class TestTs2JavaAstBinExprLogicalCondition extends BaseTestTs2Java {
     }
 
     @Test
+    public void testBoolAnd_Z_Z() throws Exception {
+        tsClass = new TsClass(
+                "return false && a;",
+                boolean.class,
+                TsMethodArgument.of("a", boolean.class));
+        assertFalse((boolean) tsClass.invoke(true));
+        assertFalse((boolean) tsClass.invoke(false));
+        tsClass = new TsClass(
+                "return true && a;",
+                boolean.class,
+                TsMethodArgument.of("a", boolean.class));
+        assertTrue((boolean) tsClass.invoke(true));
+        assertFalse((boolean) tsClass.invoke(false));
+    }
+
+    @Test
     public void testNotAndAndAnd_ZZZ_Z() throws Exception {
         assertFalse(notAndAndAnd_ZZZ_Z(true, true, true));
         assertTrue(notAndAndAnd_ZZZ_Z(true, false, true));
