@@ -152,6 +152,38 @@ public class TestTs2JavaAstBinExprLogicalCondition extends BaseTestTs2Java {
     }
 
     /*
+  public notAndAndAnd_ZZZ_Z(ZZZ)Z
+   L0
+    LINENUMBER 155 L0
+    ILOAD 1
+    IFEQ L1
+    ILOAD 2
+    IFEQ L1
+    ILOAD 3
+    IFNE L2
+   L1
+   FRAME SAME
+    ICONST_1
+    GOTO L3
+   L2
+   FRAME SAME
+    ICONST_0
+   L3
+   FRAME SAME1 I
+    IRETURN
+   L4
+    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/ast/expr/TestTs2JavaAstBinExprLogicalCondition; L0 L4 0
+    LOCALVARIABLE a Z L0 L4 1
+    LOCALVARIABLE b Z L0 L4 2
+    LOCALVARIABLE c Z L0 L4 3
+    MAXSTACK = 1
+    MAXLOCALS = 4
+     */
+    public boolean notAndAndAnd_ZZZ_Z(boolean a, boolean b, boolean c) {
+        return !(a && b && c);
+    }
+
+    /*
   public notAnd_II_Z(II)Z
    L0
     LINENUMBER 210 L0
@@ -466,6 +498,20 @@ public class TestTs2JavaAstBinExprLogicalCondition extends BaseTestTs2Java {
         assertTrue((boolean) tsClass.invoke(true, true));
         assertFalse((boolean) tsClass.invoke(true, false));
         assertFalse((boolean) tsClass.invoke(false, false));
+    }
+
+    @Test
+    public void testNotAndAndAnd_ZZZ_Z() throws Exception {
+        assertFalse(notAndAndAnd_ZZZ_Z(true, true, true));
+        assertTrue(notAndAndAnd_ZZZ_Z(true, false, true));
+        tsClass = new TsClass(
+                "return !(a && b && c);",
+                boolean.class,
+                TsMethodArgument.of("a", boolean.class),
+                TsMethodArgument.of("b", boolean.class),
+                TsMethodArgument.of("c", boolean.class));
+        assertFalse((boolean) tsClass.invoke(true, true, true));
+        assertTrue((boolean) tsClass.invoke(true, false, true));
     }
 
     @Test

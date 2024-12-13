@@ -78,7 +78,11 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
                 }
                 sizes.add(right.apply(methodVisitor, context));
                 if (!isRightLogical) {
-                    methodVisitor.visitJumpInsn(opcodeCompareFalse, labelFalse);
+                    if (labelSwitched) {
+                        methodVisitor.visitJumpInsn(opcodeCompareTrue, labelTrue);
+                    } else {
+                        methodVisitor.visitJumpInsn(opcodeCompareFalse, labelFalse);
+                    }
                 }
                 break;
             }
@@ -118,10 +122,15 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
         if (isLeftLogical && isRightLogical) {
             Ts2JavaAstBinExprLogical leftLogical = left.as(Ts2JavaAstBinExprLogical.class);
             Ts2JavaAstBinExprLogical rightLogical = right.as(Ts2JavaAstBinExprLogical.class);
-            labelTrue = leftLogical.getLabelTrue();
-            labelFalse = rightLogical.getLabelFalse();
-            leftLogical.setLabelFalse(labelFalse);
-            rightLogical.setLabelTrue(labelTrue);
+//            TODO
+//            if (op == Swc4jAstBinaryOp.LogicalAnd) {
+                labelTrue = leftLogical.getLabelTrue();
+                labelFalse = rightLogical.getLabelFalse();
+                leftLogical.setLabelFalse(labelFalse);
+                rightLogical.setLabelTrue(labelTrue);
+//            } else {
+//                throw new Ts2JavaAstException(ast, "Logical OR (||) is not supported.");
+//            }
         } else if (isLeftLogical) {
             Ts2JavaAstBinExprLogical leftLogical = left.as(Ts2JavaAstBinExprLogical.class);
             labelTrue = leftLogical.getLabelTrue();
