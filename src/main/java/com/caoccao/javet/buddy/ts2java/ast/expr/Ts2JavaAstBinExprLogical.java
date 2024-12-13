@@ -19,6 +19,7 @@ package com.caoccao.javet.buddy.ts2java.ast.expr;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities.ITs2JavaBangFlippable;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
+import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
@@ -63,6 +64,8 @@ public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
     public Label getLabelTrue() {
         return labelTrue;
     }
+
+    public abstract Swc4jAstBinaryOp getResolvedOp();
 
     @Override
     public boolean isBangFlippable() {

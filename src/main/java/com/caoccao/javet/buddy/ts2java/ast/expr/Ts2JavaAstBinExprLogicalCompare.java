@@ -58,12 +58,17 @@ public class Ts2JavaAstBinExprLogicalCompare extends Ts2JavaAstBinExprLogical {
         sizes.add(JavaClassCast.getUpCastStackManipulation(right.getType(), upCastType)
                 .map(s -> s.apply(methodVisitor, context))
                 .orElse(Size.ZERO));
-        final Swc4jAstBinaryOp finalOp = bangFlipped != labelSwitched ? op.getOppositeOperator() : op;
+        final Swc4jAstBinaryOp resolvedOp = getResolvedOp();
         final Label label = labelSwitched ? labelTrue : labelFalse;
-        sizes.add(Ts2JavaAstBinaryOp.getLogicalCompareStackManipulation(ast, finalOp, upCastType, label)
+        sizes.add(Ts2JavaAstBinaryOp.getLogicalCompareStackManipulation(ast, resolvedOp, upCastType, label)
                 .apply(methodVisitor, context));
         sizes.add(logicalClose(methodVisitor));
         return aggregateSize(sizes);
+    }
+
+    @Override
+    public Swc4jAstBinaryOp getResolvedOp() {
+        return bangFlipped != labelSwitched ? op.getOppositeOperator() : op;
     }
 
     @Override

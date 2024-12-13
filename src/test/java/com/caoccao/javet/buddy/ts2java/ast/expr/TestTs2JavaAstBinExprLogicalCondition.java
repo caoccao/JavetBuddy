@@ -27,6 +27,36 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestTs2JavaAstBinExprLogicalCondition extends BaseTestTs2Java {
     /*
+  public andAndAnd_ZZZ_Z(ZZZ)Z
+   L0
+    LINENUMBER 30 L0
+    ILOAD 1
+    IFEQ L1
+    ILOAD 2
+    IFEQ L1
+    ILOAD 3
+    IFEQ L1
+    ICONST_1
+    GOTO L2
+   L1
+   FRAME SAME
+    ICONST_0
+   L2
+   FRAME SAME1 I
+    IRETURN
+   L3
+    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/ast/expr/TestTs2JavaAstBinExprLogicalCondition; L0 L3 0
+    LOCALVARIABLE a Z L0 L3 1
+    LOCALVARIABLE b Z L0 L3 2
+    LOCALVARIABLE c Z L0 L3 3
+    MAXSTACK = 1
+    MAXLOCALS = 4
+     */
+    public boolean andAndAnd_ZZZ_Z(boolean a, boolean b, boolean c) {
+        return true && a && b && c;
+    }
+
+    /*
   public andOrAnd_II_Z(II)Z
    L0
     LINENUMBER 91 L0
@@ -209,6 +239,45 @@ public class TestTs2JavaAstBinExprLogicalCondition extends BaseTestTs2Java {
     }
 
     /*
+  public orAndOr_II_Z(II)Z
+   L0
+    LINENUMBER 212 L0
+    ILOAD 1
+    ILOAD 2
+    IF_ICMPEQ L1
+    ILOAD 1
+    ICONST_1
+    IF_ICMPLE L2
+   L1
+   FRAME SAME
+    ILOAD 1
+    ILOAD 2
+    IF_ICMPNE L3
+    ILOAD 2
+    ICONST_1
+    IF_ICMPLE L2
+   L3
+   FRAME SAME
+    ICONST_1
+    GOTO L4
+   L2
+   FRAME SAME
+    ICONST_0
+   L4
+   FRAME SAME1 I
+    IRETURN
+   L5
+    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/ast/expr/TestTs2JavaAstBinExprLogicalCondition; L0 L5 0
+    LOCALVARIABLE a I L0 L5 1
+    LOCALVARIABLE b I L0 L5 2
+    MAXSTACK = 2
+    MAXLOCALS = 3
+     */
+    public boolean orAndOr_II_Z(int a, int b) {
+        return (a == b || a > 1) && (a != b || b > 1);
+    }
+
+    /*
   public or_DD_Z(DD)Z
    L0
     LINENUMBER 297 L0
@@ -339,6 +408,20 @@ public class TestTs2JavaAstBinExprLogicalCondition extends BaseTestTs2Java {
     }
 
     @Test
+    public void testAndAndAnd_ZZZ_Z() throws Exception {
+        assertTrue(andAndAnd_ZZZ_Z(true, true, true));
+        assertFalse(andAndAnd_ZZZ_Z(true, false, true));
+        tsClass = new TsClass(
+                "return true && a && b && c;",
+                boolean.class,
+                TsMethodArgument.of("a", boolean.class),
+                TsMethodArgument.of("b", boolean.class),
+                TsMethodArgument.of("c", boolean.class));
+        assertTrue((boolean) tsClass.invoke(true, true, true));
+        assertFalse((boolean) tsClass.invoke(true, false, true));
+    }
+
+    @Test
     public void testAndOrAnd_II_Z() throws Exception {
         assertTrue(andOrAnd_II_Z(2, 2));
         assertFalse(andOrAnd_II_Z(1, 1));
@@ -434,6 +517,24 @@ public class TestTs2JavaAstBinExprLogicalCondition extends BaseTestTs2Java {
         assertTrue((boolean) tsClass.invoke(2, 3));
         assertTrue((boolean) tsClass.invoke(1, 1));
         assertTrue((boolean) tsClass.invoke(0, 1));
+    }
+
+    //    @Test
+    public void testOrAndOr_II_Z() throws Exception {
+        assertTrue(orAndOr_II_Z(2, 2));
+        assertFalse(orAndOr_II_Z(1, 1));
+        assertFalse(orAndOr_II_Z(1, 2));
+        assertTrue(orAndOr_II_Z(2, 1));
+        enableLogging();
+        tsClass = new TsClass(
+                "return (a == b || a > 1) && (a != b || b > 1);",
+                boolean.class,
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertTrue((boolean) tsClass.invoke(2, 2));
+        assertFalse((boolean) tsClass.invoke(1, 1));
+        assertFalse((boolean) tsClass.invoke(1, 2));
+        assertTrue((boolean) tsClass.invoke(2, 1));
     }
 
     @Test

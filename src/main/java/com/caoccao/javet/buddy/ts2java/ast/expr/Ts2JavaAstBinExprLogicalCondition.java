@@ -43,11 +43,11 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
     public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
         super.apply(methodVisitor, context);
         final List<Size> sizes = new ArrayList<>();
-        final Swc4jAstBinaryOp finalOp = bangFlipped ? op.getOppositeOperator() : op;
+        final Swc4jAstBinaryOp resolvedOp = getResolvedOp();
         final boolean isLeftLogical = left instanceof Ts2JavaAstBinExprLogical;
         final boolean isRightLogical = right instanceof Ts2JavaAstBinExprLogical;
         final int opcodeCompareFalse = bangFlipped ? Opcodes.IFNE : Opcodes.IFEQ;
-        switch (finalOp) {
+        switch (resolvedOp) {
             case LogicalAnd: {
                 sizes.add(left.apply(methodVisitor, context));
                 if (!isLeftLogical) {
@@ -134,8 +134,12 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
     }
 
     @Override
+    public Swc4jAstBinaryOp getResolvedOp() {
+        return bangFlipped ? op.getOppositeOperator() : op;
+    }
+
+    @Override
     public boolean isLabelTrueRequired() {
-        return (op == Swc4jAstBinaryOp.LogicalAnd && bangFlipped)
-                || (op == Swc4jAstBinaryOp.LogicalOr && !bangFlipped);
+        return getResolvedOp() == Swc4jAstBinaryOp.LogicalOr;
     }
 }
