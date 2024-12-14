@@ -53,14 +53,32 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
         final int opcodeCompareFalse = bangFlipped ? Opcodes.IFNE : Opcodes.IFEQ;
         switch (resolvedOp) {
             case LogicalAnd: {
-                if (isLeftBool) {
+                if (isLeftBool && isRightBool) {
+                    Ts2JavaAstBool leftBool = left.as(Ts2JavaAstBool.class);
+                    Ts2JavaAstBool rightBool = right.as(Ts2JavaAstBool.class);
+                    if (!rightBool.isValue()) {
+                        sizes.add(rightBool.apply(methodVisitor, context));
+                    } else {
+                        sizes.add(leftBool.apply(methodVisitor, context));
+                    }
+                    ignoreClose = true;
+                    break;
+                } else if (isLeftBool) {
                     Ts2JavaAstBool leftBool = left.as(Ts2JavaAstBool.class);
                     if (!leftBool.isValue()) {
                         sizes.add(leftBool.apply(methodVisitor, context));
                         ignoreClose = true;
                         break;
                     }
-                } else {
+                } else if (isRightBool) {
+                    Ts2JavaAstBool rightBool = right.as(Ts2JavaAstBool.class);
+                    if (!rightBool.isValue()) {
+                        sizes.add(rightBool.apply(methodVisitor, context));
+                        ignoreClose = true;
+                        break;
+                    }
+                }
+                if (!isLeftBool) {
                     sizes.add(left.apply(methodVisitor, context));
                     if (!isLeftLogical) {
                         methodVisitor.visitJumpInsn(opcodeCompareFalse, labelFalse);
@@ -69,9 +87,11 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
                 if (labelSwitched && isRightLogical) {
                     right.as(Ts2JavaAstBinExprLogical.class).setLabelSwitched(true);
                 }
-                sizes.add(right.apply(methodVisitor, context));
-                if (!isRightLogical) {
-                    methodVisitor.visitJumpInsn(opcodeCompareFalse, labelSwitched ? labelTrue : labelFalse);
+                if (!isRightBool) {
+                    sizes.add(right.apply(methodVisitor, context));
+                    if (!isRightLogical) {
+                        methodVisitor.visitJumpInsn(opcodeCompareFalse, labelSwitched ? labelTrue : labelFalse);
+                    }
                 }
                 if (labelSwitched && isLeftLogical) {
                     Ts2JavaAstBinExprLogical leftLogical = left.as(Ts2JavaAstBinExprLogical.class);

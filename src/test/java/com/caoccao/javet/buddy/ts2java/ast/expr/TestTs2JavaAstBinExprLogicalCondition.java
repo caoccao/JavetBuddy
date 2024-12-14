@@ -454,6 +454,22 @@ public class TestTs2JavaAstBinExprLogicalCondition extends BaseTestTs2Java {
     }
 
     @Test
+    public void testAndBool_Z_Z() throws Exception {
+        tsClass = new TsClass(
+                "return a && false;",
+                boolean.class,
+                TsMethodArgument.of("a", boolean.class));
+        assertFalse((boolean) tsClass.invoke(true));
+        assertFalse((boolean) tsClass.invoke(false));
+        tsClass = new TsClass(
+                "return a && true;",
+                boolean.class,
+                TsMethodArgument.of("a", boolean.class));
+        assertTrue((boolean) tsClass.invoke(true));
+        assertFalse((boolean) tsClass.invoke(false));
+    }
+
+    @Test
     public void testAndOrAnd_II_Z() throws Exception {
         assertTrue(andOrAnd_II_Z(2, 2));
         assertFalse(andOrAnd_II_Z(1, 1));
@@ -498,6 +514,18 @@ public class TestTs2JavaAstBinExprLogicalCondition extends BaseTestTs2Java {
         assertTrue((boolean) tsClass.invoke(true, true));
         assertFalse((boolean) tsClass.invoke(true, false));
         assertFalse((boolean) tsClass.invoke(false, false));
+    }
+
+    @Test
+    public void testBoolAndBool_Z_Z() throws Exception {
+        tsClass = new TsClass("return true && true;");
+        assertTrue((boolean) tsClass.invoke());
+        tsClass = new TsClass("return false && true;");
+        assertFalse((boolean) tsClass.invoke());
+        tsClass = new TsClass("return true && false;");
+        assertFalse((boolean) tsClass.invoke());
+        tsClass = new TsClass("return false && false;");
+        assertFalse((boolean) tsClass.invoke());
     }
 
     @Test
