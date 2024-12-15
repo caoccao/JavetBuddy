@@ -101,20 +101,52 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
                 break;
             }
             case LogicalOr: {
-                if (isLeftLogical) {
-                    left.as(Ts2JavaAstBinExprLogical.class).setLabelSwitched(true);
+                if (isLeftBool && isRightBool) {
+                    Ts2JavaAstBool leftBool = left.as(Ts2JavaAstBool.class);
+                    Ts2JavaAstBool rightBool = right.as(Ts2JavaAstBool.class);
+                    if (rightBool.isValue()) {
+                        sizes.add(rightBool.apply(methodVisitor, context));
+                    } else {
+                        sizes.add(leftBool.apply(methodVisitor, context));
+                    }
+                    ignoreClose = true;
+                    break;
+                } else if (isLeftBool) {
+                    Ts2JavaAstBool leftBool = left.as(Ts2JavaAstBool.class);
+                    if (leftBool.isValue()) {
+                        sizes.add(leftBool.apply(methodVisitor, context));
+                        ignoreClose = true;
+                        break;
+                    }
+                } else if (isRightBool) {
+                    Ts2JavaAstBool rightBool = right.as(Ts2JavaAstBool.class);
+                    if (rightBool.isValue()) {
+                        sizes.add(rightBool.apply(methodVisitor, context));
+                        ignoreClose = true;
+                        break;
+                    }
                 }
                 final int opcodeCompareTrue = bangFlipped ? Opcodes.IFEQ : Opcodes.IFNE;
-                sizes.add(left.apply(methodVisitor, context));
-                if (!isLeftLogical) {
-                    methodVisitor.visitJumpInsn(opcodeCompareTrue, labelSwitched ? labelFalse : labelTrue);
+                if (!isLeftBool) {
+                    if (isLeftLogical) {
+                        left.as(Ts2JavaAstBinExprLogical.class).setLabelSwitched(true);
+                    }
+                    sizes.add(left.apply(methodVisitor, context));
+                    if (!isLeftLogical) {
+                        methodVisitor.visitJumpInsn(opcodeCompareTrue, labelSwitched ? labelFalse : labelTrue);
+                    }
+                    if (isRightBool) {
+                        methodVisitor.visitJumpInsn(Opcodes.GOTO, labelSwitched ? labelTrue : labelFalse);
+                    }
                 }
-                sizes.add(right.apply(methodVisitor, context));
-                if (!isRightLogical) {
-                    if (labelSwitched) {
-                        methodVisitor.visitJumpInsn(opcodeCompareTrue, labelTrue);
-                    } else {
-                        methodVisitor.visitJumpInsn(opcodeCompareFalse, labelFalse);
+                if (!isRightBool) {
+                    sizes.add(right.apply(methodVisitor, context));
+                    if (!isRightLogical) {
+                        if (labelSwitched) {
+                            methodVisitor.visitJumpInsn(opcodeCompareTrue, labelTrue);
+                        } else {
+                            methodVisitor.visitJumpInsn(opcodeCompareFalse, labelFalse);
+                        }
                     }
                 }
                 break;

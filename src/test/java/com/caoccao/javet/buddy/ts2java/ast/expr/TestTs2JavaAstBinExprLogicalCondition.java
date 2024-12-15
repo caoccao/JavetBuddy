@@ -545,6 +545,34 @@ public class TestTs2JavaAstBinExprLogicalCondition extends BaseTestTs2Java {
     }
 
     @Test
+    public void testBoolOrBool_Z_Z() throws Exception {
+        tsClass = new TsClass("return true || true;");
+        assertTrue((boolean) tsClass.invoke());
+        tsClass = new TsClass("return false || true;");
+        assertTrue((boolean) tsClass.invoke());
+        tsClass = new TsClass("return true || false;");
+        assertTrue((boolean) tsClass.invoke());
+        tsClass = new TsClass("return false || false;");
+        assertFalse((boolean) tsClass.invoke());
+    }
+
+    @Test
+    public void testBoolOr_Z_Z() throws Exception {
+        tsClass = new TsClass(
+                "return false || a;",
+                boolean.class,
+                TsMethodArgument.of("a", boolean.class));
+        assertTrue((boolean) tsClass.invoke(true));
+        assertFalse((boolean) tsClass.invoke(false));
+        tsClass = new TsClass(
+                "return true || a;",
+                boolean.class,
+                TsMethodArgument.of("a", boolean.class));
+        assertTrue((boolean) tsClass.invoke(true));
+        assertTrue((boolean) tsClass.invoke(false));
+    }
+
+    @Test
     public void testNotAndAndAnd_ZZZ_Z() throws Exception {
         assertFalse(notAndAndAnd_ZZZ_Z(true, true, true));
         assertTrue(notAndAndAnd_ZZZ_Z(true, false, true));
@@ -625,6 +653,22 @@ public class TestTs2JavaAstBinExprLogicalCondition extends BaseTestTs2Java {
         assertFalse((boolean) tsClass.invoke(1, 1));
         assertFalse((boolean) tsClass.invoke(1, 2));
         assertTrue((boolean) tsClass.invoke(2, 1));
+    }
+
+    @Test
+    public void testOrBool_Z_Z() throws Exception {
+        tsClass = new TsClass(
+                "return a || false;",
+                boolean.class,
+                TsMethodArgument.of("a", boolean.class));
+        assertTrue((boolean) tsClass.invoke(true));
+        assertFalse((boolean) tsClass.invoke(false));
+        tsClass = new TsClass(
+                "return a || true;",
+                boolean.class,
+                TsMethodArgument.of("a", boolean.class));
+        assertTrue((boolean) tsClass.invoke(true));
+        assertTrue((boolean) tsClass.invoke(false));
     }
 
     @Test
