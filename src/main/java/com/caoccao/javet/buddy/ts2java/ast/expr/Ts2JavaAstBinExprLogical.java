@@ -80,24 +80,15 @@ public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
         return labelSwitched;
     }
 
-    public abstract boolean isLabelTrueRequired();
-
     protected Size logicalClose(MethodVisitor methodVisitor) {
-        if (isTopBinExpr()) {
-            // This is the top bin expr. Let's close it.
-            Label labelClose = new Label();
-            if (isLabelTrueRequired()) {
-                methodVisitor.visitLabel(labelTrue);
-                methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-            }
-            methodVisitor.visitInsn(Opcodes.ICONST_1);
-            methodVisitor.visitJumpInsn(Opcodes.GOTO, labelClose);
-            methodVisitor.visitLabel(labelFalse);
-            methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-            methodVisitor.visitInsn(Opcodes.ICONST_0);
-            methodVisitor.visitLabel(labelClose);
-            methodVisitor.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[]{Opcodes.INTEGER});
-        }
+        Label labelClose = new Label();
+        methodVisitor.visitInsn(Opcodes.ICONST_1);
+        methodVisitor.visitJumpInsn(Opcodes.GOTO, labelClose);
+        methodVisitor.visitLabel(labelFalse);
+        methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+        methodVisitor.visitInsn(Opcodes.ICONST_0);
+        methodVisitor.visitLabel(labelClose);
+        methodVisitor.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[]{Opcodes.INTEGER});
         return StackManipulation.Size.ZERO;
     }
 
