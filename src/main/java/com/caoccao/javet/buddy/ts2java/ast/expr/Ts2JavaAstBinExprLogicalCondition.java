@@ -43,13 +43,13 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
     @Override
     public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
         super.apply(methodVisitor, context);
+        boolean ignoreClose = !isTopBinExpr();
         final List<Size> sizes = new ArrayList<>();
         final Swc4jAstBinaryOp resolvedOp = getResolvedOp();
         final boolean isLeftBool = left instanceof Ts2JavaAstBool;
         final boolean isRightBool = right instanceof Ts2JavaAstBool;
         final boolean isLeftLogical = left instanceof Ts2JavaAstBinExprLogical;
         final boolean isRightLogical = right instanceof Ts2JavaAstBinExprLogical;
-        boolean ignoreClose = false;
         final int opcodeCompareFalse = bangFlipped ? Opcodes.IFNE : Opcodes.IFEQ;
         switch (resolvedOp) {
             case LogicalAnd: {
@@ -159,7 +159,7 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
                         SimpleFreeMarkerFormat.format("Bin expr op ${op} is not supported.",
                                 SimpleMap.of("op", ast.getOp().name())));
         }
-        if (!ignoreClose && isTopBinExpr()) {
+        if (!ignoreClose) {
             sizes.add(logicalClose(methodVisitor));
         }
         return aggregateSize(sizes);
