@@ -59,7 +59,7 @@ public class TestTs2JavaAstBinExprLogicalCondition extends BaseTestTs2Java {
     /*
   public andOrAnd_II_Z(II)Z
    L0
-    LINENUMBER 91 L0
+    LINENUMBER 95 L0
     ILOAD 1
     ILOAD 2
     IF_ICMPNE L1
@@ -85,7 +85,7 @@ public class TestTs2JavaAstBinExprLogicalCondition extends BaseTestTs2Java {
    FRAME SAME1 I
     IRETURN
    L5
-    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/ast/TestLogicalOperations; L0 L5 0
+    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/ast/expr/TestTs2JavaAstBinExprLogicalCondition; L0 L5 0
     LOCALVARIABLE a I L0 L5 1
     LOCALVARIABLE b I L0 L5 2
     MAXSTACK = 2
@@ -469,7 +469,7 @@ public class TestTs2JavaAstBinExprLogicalCondition extends BaseTestTs2Java {
         assertFalse((boolean) tsClass.invoke(false));
     }
 
-//    @Test
+    @Test
     public void testAndOrAnd_II_Z() throws Exception {
         assertTrue(andOrAnd_II_Z(2, 2));
         assertFalse(andOrAnd_II_Z(1, 1));

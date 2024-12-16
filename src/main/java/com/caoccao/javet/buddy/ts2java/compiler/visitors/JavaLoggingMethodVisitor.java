@@ -27,7 +27,7 @@ public class JavaLoggingMethodVisitor extends MethodVisitor {
 
     @Override
     public void visitFrame(int type, int numLocal, Object[] local, int numStack, Object[] stack) {
-        System.out.println(" FRAME " + JavaOpcodeUtils.getFrameTypeName(type) + " " + numLocal + " " + local + " " + numStack + " " + stack);
+        System.out.println(" " + JavaOpcodeUtils.getFrameTypeName(type) + " " + numLocal + " " + local + " " + numStack + " " + stack);
         super.visitFrame(type, numLocal, local, numStack, stack);
     }
 

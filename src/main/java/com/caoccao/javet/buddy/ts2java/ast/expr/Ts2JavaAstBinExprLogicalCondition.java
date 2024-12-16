@@ -193,17 +193,26 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
 
     @Override
     public void syncLabels() {
-        final Swc4jAstBinaryOp resolvedOp = getResolvedOp();
-        if (left instanceof Ts2JavaAstBinExprLogical) {
-            Ts2JavaAstBinExprLogical leftLogical = left.as(Ts2JavaAstBinExprLogical.class);
-            if (resolvedOp == Swc4jAstBinaryOp.LogicalOr) {
-                leftLogical.setLabelTrue(labelTrue);
-            }
+        if (left instanceof Ts2JavaAstBinExprLogicalCompare) {
+            Ts2JavaAstBinExprLogicalCompare leftLogical = left.as(Ts2JavaAstBinExprLogicalCompare.class);
+            leftLogical.setLabelTrue(labelTrue);
             leftLogical.setLabelFalse(labelFalse);
+        } else if (left instanceof Ts2JavaAstBinExprLogicalCondition) {
+            Ts2JavaAstBinExprLogicalCondition leftLogical = left.as(Ts2JavaAstBinExprLogicalCondition.class);
+            if ((leftLogical.getResolvedOp() == Swc4jAstBinaryOp.LogicalOr)
+                    || (!(right instanceof Ts2JavaAstBinExprLogical))) {
+                leftLogical.setLabelFalse(labelFalse);
+            }
+            leftLogical.setLabelTrue(labelTrue);
         }
-        if (right instanceof Ts2JavaAstBinExprLogical) {
-            Ts2JavaAstBinExprLogical rightLogical = right.as(Ts2JavaAstBinExprLogical.class);
-            if (resolvedOp == Swc4jAstBinaryOp.LogicalAnd) {
+        if (right instanceof Ts2JavaAstBinExprLogicalCompare) {
+            Ts2JavaAstBinExprLogicalCompare rightLogical = right.as(Ts2JavaAstBinExprLogicalCompare.class);
+            rightLogical.setLabelTrue(labelTrue);
+            rightLogical.setLabelFalse(labelFalse);
+        } else if (right instanceof Ts2JavaAstBinExprLogicalCondition) {
+            Ts2JavaAstBinExprLogicalCondition rightLogical = right.as(Ts2JavaAstBinExprLogicalCondition.class);
+            if ((rightLogical.getResolvedOp() == Swc4jAstBinaryOp.LogicalAnd)
+                    || (!(left instanceof Ts2JavaAstBinExprLogical))) {
                 rightLogical.setLabelTrue(labelTrue);
             }
             rightLogical.setLabelFalse(labelFalse);
