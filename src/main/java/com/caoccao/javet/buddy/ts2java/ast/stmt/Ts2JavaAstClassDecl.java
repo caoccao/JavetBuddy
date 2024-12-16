@@ -71,4 +71,9 @@ public class Ts2JavaAstClassDecl
     public String getPackageName() {
         return packageName;
     }
+
+    @Override
+    public void syncLabels() {
+        clazz.syncLabels();
+    }
 }

@@ -115,4 +115,10 @@ public class Ts2JavaAstVarDeclarator
     public ITs2JavaAstPat<?, ?> getName() {
         return name;
     }
+
+    @Override
+    public void syncLabels() {
+        init.ifPresent(ITs2JavaAstExpr::syncLabels);
+        name.syncLabels();
+    }
 }

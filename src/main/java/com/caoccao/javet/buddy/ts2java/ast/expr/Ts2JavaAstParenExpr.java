@@ -67,4 +67,9 @@ public class Ts2JavaAstParenExpr
     public TypeDescription getType() {
         return expr.getType();
     }
+
+    @Override
+    public void syncLabels() {
+        expr.syncLabels();
+    }
 }

@@ -57,4 +57,9 @@ public class Ts2JavaAstTsTypeAnn
     public ITs2JavaAstTsType<?, ?> getTypeAnn() {
         return typeAnn;
     }
+
+    @Override
+    public void syncLabels() {
+        typeAnn.syncLabels();
+    }
 }

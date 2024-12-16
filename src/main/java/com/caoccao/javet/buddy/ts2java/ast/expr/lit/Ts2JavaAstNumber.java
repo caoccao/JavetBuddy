@@ -118,4 +118,8 @@ public class Ts2JavaAstNumber
     public boolean isNegative() {
         return negative;
     }
+
+    @Override
+    public void syncLabels() {
+    }
 }

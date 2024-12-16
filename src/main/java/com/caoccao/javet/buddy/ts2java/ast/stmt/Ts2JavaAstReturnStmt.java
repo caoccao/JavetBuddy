@@ -85,4 +85,9 @@ public class Ts2JavaAstReturnStmt
     public Optional<ITs2JavaAstExpr<?, ?>> getArg() {
         return arg;
     }
+
+    @Override
+    public void syncLabels() {
+        arg.ifPresent(ITs2JavaAstExpr::syncLabels);
+    }
 }

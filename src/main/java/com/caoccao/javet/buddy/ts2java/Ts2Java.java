@@ -101,6 +101,7 @@ public class Ts2Java {
                     new Ts2JavaMemoDynamicType(builder),
                     getPackageName());
             ts2JavaAstClassDecl.compile();
+            ts2JavaAstClassDecl.syncLabels();
             if (logging) {
                 ts2JavaAstClassDecl.apply(new JavaLoggingMethodVisitor(Opcodes.ASM9), null);
             }

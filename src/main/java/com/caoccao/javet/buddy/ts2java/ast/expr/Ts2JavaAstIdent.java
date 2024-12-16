@@ -94,4 +94,8 @@ public class Ts2JavaAstIdent
     public boolean isOptional() {
         return optional;
     }
+
+    @Override
+    public void syncLabels() {
+    }
 }

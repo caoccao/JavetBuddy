@@ -75,4 +75,8 @@ public class Ts2JavaAstBool
     public boolean isValue() {
         return value;
     }
+
+    @Override
+    public void syncLabels() {
+    }
 }

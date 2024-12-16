@@ -147,10 +147,8 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
                                 labelSwitched ? labelTrue : labelFalse);
                     }
                 }
-                if (isTopBinExpr()) {
-                    methodVisitor.visitLabel(labelTrue);
-                    methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-                }
+                methodVisitor.visitLabel(labelTrue);
+                methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
                 break;
             }
             default:
@@ -186,40 +184,44 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
                     SimpleFreeMarkerFormat.format("Unsupported right type ${type} in logical AND (&&).",
                             SimpleMap.of("type", right.getType().getName())));
         }
+    }
+
+    @Override
+    public Swc4jAstBinaryOp getResolvedOp() {
+        return bangFlipped ? op.getOppositeOperator() : op;
+    }
+
+    @Override
+    public void syncLabels() {
         final boolean isLeftLogical = left instanceof Ts2JavaAstBinExprLogical;
         final boolean isRightLogical = right instanceof Ts2JavaAstBinExprLogical;
         if (isLeftLogical && isRightLogical) {
             Ts2JavaAstBinExprLogical leftLogical = left.as(Ts2JavaAstBinExprLogical.class);
             Ts2JavaAstBinExprLogical rightLogical = right.as(Ts2JavaAstBinExprLogical.class);
-            switch (op) {
+            final Swc4jAstBinaryOp resolvedOp = getResolvedOp();
+            switch (resolvedOp) {
                 case LogicalAnd:
-                    labelTrue = leftLogical.getLabelTrue();
-                    labelFalse = rightLogical.getLabelFalse();
-                    leftLogical.setLabelFalse(labelFalse);
                     rightLogical.setLabelTrue(labelTrue);
+                    rightLogical.setLabelFalse(labelFalse);
+                    leftLogical.setLabelFalse(labelFalse);
                     break;
                 case LogicalOr:
-                    labelTrue = leftLogical.getLabelTrue();
-                    labelFalse = rightLogical.getLabelFalse();
+                    leftLogical.setLabelTrue(labelTrue);
                     leftLogical.setLabelFalse(labelFalse);
-                    rightLogical.setLabelTrue(labelTrue);
+                    rightLogical.setLabelFalse(labelFalse);
                     break;
                 default:
                     throw new Ts2JavaAstException(ast, "Logical OR (||) is not supported.");
             }
         } else if (isLeftLogical) {
             Ts2JavaAstBinExprLogical leftLogical = left.as(Ts2JavaAstBinExprLogical.class);
-            labelTrue = leftLogical.getLabelTrue();
-            labelFalse = leftLogical.getLabelFalse();
+            leftLogical.setLabelTrue(labelTrue);
+            leftLogical.setLabelFalse(labelFalse);
         } else if (isRightLogical) {
             Ts2JavaAstBinExprLogical rightLogical = right.as(Ts2JavaAstBinExprLogical.class);
-            labelTrue = rightLogical.getLabelTrue();
-            labelFalse = rightLogical.getLabelFalse();
+            rightLogical.setLabelTrue(labelTrue);
+            rightLogical.setLabelFalse(labelFalse);
         }
-    }
-
-    @Override
-    public Swc4jAstBinaryOp getResolvedOp() {
-        return bangFlipped ? op.getOppositeOperator() : op;
+        super.syncLabels();
     }
 }

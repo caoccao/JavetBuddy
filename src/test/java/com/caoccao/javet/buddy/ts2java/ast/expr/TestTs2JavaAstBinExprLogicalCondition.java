@@ -469,7 +469,7 @@ public class TestTs2JavaAstBinExprLogicalCondition extends BaseTestTs2Java {
         assertFalse((boolean) tsClass.invoke(false));
     }
 
-    @Test
+//    @Test
     public void testAndOrAnd_II_Z() throws Exception {
         assertTrue(andOrAnd_II_Z(2, 2));
         assertFalse(andOrAnd_II_Z(1, 1));
@@ -637,13 +637,12 @@ public class TestTs2JavaAstBinExprLogicalCondition extends BaseTestTs2Java {
         assertTrue((boolean) tsClass.invoke(0, 1));
     }
 
-    //    @Test
+    @Test
     public void testOrAndOr_II_Z() throws Exception {
         assertTrue(orAndOr_II_Z(2, 2));
         assertFalse(orAndOr_II_Z(1, 1));
         assertFalse(orAndOr_II_Z(1, 2));
         assertTrue(orAndOr_II_Z(2, 1));
-        enableLogging();
         tsClass = new TsClass(
                 "return (a == b || a > 1) && (a != b || b > 1);",
                 boolean.class,

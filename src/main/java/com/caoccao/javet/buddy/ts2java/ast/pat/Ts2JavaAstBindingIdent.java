@@ -77,4 +77,9 @@ public class Ts2JavaAstBindingIdent
     public Optional<Ts2JavaAstTsTypeAnn> getTypeAnn() {
         return typeAnn;
     }
+
+    @Override
+    public void syncLabels() {
+        typeAnn.ifPresent(Ts2JavaAstTsTypeAnn::syncLabels);
+    }
 }

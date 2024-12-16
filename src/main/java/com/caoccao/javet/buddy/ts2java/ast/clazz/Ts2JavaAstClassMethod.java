@@ -83,4 +83,9 @@ public class Ts2JavaAstClassMethod
     public Ts2JavaAstFunction getFunction() {
         return function;
     }
+
+    @Override
+    public void syncLabels() {
+        function.syncLabels();
+    }
 }

@@ -65,4 +65,10 @@ public class Ts2JavaAstTsQualifiedName
     public String getTypeName() {
         return left.getTypeName() + "." + right.getSym();
     }
+
+    @Override
+    public void syncLabels() {
+        left.syncLabels();
+        right.syncLabels();
+    }
 }

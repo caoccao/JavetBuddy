@@ -70,4 +70,9 @@ public class Ts2JavaAstVarDecl
     public List<Ts2JavaAstVarDeclarator> getDecls() {
         return decls;
     }
+
+    @Override
+    public void syncLabels() {
+        decls.forEach(Ts2JavaAstVarDeclarator::syncLabels);
+    }
 }

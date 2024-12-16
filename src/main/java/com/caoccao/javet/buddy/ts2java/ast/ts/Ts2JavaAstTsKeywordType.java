@@ -75,4 +75,8 @@ public class Ts2JavaAstTsKeywordType
     public Swc4jAstTsKeywordTypeKind getKind() {
         return kind;
     }
+
+    @Override
+    public void syncLabels() {
+    }
 }

@@ -63,4 +63,8 @@ public class Ts2JavaAstIdentName
     public String getSym() {
         return sym;
     }
+
+    @Override
+    public void syncLabels() {
+    }
 }

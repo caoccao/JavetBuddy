@@ -64,4 +64,9 @@ public class Ts2JavaAstParam
     public ITs2JavaAstPat<?, ?> getPat() {
         return pat;
     }
+
+    @Override
+    public void syncLabels() {
+        pat.syncLabels();
+    }
 }

@@ -81,4 +81,9 @@ public class Ts2JavaAstTsTypeRef
     public ITs2JavaAstTsEntityName<?, ?> getTypeName() {
         return typeName;
     }
+
+    @Override
+    public void syncLabels() {
+        typeName.syncLabels();
+    }
 }

@@ -51,4 +51,6 @@ public interface ITs2JavaAst<AST extends ISwc4jAst, Memo extends Ts2JavaMemo>
     default boolean isValid() {
         return true;
     }
+
+    void syncLabels();
 }

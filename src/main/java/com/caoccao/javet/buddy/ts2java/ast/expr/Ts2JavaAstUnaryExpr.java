@@ -168,4 +168,9 @@ public class Ts2JavaAstUnaryExpr
         }
         return false;
     }
+
+    @Override
+    public void syncLabels() {
+        arg.syncLabels();
+    }
 }

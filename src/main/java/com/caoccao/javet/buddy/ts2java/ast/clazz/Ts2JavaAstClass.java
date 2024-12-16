@@ -64,4 +64,9 @@ public class Ts2JavaAstClass
     public List<ITs2JavaAstClassMember<?, ?>> getBody() {
         return body;
     }
+
+    @Override
+    public void syncLabels() {
+        body.forEach(ITs2JavaAstClassMember::syncLabels);
+    }
 }

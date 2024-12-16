@@ -90,4 +90,10 @@ public abstract class Ts2JavaAstBinExpr
     public boolean isTopBinExpr() {
         return parent == null || !(parent instanceof Ts2JavaAstBinExpr);
     }
+
+    @Override
+    public void syncLabels() {
+        left.syncLabels();
+        right.syncLabels();
+    }
 }

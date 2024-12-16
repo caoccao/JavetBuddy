@@ -117,4 +117,11 @@ public class Ts2JavaAstFunction
     public Optional<Ts2JavaAstTsTypeAnn> getReturnType() {
         return returnType;
     }
+
+    @Override
+    public void syncLabels() {
+        body.ifPresent(Ts2JavaAstBlockStmt::syncLabels);
+        params.forEach(Ts2JavaAstParam::syncLabels);
+        returnType.ifPresent(Ts2JavaAstTsTypeAnn::syncLabels);
+    }
 }

@@ -67,4 +67,9 @@ public class Ts2JavaAstBlockStmt
             type = stmts.get(stmts.size() - 1).getType();
         }
     }
+
+    @Override
+    public void syncLabels() {
+        stmts.forEach(ITs2JavaAstStmt::syncLabels);
+    }
 }
