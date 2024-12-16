@@ -193,33 +193,19 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
 
     @Override
     public void syncLabels() {
-        final boolean isLeftLogical = left instanceof Ts2JavaAstBinExprLogical;
-        final boolean isRightLogical = right instanceof Ts2JavaAstBinExprLogical;
-        if (isLeftLogical && isRightLogical) {
+        final Swc4jAstBinaryOp resolvedOp = getResolvedOp();
+        if (left instanceof Ts2JavaAstBinExprLogical) {
             Ts2JavaAstBinExprLogical leftLogical = left.as(Ts2JavaAstBinExprLogical.class);
-            Ts2JavaAstBinExprLogical rightLogical = right.as(Ts2JavaAstBinExprLogical.class);
-            final Swc4jAstBinaryOp resolvedOp = getResolvedOp();
-            switch (resolvedOp) {
-                case LogicalAnd:
-                    rightLogical.setLabelTrue(labelTrue);
-                    rightLogical.setLabelFalse(labelFalse);
-                    leftLogical.setLabelFalse(labelFalse);
-                    break;
-                case LogicalOr:
-                    leftLogical.setLabelTrue(labelTrue);
-                    leftLogical.setLabelFalse(labelFalse);
-                    rightLogical.setLabelFalse(labelFalse);
-                    break;
-                default:
-                    throw new Ts2JavaAstException(ast, "Logical OR (||) is not supported.");
+            if (resolvedOp == Swc4jAstBinaryOp.LogicalOr) {
+                leftLogical.setLabelTrue(labelTrue);
             }
-        } else if (isLeftLogical) {
-            Ts2JavaAstBinExprLogical leftLogical = left.as(Ts2JavaAstBinExprLogical.class);
-            leftLogical.setLabelTrue(labelTrue);
             leftLogical.setLabelFalse(labelFalse);
-        } else if (isRightLogical) {
+        }
+        if (right instanceof Ts2JavaAstBinExprLogical) {
             Ts2JavaAstBinExprLogical rightLogical = right.as(Ts2JavaAstBinExprLogical.class);
-            rightLogical.setLabelTrue(labelTrue);
+            if (resolvedOp == Swc4jAstBinaryOp.LogicalAnd) {
+                rightLogical.setLabelTrue(labelTrue);
+            }
             rightLogical.setLabelFalse(labelFalse);
         }
         super.syncLabels();
