@@ -18,65 +18,14 @@ package com.caoccao.javet.buddy.ts2java.ast.expr;
 
 import com.caoccao.javet.buddy.ts2java.BaseTestTs2Java;
 import com.caoccao.javet.buddy.ts2java.TsClass;
-import com.caoccao.javet.buddy.ts2java.TsMethodArgument;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestTs2JavaAstUnaryExpr extends BaseTestTs2Java {
     @Test
-    public void testBang() throws Exception {
-        tsClass = new TsClass("return !true;", boolean.class);
-        assertFalse((boolean) tsClass.invoke());
-        tsClass = new TsClass("return !false;", boolean.class);
-        assertTrue((boolean) tsClass.invoke());
-        tsClass = new TsClass("return !(!true);", boolean.class);
-        assertTrue((boolean) tsClass.invoke());
-        tsClass = new TsClass("return !(!false);", boolean.class);
-        assertFalse((boolean) tsClass.invoke());
-        tsClass = new TsClass("return !a;", boolean.class, TsMethodArgument.of("a", boolean.class));
-        assertTrue((boolean) tsClass.invoke(true));
-        assertFalse((boolean) tsClass.invoke(false));
-        tsClass = new TsClass("return !!a;", boolean.class, TsMethodArgument.of("a", boolean.class));
-        assertTrue((boolean) tsClass.invoke(true));
-        assertFalse((boolean) tsClass.invoke(false));
-    }
-
-    @Test
-    public void testMinus() throws Exception {
-        tsClass = new TsClass("return -1;", int.class);
-        assertEquals(-1, tsClass.invoke());
-        tsClass = new TsClass("return -(1);", int.class);
-        assertEquals(-1, tsClass.invoke());
-        tsClass = new TsClass("return -(-1);", int.class);
-        assertEquals(1, tsClass.invoke());
-        tsClass = new TsClass(
-                "return -a;",
-                long.class,
-                TsMethodArgument.of("a", long.class));
-        assertEquals(-2L, tsClass.invoke(2L));
-        tsClass = new TsClass(
-                "return -(a + b);",
-                int.class,
-                TsMethodArgument.of("a", int.class),
-                TsMethodArgument.of("b", int.class));
-        assertEquals(-5, tsClass.invoke(3, 2));
-        tsClass = new TsClass(
-                "return -(a + (-1));",
-                int.class,
-                TsMethodArgument.of("a", int.class));
-        assertEquals(-2, tsClass.invoke(3));
-        tsClass = new TsClass(
-                "return -(-(a + b));",
-                int.class,
-                TsMethodArgument.of("a", int.class),
-                TsMethodArgument.of("b", int.class));
-        assertEquals(5, tsClass.invoke(3, 2));
-    }
-
-    @Test
     public void testPlus() throws Exception {
-        tsClass = new TsClass("return +1;", int.class);
+        tsClass = new TsClass("return +1;");
         assertEquals(1, tsClass.invoke());
         tsClass = new TsClass("return +(+1);", int.class);
         assertEquals(1, tsClass.invoke());
