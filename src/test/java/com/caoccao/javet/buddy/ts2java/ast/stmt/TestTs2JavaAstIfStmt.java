@@ -81,6 +81,67 @@ public class TestTs2JavaAstIfStmt extends BaseTestTs2Java {
         }
     }
 
+    /*
+  public logicalCompareCons(II)I
+   L0
+    LINENUMBER 85 L0
+    ILOAD 1
+    ILOAD 2
+    IF_ICMPLE L1
+   L2
+    LINENUMBER 86 L2
+    ILOAD 1
+    IRETURN
+   L1
+    LINENUMBER 88 L1
+   FRAME SAME
+    ILOAD 2
+    IRETURN
+   L3
+    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/ast/stmt/TestTs2JavaAstIfStmt; L0 L3 0
+    LOCALVARIABLE a I L0 L3 1
+    LOCALVARIABLE b I L0 L3 2
+    MAXSTACK = 2
+    MAXLOCALS = 3
+     */
+    public int logicalCompareCons(int a, int b) {
+        if (a > b) {
+            return a;
+        }
+        return b;
+    }
+
+    /*
+  public logicalCompareConsAlt(II)I
+   L0
+    LINENUMBER 85 L0
+    ILOAD 1
+    ILOAD 2
+    IF_ICMPLE L1
+   L2
+    LINENUMBER 86 L2
+    ILOAD 1
+    IRETURN
+   L1
+    LINENUMBER 88 L1
+   FRAME SAME
+    ILOAD 2
+    IRETURN
+   L3
+    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/ast/stmt/TestTs2JavaAstIfStmt; L0 L3 0
+    LOCALVARIABLE a I L0 L3 1
+    LOCALVARIABLE b I L0 L3 2
+    MAXSTACK = 2
+    MAXLOCALS = 3
+     */
+    public int logicalCompareConsAlt(int a, int b) {
+        if (a > b) {
+            return a;
+        } else {
+            return b;
+        }
+    }
+
     @Test
     public void testBooleanCons() throws Exception {
         assertEquals(1, booleanCons(true));
@@ -109,5 +170,29 @@ public class TestTs2JavaAstIfStmt extends BaseTestTs2Java {
         assertEquals(1, tsClass.invoke());
         tsClass = new TsClass("if (false) { return 1; } else { return 0; };", int.class);
         assertEquals(0, tsClass.invoke());
+    }
+
+    @Test
+    public void testLogicalCompareCons() throws Exception {
+        assertEquals(1, logicalCompareCons(1, 0));
+        assertEquals(2, logicalCompareCons(1, 2));
+        tsClass = new TsClass(
+                "if (a > b) { return a; } return b;",
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertEquals(1, tsClass.invoke(1, 0));
+        assertEquals(2, tsClass.invoke(1, 2));
+    }
+
+    @Test
+    public void testLogicalCompareConsAlt() throws Exception {
+        assertEquals(1, logicalCompareConsAlt(1, 0));
+        assertEquals(2, logicalCompareConsAlt(1, 2));
+        tsClass = new TsClass(
+                "if (a > b) { return a; } else { return b; }",
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertEquals(1, tsClass.invoke(1, 0));
+        assertEquals(2, tsClass.invoke(1, 2));
     }
 }

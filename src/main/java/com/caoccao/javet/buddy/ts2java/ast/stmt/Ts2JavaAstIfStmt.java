@@ -61,6 +61,7 @@ public class Ts2JavaAstIfStmt
     @Override
     public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
         visitLineNumber(methodVisitor);
+        // TODO To optimize the jumps for bin expr. This implementation is slow.
         final List<Size> sizes = new ArrayList<>();
         sizes.add(test.apply(methodVisitor, context));
         methodVisitor.visitJumpInsn(Opcodes.IFEQ, labelFalse);
