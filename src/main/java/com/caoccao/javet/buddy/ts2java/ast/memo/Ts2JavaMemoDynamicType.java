@@ -18,8 +18,6 @@ package com.caoccao.javet.buddy.ts2java.ast.memo;
 
 import net.bytebuddy.dynamic.DynamicType;
 
-import java.util.Objects;
-
 public class Ts2JavaMemoDynamicType extends Ts2JavaMemo {
     protected DynamicType.Builder<?> builder;
 
@@ -32,6 +30,6 @@ public class Ts2JavaMemoDynamicType extends Ts2JavaMemo {
     }
 
     public void setBuilder(DynamicType.Builder<?> builder) {
-        this.builder = Objects.requireNonNull(builder);
+        this.builder = builder;
     }
 }

@@ -83,7 +83,6 @@ public class Ts2JavaAstFunction
                 .forEach(memoFunction::addLocalVariable);
         final TypeList parameters = memoFunction.getParameters();
         final int initialOffset = memoFunction.getMaxOffset();
-        memoFunction.pushLexicalScope();
         body.ifPresent(Ts2JavaAstBlockStmt::compile);
         if (type.represents(void.class) && body.isPresent()) {
             TypeDescription bodyType = body.get().getType();

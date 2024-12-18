@@ -28,8 +28,8 @@ import net.bytebuddy.description.type.TypeList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Ts2JavaMemoFunction extends Ts2JavaMemo {
-    private final List<JavaLexicalScope> lexicalScopes;
+public class Ts2JavaMemoFunction extends Ts2JavaMemoDynamicType {
+    protected final List<JavaLexicalScope> lexicalScopes;
     protected boolean _static;
     protected int lineNumber;
     protected int maxOffset;
@@ -37,6 +37,7 @@ public class Ts2JavaMemoFunction extends Ts2JavaMemo {
     protected TypeDescription returnType;
 
     public Ts2JavaMemoFunction() {
+        super(null);
         _static = false;
         lexicalScopes = SimpleList.of(new JavaLexicalScope(0));
         lineNumber = -1;

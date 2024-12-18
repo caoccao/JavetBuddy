@@ -18,62 +18,42 @@ package com.caoccao.javet.buddy.ts2java.ast.stmt;
 
 import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
-import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstBlockStmtOrExpr;
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstClassMember;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstStmt;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
-import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstBlockStmt;
-import com.caoccao.javet.utils.ListUtils;
+import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstEmptyStmt;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-public class Ts2JavaAstBlockStmt
-        extends BaseTs2JavaAst<Swc4jAstBlockStmt, Ts2JavaMemoFunction>
-        implements ITs2JavaAstStmt<Swc4jAstBlockStmt, Ts2JavaMemoFunction>,
-        ITs2JavaAstBlockStmtOrExpr<Swc4jAstBlockStmt, Ts2JavaMemoFunction> {
-    protected final List<ITs2JavaAstStmt<?, ?>> stmts;
-
-    protected Ts2JavaAstBlockStmt(
+public class Ts2JavaAstEmptyStmt
+        extends BaseTs2JavaAst<Swc4jAstEmptyStmt, Ts2JavaMemoFunction>
+        implements ITs2JavaAstStmt<Swc4jAstEmptyStmt, Ts2JavaMemoFunction>,
+        ITs2JavaAstClassMember<Swc4jAstEmptyStmt, Ts2JavaMemoFunction> {
+    protected Ts2JavaAstEmptyStmt(
             ITs2JavaAst<?, ?> parent,
-            Swc4jAstBlockStmt ast,
+            Swc4jAstEmptyStmt ast,
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
-        stmts = ast.getStmts().stream()
-                .map(stmt -> ITs2JavaAstStmt.create(this, stmt, memo))
-                .collect(Collectors.toList());
     }
 
-    public static Ts2JavaAstBlockStmt create(
+    public static Ts2JavaAstEmptyStmt create(
             ITs2JavaAst<?, ?> parent,
-            Swc4jAstBlockStmt ast,
+            Swc4jAstEmptyStmt ast,
             Ts2JavaMemoFunction memo) {
-        return new Ts2JavaAstBlockStmt(parent, ast, memo);
+        return new Ts2JavaAstEmptyStmt(parent, ast, memo);
     }
 
     @Override
     public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
         visitLineNumber(methodVisitor);
-        memo.pushLexicalScope();
-        Size size = stmts.stream()
-                .map((stmt) -> stmt.apply(methodVisitor, context))
-                .reduce(BaseTs2JavaAst::aggregateSize)
-                .orElse(Size.ZERO);
-        memo.popLexicalScope();
-        return size;
+        return Size.ZERO;
     }
 
     @Override
     public void compile() {
-        stmts.forEach(ITs2JavaAstStmt::compile);
-        if (type == null && ListUtils.isNotEmpty(stmts)) {
-            type = stmts.get(stmts.size() - 1).getType();
-        }
     }
 
     @Override
     public void syncLabels() {
-        stmts.forEach(ITs2JavaAstStmt::syncLabels);
     }
 }
