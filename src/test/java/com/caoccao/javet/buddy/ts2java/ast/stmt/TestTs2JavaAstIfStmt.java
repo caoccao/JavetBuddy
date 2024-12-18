@@ -142,6 +142,41 @@ public class TestTs2JavaAstIfStmt extends BaseTestTs2Java {
         }
     }
 
+    /*
+  public logicalConditionOrConsAlt(II)I
+   L0
+    LINENUMBER 146 L0
+    ILOAD 1
+    ILOAD 2
+    IF_ICMPGT L1
+    ILOAD 1
+    ILOAD 2
+    IF_ICMPGE L2
+   L1
+    LINENUMBER 147 L1
+   FRAME SAME
+    ICONST_1
+    IRETURN
+   L2
+    LINENUMBER 149 L2
+   FRAME SAME
+    ICONST_0
+    IRETURN
+   L3
+    LOCALVARIABLE this Lcom/caoccao/javet/buddy/ts2java/ast/stmt/TestTs2JavaAstIfStmt; L0 L3 0
+    LOCALVARIABLE a I L0 L3 1
+    LOCALVARIABLE b I L0 L3 2
+    MAXSTACK = 2
+    MAXLOCALS = 3
+     */
+    public int logicalConditionOrConsAlt(int a, int b) {
+        if (a > b || a < b) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
     @Test
     public void testBooleanCons() throws Exception {
         assertEquals(1, booleanCons(true));
@@ -194,5 +229,19 @@ public class TestTs2JavaAstIfStmt extends BaseTestTs2Java {
                 TsMethodArgument.of("b", int.class));
         assertEquals(1, tsClass.invoke(1, 0));
         assertEquals(2, tsClass.invoke(1, 2));
+    }
+
+    @Test
+    public void testLogicalConditionOrConsAlt() throws Exception {
+        assertEquals(1, logicalConditionOrConsAlt(1, 2));
+        assertEquals(1, logicalConditionOrConsAlt(2, 1));
+        assertEquals(0, logicalConditionOrConsAlt(1, 1));
+        tsClass = new TsClass(
+                "if (a > b || a < b) { return 1; } else { return 0; }",
+                TsMethodArgument.of("a", int.class),
+                TsMethodArgument.of("b", int.class));
+        assertEquals(1, tsClass.invoke(1, 2));
+        assertEquals(1, tsClass.invoke(2, 1));
+        assertEquals(0, tsClass.invoke(1, 1));
     }
 }
