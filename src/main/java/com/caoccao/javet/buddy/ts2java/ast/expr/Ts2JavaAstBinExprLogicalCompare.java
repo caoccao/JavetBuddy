@@ -44,7 +44,6 @@ public class Ts2JavaAstBinExprLogicalCompare extends Ts2JavaAstBinExprLogical {
     @Override
     public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
         super.apply(methodVisitor, context);
-        boolean ignoreClose = !isTopBinExpr();
         final List<Size> sizes = new ArrayList<>();
         sizes.add(left.apply(methodVisitor, context));
         TypeDescription upCastType = left.getType();
@@ -63,7 +62,7 @@ public class Ts2JavaAstBinExprLogicalCompare extends Ts2JavaAstBinExprLogical {
         final Label label = labelSwitched ? labelTrue : labelFalse;
         sizes.add(Ts2JavaAstBinaryOp.getLogicalCompareStackManipulation(ast, resolvedOp, upCastType, label)
                 .apply(methodVisitor, context));
-        if (!ignoreClose) {
+        if (!labelOverridden) {
             sizes.add(logicalClose(methodVisitor));
         }
         return aggregateSize(sizes);
