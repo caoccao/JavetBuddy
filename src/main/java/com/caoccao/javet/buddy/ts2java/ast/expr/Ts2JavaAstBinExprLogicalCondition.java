@@ -43,7 +43,7 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
     @Override
     public Size apply(MethodVisitor methodVisitor, Implementation.Context context) {
         super.apply(methodVisitor, context);
-        boolean ignoreClose = labelOverridden;
+        boolean ignoreClose = isLabelOverridden();
         final List<Size> sizes = new ArrayList<>();
         final Swc4jAstBinaryOp resolvedOp = getResolvedOp();
         final boolean isLeftBool = left instanceof Ts2JavaAstBool;
@@ -143,7 +143,7 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
                     sizes.add(right.apply(methodVisitor, context));
                     if (!isRightLogical) {
                         methodVisitor.visitJumpInsn(
-                                labelOverridden ? opcodeCompareTrue : opcodeCompareFalse,
+                                isLabelOverridden() ? opcodeCompareTrue : opcodeCompareFalse,
                                 labelSwitched ? labelTrue : labelFalse);
                     }
                 }
