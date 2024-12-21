@@ -16,7 +16,6 @@
 
 package com.caoccao.javet.buddy.ts2java.ast.expr;
 
-import com.caoccao.javet.buddy.ts2java.ast.expr.lit.Ts2JavaAstBool;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities.ITs2JavaBoolEval;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
@@ -49,12 +48,8 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
         boolean ignoreClose = isLabelOverridden();
         final List<Size> sizes = new ArrayList<>();
         final Swc4jAstBinaryOp resolvedOp = getResolvedOp();
-        final Optional<Boolean> optionalLeftBool = left instanceof ITs2JavaBoolEval
-                ? left.as(ITs2JavaBoolEval.class).evalBool()
-                : Optional.empty();
-        final Optional<Boolean> optionalRightBool = right instanceof ITs2JavaBoolEval
-                ? right.as(ITs2JavaBoolEval.class).evalBool()
-                : Optional.empty();
+        final Optional<Boolean> optionalLeftBool = ITs2JavaBoolEval.evalBool(left);
+        final Optional<Boolean> optionalRightBool = ITs2JavaBoolEval.evalBool(right);
         final boolean isLeftLogical = left instanceof Ts2JavaAstBinExprLogical;
         final boolean isRightLogical = right instanceof Ts2JavaAstBinExprLogical;
         final int opcodeCompareFalse = bangFlipped ? Opcodes.IFNE : Opcodes.IFEQ;

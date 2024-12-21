@@ -16,8 +16,16 @@
 
 package com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities;
 
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
+
 import java.util.Optional;
 
 public interface ITs2JavaBoolEval {
+    static Optional<Boolean> evalBool(ITs2JavaAst<?, ?> ast) {
+        return Optional.of(ast instanceof ITs2JavaBoolEval)
+                .filter(b -> b)
+                .flatMap(b -> ast.as(ITs2JavaBoolEval.class).evalBool());
+    }
+
     Optional<Boolean> evalBool();
 }

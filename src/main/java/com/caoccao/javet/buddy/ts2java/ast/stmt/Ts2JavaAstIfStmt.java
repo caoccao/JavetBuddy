@@ -20,6 +20,7 @@ import com.caoccao.javet.buddy.ts2java.ast.BaseTs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstExpr;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstStmt;
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities.ITs2JavaBoolEval;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.swc4j.ast.stmt.Swc4jAstIfStmt;
 import net.bytebuddy.implementation.Implementation;
@@ -63,14 +64,25 @@ public class Ts2JavaAstIfStmt
         visitLineNumber(methodVisitor);
         // TODO To optimize the jumps for bin expr. This implementation is slow.
         final List<Size> sizes = new ArrayList<>();
-        sizes.add(test.apply(methodVisitor, context));
-        methodVisitor.visitJumpInsn(Opcodes.IFEQ, labelFalse);
-        sizes.add(cons.apply(methodVisitor, context));
-        methodVisitor.visitLabel(labelFalse);
-        methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-        alt.ifPresent(stmt -> {
-            sizes.add(stmt.apply(methodVisitor, context));
-        });
+        Optional<Boolean> optionalTestBool = ITs2JavaBoolEval.evalBool(test);
+        if (optionalTestBool.isPresent()) {
+            if (optionalTestBool.get()) {
+                sizes.add(cons.apply(methodVisitor, context));
+            } else {
+                alt.ifPresent(stmt -> {
+                    sizes.add(stmt.apply(methodVisitor, context));
+                });
+            }
+        } else {
+            sizes.add(test.apply(methodVisitor, context));
+            methodVisitor.visitJumpInsn(Opcodes.IFEQ, labelFalse);
+            sizes.add(cons.apply(methodVisitor, context));
+            methodVisitor.visitLabel(labelFalse);
+            methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+            alt.ifPresent(stmt -> {
+                sizes.add(stmt.apply(methodVisitor, context));
+            });
+        }
         return aggregateSize(sizes);
     }
 

@@ -77,7 +77,6 @@ public class TestTs2JavaAstUnaryExprBang extends BaseTestTs2Java {
         assertTrue(bangLogicalCompare(true, 1, 2));
         assertFalse(bangLogicalCompare(true, 2, 1));
         assertFalse(bangLogicalCompare(false, 1, 2));
-        enableLogging();
         tsClass = new TsClass(
                 "return a && !(b > c);",
                 boolean.class,

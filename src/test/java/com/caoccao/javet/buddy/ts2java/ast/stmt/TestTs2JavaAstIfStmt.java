@@ -186,9 +186,13 @@ public class TestTs2JavaAstIfStmt extends BaseTestTs2Java {
                 TsMethodArgument.of("a", boolean.class));
         assertEquals(1, tsClass.invoke(true));
         assertEquals(0, tsClass.invoke(false));
-        tsClass = new TsClass("if (true) { return 1; } return 0;", int.class);
+        tsClass = new TsClass("if (true) { return 1; }", int.class);
         assertEquals(1, tsClass.invoke());
         tsClass = new TsClass("if (false) { return 1; } return 0;", int.class);
+        assertEquals(0, tsClass.invoke());
+        tsClass = new TsClass("if (!false) { return 1; }", int.class);
+        assertEquals(1, tsClass.invoke());
+        tsClass = new TsClass("if (!true) { return 1; } return 0;", int.class);
         assertEquals(0, tsClass.invoke());
     }
 
