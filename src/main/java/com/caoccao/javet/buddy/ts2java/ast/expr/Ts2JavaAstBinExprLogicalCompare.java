@@ -20,6 +20,7 @@ import com.caoccao.javet.buddy.ts2java.ast.enums.Ts2JavaAstBinaryOp;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaClassCast;
+import com.caoccao.javet.buddy.ts2java.compiler.JavaLabelUtils;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import net.bytebuddy.description.type.TypeDescription;
@@ -63,7 +64,7 @@ public class Ts2JavaAstBinExprLogicalCompare extends Ts2JavaAstBinExprLogical {
         sizes.add(Ts2JavaAstBinaryOp.getLogicalCompareStackManipulation(ast, resolvedOp, upCastType, label)
                 .apply(methodVisitor, context));
         if (!isLabelOverridden()) {
-            sizes.add(logicalClose(methodVisitor));
+            sizes.add(JavaLabelUtils.generateLogicalClose(methodVisitor, labelFalse));
         }
         return aggregateSize(sizes);
     }

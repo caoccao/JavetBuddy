@@ -19,6 +19,7 @@ package com.caoccao.javet.buddy.ts2java.ast.expr;
 import com.caoccao.javet.buddy.ts2java.ast.expr.lit.Ts2JavaAstBool;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
+import com.caoccao.javet.buddy.ts2java.compiler.JavaLabelUtils;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
@@ -158,7 +159,7 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
                                 SimpleMap.of("op", ast.getOp().name())));
         }
         if (!ignoreClose) {
-            sizes.add(logicalClose(methodVisitor));
+            sizes.add(JavaLabelUtils.generateLogicalClose(methodVisitor, labelFalse));
         }
         return aggregateSize(sizes);
     }

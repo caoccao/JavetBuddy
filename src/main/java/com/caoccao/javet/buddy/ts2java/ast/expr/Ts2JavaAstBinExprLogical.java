@@ -22,10 +22,7 @@ import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstBinaryOp;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import net.bytebuddy.description.type.TypeDescription;
-import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.jar.asm.Label;
-import net.bytebuddy.jar.asm.MethodVisitor;
-import net.bytebuddy.jar.asm.Opcodes;
 
 public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
         implements ITs2JavaBangFlippable {
@@ -84,18 +81,6 @@ public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
 
     public boolean isLabelSwitched() {
         return labelSwitched;
-    }
-
-    protected Size logicalClose(MethodVisitor methodVisitor) {
-        Label labelClose = new Label();
-        methodVisitor.visitInsn(Opcodes.ICONST_1);
-        methodVisitor.visitJumpInsn(Opcodes.GOTO, labelClose);
-        methodVisitor.visitLabel(labelFalse);
-        methodVisitor.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
-        methodVisitor.visitInsn(Opcodes.ICONST_0);
-        methodVisitor.visitLabel(labelClose);
-        methodVisitor.visitFrame(Opcodes.F_SAME1, 0, null, 1, new Object[]{Opcodes.INTEGER});
-        return StackManipulation.Size.ZERO;
     }
 
     public Ts2JavaAstBinExprLogical setLabelFalse(Label labelFalse) {
