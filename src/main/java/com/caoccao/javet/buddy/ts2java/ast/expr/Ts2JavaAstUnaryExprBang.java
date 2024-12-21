@@ -18,15 +18,18 @@ package com.caoccao.javet.buddy.ts2java.ast.expr;
 
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities.ITs2JavaBangFlippable;
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities.ITs2JavaBoolEval;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstUnaryOp;
 import com.caoccao.javet.swc4j.ast.expr.Swc4jAstUnaryExpr;
 import net.bytebuddy.implementation.Implementation;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
+import java.util.Optional;
+
 public class Ts2JavaAstUnaryExprBang
         extends Ts2JavaAstUnaryExpr
-        implements ITs2JavaBangFlippable {
+        implements ITs2JavaBangFlippable, ITs2JavaBoolEval {
     protected Ts2JavaAstUnaryExprBang(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstUnaryExpr ast,
@@ -49,6 +52,14 @@ public class Ts2JavaAstUnaryExprBang
     public void compile() {
         super.compile();
         flipBang();
+    }
+
+    @Override
+    public Optional<Boolean> evalBool() {
+        if (arg instanceof ITs2JavaBoolEval) {
+            return arg.as(ITs2JavaBoolEval.class).evalBool();
+        }
+        return Optional.empty();
     }
 
     @Override

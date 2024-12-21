@@ -18,6 +18,7 @@ package com.caoccao.javet.buddy.ts2java.ast.expr;
 
 import com.caoccao.javet.buddy.ts2java.ast.expr.lit.Ts2JavaAstBool;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities.ITs2JavaBoolEval;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.buddy.ts2java.compiler.JavaLabelUtils;
 import com.caoccao.javet.buddy.ts2java.exceptions.Ts2JavaAstException;
@@ -31,6 +32,7 @@ import net.bytebuddy.jar.asm.Opcodes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical {
 
@@ -47,39 +49,39 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
         boolean ignoreClose = isLabelOverridden();
         final List<Size> sizes = new ArrayList<>();
         final Swc4jAstBinaryOp resolvedOp = getResolvedOp();
-        final boolean isLeftBool = left instanceof Ts2JavaAstBool;
-        final boolean isRightBool = right instanceof Ts2JavaAstBool;
+        final Optional<Boolean> optionalLeftBool = left instanceof ITs2JavaBoolEval
+                ? left.as(ITs2JavaBoolEval.class).evalBool()
+                : Optional.empty();
+        final Optional<Boolean> optionalRightBool = right instanceof ITs2JavaBoolEval
+                ? right.as(ITs2JavaBoolEval.class).evalBool()
+                : Optional.empty();
         final boolean isLeftLogical = left instanceof Ts2JavaAstBinExprLogical;
         final boolean isRightLogical = right instanceof Ts2JavaAstBinExprLogical;
         final int opcodeCompareFalse = bangFlipped ? Opcodes.IFNE : Opcodes.IFEQ;
         switch (resolvedOp) {
             case LogicalAnd: {
-                if (isLeftBool && isRightBool) {
-                    Ts2JavaAstBool leftBool = left.as(Ts2JavaAstBool.class);
-                    Ts2JavaAstBool rightBool = right.as(Ts2JavaAstBool.class);
-                    if (!rightBool.isValue()) {
-                        sizes.add(rightBool.apply(methodVisitor, context));
+                if (optionalLeftBool.isPresent() && optionalRightBool.isPresent()) {
+                    if (!optionalRightBool.get()) {
+                        sizes.add(right.apply(methodVisitor, context));
                     } else {
-                        sizes.add(leftBool.apply(methodVisitor, context));
+                        sizes.add(left.apply(methodVisitor, context));
                     }
                     ignoreClose = true;
                     break;
-                } else if (isLeftBool) {
-                    Ts2JavaAstBool leftBool = left.as(Ts2JavaAstBool.class);
-                    if (!leftBool.isValue()) {
-                        sizes.add(leftBool.apply(methodVisitor, context));
+                } else if (optionalLeftBool.isPresent()) {
+                    if (!optionalLeftBool.get()) {
+                        sizes.add(left.apply(methodVisitor, context));
                         ignoreClose = true;
                         break;
                     }
-                } else if (isRightBool) {
-                    Ts2JavaAstBool rightBool = right.as(Ts2JavaAstBool.class);
-                    if (!rightBool.isValue()) {
-                        sizes.add(rightBool.apply(methodVisitor, context));
+                } else if (optionalRightBool.isPresent()) {
+                    if (!optionalRightBool.get()) {
+                        sizes.add(right.apply(methodVisitor, context));
                         ignoreClose = true;
                         break;
                     }
                 }
-                if (!isLeftBool) {
+                if (!optionalLeftBool.isPresent()) {
                     sizes.add(left.apply(methodVisitor, context));
                     if (!isLeftLogical) {
                         methodVisitor.visitJumpInsn(opcodeCompareFalse, labelFalse);
@@ -88,7 +90,7 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
                 if (labelSwitched && isRightLogical) {
                     right.as(Ts2JavaAstBinExprLogical.class).setLabelSwitched(true);
                 }
-                if (!isRightBool) {
+                if (!optionalRightBool.isPresent()) {
                     sizes.add(right.apply(methodVisitor, context));
                     if (!isRightLogical) {
                         methodVisitor.visitJumpInsn(opcodeCompareFalse, labelSwitched ? labelTrue : labelFalse);
@@ -102,33 +104,29 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
                 break;
             }
             case LogicalOr: {
-                if (isLeftBool && isRightBool) {
-                    Ts2JavaAstBool leftBool = left.as(Ts2JavaAstBool.class);
-                    Ts2JavaAstBool rightBool = right.as(Ts2JavaAstBool.class);
-                    if (rightBool.isValue()) {
-                        sizes.add(rightBool.apply(methodVisitor, context));
+                if (optionalLeftBool.isPresent() && optionalRightBool.isPresent()) {
+                    if (optionalRightBool.get()) {
+                        sizes.add(right.apply(methodVisitor, context));
                     } else {
-                        sizes.add(leftBool.apply(methodVisitor, context));
+                        sizes.add(left.apply(methodVisitor, context));
                     }
                     ignoreClose = true;
                     break;
-                } else if (isLeftBool) {
-                    Ts2JavaAstBool leftBool = left.as(Ts2JavaAstBool.class);
-                    if (leftBool.isValue()) {
-                        sizes.add(leftBool.apply(methodVisitor, context));
+                } else if (optionalLeftBool.isPresent()) {
+                    if (optionalLeftBool.get()) {
+                        sizes.add(left.apply(methodVisitor, context));
                         ignoreClose = true;
                         break;
                     }
-                } else if (isRightBool) {
-                    Ts2JavaAstBool rightBool = right.as(Ts2JavaAstBool.class);
-                    if (rightBool.isValue()) {
-                        sizes.add(rightBool.apply(methodVisitor, context));
+                } else if (optionalRightBool.isPresent()) {
+                    if (optionalRightBool.get()) {
+                        sizes.add(right.apply(methodVisitor, context));
                         ignoreClose = true;
                         break;
                     }
                 }
                 final int opcodeCompareTrue = bangFlipped ? Opcodes.IFEQ : Opcodes.IFNE;
-                if (!isLeftBool) {
+                if (!optionalLeftBool.isPresent()) {
                     if (isLeftLogical) {
                         left.as(Ts2JavaAstBinExprLogical.class).setLabelSwitched(true);
                     }
@@ -136,11 +134,11 @@ public class Ts2JavaAstBinExprLogicalCondition extends Ts2JavaAstBinExprLogical 
                     if (!isLeftLogical) {
                         methodVisitor.visitJumpInsn(opcodeCompareTrue, labelSwitched ? labelFalse : labelTrue);
                     }
-                    if (isRightBool) {
+                    if (optionalRightBool.isPresent()) {
                         methodVisitor.visitJumpInsn(Opcodes.GOTO, labelSwitched ? labelTrue : labelFalse);
                     }
                 }
-                if (!isRightBool) {
+                if (!optionalRightBool.isPresent()) {
                     sizes.add(right.apply(methodVisitor, context));
                     if (!isRightLogical) {
                         methodVisitor.visitJumpInsn(

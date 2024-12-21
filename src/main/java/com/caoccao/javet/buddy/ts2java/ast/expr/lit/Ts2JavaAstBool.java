@@ -21,6 +21,7 @@ import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstLit;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstTsLit;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities.ITs2JavaBangFlippable;
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities.ITs2JavaBoolEval;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.swc4j.ast.expr.lit.Swc4jAstBool;
 import net.bytebuddy.description.type.TypeDescription;
@@ -29,9 +30,11 @@ import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.implementation.bytecode.constant.IntegerConstant;
 import net.bytebuddy.jar.asm.MethodVisitor;
 
+import java.util.Optional;
+
 public class Ts2JavaAstBool
         extends BaseTs2JavaAst<Swc4jAstBool, Ts2JavaMemoFunction>
-        implements ITs2JavaBangFlippable,
+        implements ITs2JavaBangFlippable, ITs2JavaBoolEval,
         ITs2JavaAstLit<Swc4jAstBool, Ts2JavaMemoFunction>, ITs2JavaAstTsLit<Swc4jAstBool, Ts2JavaMemoFunction> {
     protected boolean value;
 
@@ -60,6 +63,11 @@ public class Ts2JavaAstBool
 
     @Override
     public void compile() {
+    }
+
+    @Override
+    public Optional<Boolean> evalBool() {
+        return Optional.of(value);
     }
 
     @Override
