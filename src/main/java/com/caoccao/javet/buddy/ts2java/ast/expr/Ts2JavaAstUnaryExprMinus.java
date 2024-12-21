@@ -53,16 +53,11 @@ public class Ts2JavaAstUnaryExprMinus
 
     @Override
     public void flipMinus() {
-        if (isMinusFlippable()) {
-            arg.as(ITs2JavaMinusFlippable.class).flipMinus();
-        }
+        ITs2JavaMinusFlippable.flipMinus(arg);
     }
 
     @Override
     public boolean isMinusFlippable() {
-        if (arg instanceof ITs2JavaMinusFlippable) {
-            return arg.as(ITs2JavaMinusFlippable.class).isMinusFlippable();
-        }
-        return false;
+        return ITs2JavaMinusFlippable.isMinusFlippable(arg);
     }
 }

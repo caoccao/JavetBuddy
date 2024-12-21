@@ -64,16 +64,11 @@ public class Ts2JavaAstUnaryExprBang
 
     @Override
     public void flipBang() {
-        if (isBangFlippable()) {
-            arg.as(ITs2JavaBangFlippable.class).flipBang();
-        }
+        ITs2JavaBangFlippable.flipBang(arg);
     }
 
     @Override
     public boolean isBangFlippable() {
-        if (arg instanceof ITs2JavaBangFlippable) {
-            return arg.as(ITs2JavaBangFlippable.class).isBangFlippable();
-        }
-        return false;
+        return ITs2JavaBangFlippable.isBangFlippable(arg);
     }
 }

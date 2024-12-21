@@ -16,7 +16,22 @@
 
 package com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities;
 
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
+
 public interface ITs2JavaBangFlippable {
+    static void flipBang(ITs2JavaAst<?, ?> ast) {
+        if (isBangFlippable(ast)) {
+            ast.as(ITs2JavaBangFlippable.class).flipBang();
+        }
+    }
+
+    static boolean isBangFlippable(ITs2JavaAst<?, ?> ast) {
+        if (ast instanceof ITs2JavaBangFlippable) {
+            return ast.as(ITs2JavaBangFlippable.class).isBangFlippable();
+        }
+        return false;
+    }
+
     void flipBang();
 
     boolean isBangFlippable();
