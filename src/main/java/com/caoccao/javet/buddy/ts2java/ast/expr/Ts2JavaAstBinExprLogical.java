@@ -16,6 +16,7 @@
 
 package com.caoccao.javet.buddy.ts2java.ast.expr;
 
+import com.caoccao.javet.buddy.ts2java.ast.enums.Ts2JavaLogicalMode;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities.ITs2JavaBangFlippable;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
@@ -24,6 +25,8 @@ import com.caoccao.javet.swc4j.ast.expr.Swc4jAstBinExpr;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.jar.asm.Label;
 
+import java.util.Objects;
+
 public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
         implements ITs2JavaBangFlippable {
     protected boolean bangFlipped;
@@ -31,6 +34,7 @@ public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
     protected boolean labelOverridden;
     protected boolean labelSwitched;
     protected Label labelTrue;
+    protected Ts2JavaLogicalMode logicalMode;
 
     protected Ts2JavaAstBinExprLogical(
             ITs2JavaAst<?, ?> parent,
@@ -42,6 +46,7 @@ public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
         labelTrue = new Label();
         labelOverridden = false;
         labelSwitched = false;
+        logicalMode = Ts2JavaLogicalMode.Default;
         type = TypeDescription.ForLoadedType.of(boolean.class);
     }
 
@@ -62,6 +67,10 @@ public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
 
     public Label getLabelTrue() {
         return labelTrue;
+    }
+
+    public Ts2JavaLogicalMode getLogicalMode() {
+        return logicalMode;
     }
 
     public abstract Swc4jAstBinaryOp getResolvedOp();
@@ -98,5 +107,9 @@ public abstract class Ts2JavaAstBinExprLogical extends Ts2JavaAstBinExpr
         this.labelTrue = labelTrue;
         labelOverridden = true;
         return this;
+    }
+
+    public void setLogicalMode(Ts2JavaLogicalMode logicalMode) {
+        this.logicalMode = Objects.requireNonNull(logicalMode);
     }
 }

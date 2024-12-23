@@ -64,6 +64,7 @@ public abstract class BaseTs2JavaAst<AST extends ISwc4jAst, Memo extends Ts2Java
         return memo;
     }
 
+    @Override
     public ITs2JavaAst<?, ?> getParent() {
         return parent;
     }
@@ -71,6 +72,11 @@ public abstract class BaseTs2JavaAst<AST extends ISwc4jAst, Memo extends Ts2Java
     @Override
     public TypeDescription getType() {
         return type;
+    }
+
+    @Override
+    public void setParent(ITs2JavaAst<?, ?> parent) {
+        this.parent = parent;
     }
 
     protected void visitLineNumber(MethodVisitor methodVisitor) {

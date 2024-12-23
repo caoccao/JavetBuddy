@@ -44,15 +44,15 @@ public class Ts2JavaAstUnaryExpr
         op = ast.getOp();
     }
 
-    public static Ts2JavaAstUnaryExpr create(
+    public static ITs2JavaAstExpr<?, ?> create(
             ITs2JavaAst<?, ?> parent,
             Swc4jAstUnaryExpr ast,
             Ts2JavaMemoFunction memo) {
         switch (ast.getOp()) {
             case Bang:
-                return new Ts2JavaAstUnaryExprBang(parent, ast, memo);
+                return Ts2JavaAstUnaryExprBang.create(parent, ast, memo);
             case Minus:
-                return new Ts2JavaAstUnaryExprMinus(parent, ast, memo);
+                return Ts2JavaAstUnaryExprMinus.create(parent, ast, memo);
             default:
                 return new Ts2JavaAstUnaryExpr(parent, ast, memo);
         }

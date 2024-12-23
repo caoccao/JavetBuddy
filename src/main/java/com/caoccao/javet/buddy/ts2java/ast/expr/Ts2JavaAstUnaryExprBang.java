@@ -17,6 +17,7 @@
 package com.caoccao.javet.buddy.ts2java.ast.expr;
 
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstExpr;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities.ITs2JavaBangFlippable;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities.ITs2JavaBoolEval;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
@@ -36,6 +37,20 @@ public class Ts2JavaAstUnaryExprBang
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
         op = Swc4jAstUnaryOp.Bang;
+    }
+
+    public static ITs2JavaAstExpr<?, ?> create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstUnaryExpr ast,
+            Ts2JavaMemoFunction memo) {
+        Ts2JavaAstUnaryExprBang unaryExpr = new Ts2JavaAstUnaryExprBang(parent, ast, memo);
+        if (unaryExpr.isBangFlippable()) {
+            ITs2JavaAstExpr<?, ?> arg = unaryExpr.getArg();
+            arg.setParent(parent);
+            arg.as(ITs2JavaBangFlippable.class).flipBang();
+            return arg;
+        }
+        return unaryExpr;
     }
 
     @Override

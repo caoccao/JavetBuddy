@@ -17,6 +17,7 @@
 package com.caoccao.javet.buddy.ts2java.ast.expr;
 
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
+import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAstExpr;
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities.ITs2JavaMinusFlippable;
 import com.caoccao.javet.buddy.ts2java.ast.memo.Ts2JavaMemoFunction;
 import com.caoccao.javet.swc4j.ast.enums.Swc4jAstUnaryOp;
@@ -33,6 +34,20 @@ public class Ts2JavaAstUnaryExprMinus
             Ts2JavaMemoFunction memo) {
         super(parent, ast, memo);
         op = Swc4jAstUnaryOp.Minus;
+    }
+
+    public static ITs2JavaAstExpr<?, ?> create(
+            ITs2JavaAst<?, ?> parent,
+            Swc4jAstUnaryExpr ast,
+            Ts2JavaMemoFunction memo) {
+        Ts2JavaAstUnaryExprMinus unaryExpr = new Ts2JavaAstUnaryExprMinus(parent, ast, memo);
+        if (unaryExpr.isMinusFlippable()) {
+            ITs2JavaAstExpr<?, ?> arg = unaryExpr.getArg();
+            arg.setParent(parent);
+            arg.as(ITs2JavaMinusFlippable.class).flipMinus();
+            return arg;
+        }
+        return unaryExpr;
     }
 
     @Override

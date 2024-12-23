@@ -46,12 +46,16 @@ public interface ITs2JavaAst<AST extends ISwc4jAst, Memo extends Ts2JavaMemo>
 
     Memo getMemo();
 
+    ITs2JavaAst<?, ?> getParent();
+
     TypeDescription getType();
 
     @Override
     default boolean isValid() {
         return true;
     }
+
+    void setParent(ITs2JavaAst<?, ?> parent);
 
     void syncLabels();
 }
