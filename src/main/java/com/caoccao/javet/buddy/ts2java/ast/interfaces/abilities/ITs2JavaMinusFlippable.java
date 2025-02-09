@@ -18,6 +18,8 @@ package com.caoccao.javet.buddy.ts2java.ast.interfaces.abilities;
 
 import com.caoccao.javet.buddy.ts2java.ast.interfaces.ITs2JavaAst;
 
+import java.util.Optional;
+
 public interface ITs2JavaMinusFlippable {
     static void flipMinus(ITs2JavaAst<?, ?> ast) {
         if (isMinusFlippable(ast)) {
@@ -26,10 +28,10 @@ public interface ITs2JavaMinusFlippable {
     }
 
     static boolean isMinusFlippable(ITs2JavaAst<?, ?> ast) {
-        if (ast instanceof ITs2JavaMinusFlippable) {
-            return ast.as(ITs2JavaMinusFlippable.class).isMinusFlippable();
-        }
-        return false;
+        return Optional.of(ast instanceof ITs2JavaMinusFlippable)
+                .filter(b -> b)
+                .map(b -> ast.as(ITs2JavaMinusFlippable.class).isMinusFlippable())
+                .orElse(false);
     }
 
     void flipMinus();
